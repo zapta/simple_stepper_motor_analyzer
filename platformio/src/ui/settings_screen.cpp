@@ -94,14 +94,14 @@ void SettingsScreen::setup(uint8_t screen_num) {
 
   // NOTE: adding 1 to the y of the numeric fields to better align
   // with the font of the text fields.
-  ui::create_label(screen_, w1, x1, y, "COIL 1", ui::kFontDataFields,
+  ui::create_label(screen_, w1, x1, y, "COIL A", ui::kFontDataFields,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_SILVER, nullptr);
 
   ui::create_label(screen_, w2, x2, y + 1, "", ui::kFontNumericDataFields,
                    LV_LABEL_ALIGN_RIGHT, LV_COLOR_SILVER, &ch_a_field_);
   y += 36;
 
-  ui::create_label(screen_, w1, x1, y + 1, "COIL 2", ui::kFontDataFields,
+  ui::create_label(screen_, w1, x1, y + 1, "COIL B", ui::kFontDataFields,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_SILVER, nullptr);
   ui::create_label(screen_, w2, x2, y, "", ui::kFontNumericDataFields,
                    LV_LABEL_ALIGN_RIGHT, LV_COLOR_SILVER, &ch_b_field_);
