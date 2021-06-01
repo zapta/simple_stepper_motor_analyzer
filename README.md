@@ -478,6 +478,8 @@ The electronic schematic, PCB layout, gerber files, and the firmware source file
 
 **Instructions:** Order the PCB with JLCPB with SMD service (see JLCPCB directory with gerbers and bom and pos files). Attach the Pico with XFasten tape and solder. Cut the bottom pins of the KF2510 connectors to 1mm length and solder from the top of the PCB only. Solder the current sensors, attach the TFT to the back of the PCB with XFasten tape and carefully connect the two FPC cables. Program the Pico by connecting it to a computer while it's bootsel button is pressed and drag he uf2 release file to the virtual disk you will see on your computer.
 
+Note: The two servo connectors may be hard to insert and remove. This is due to a small bump on the male side that is intended to lock in place the female connector. If you are handy with X-Acto knife, you can try scraping that bump for easier insertion. 
+
 
 
 ![](./www/assembly1.jpg)
