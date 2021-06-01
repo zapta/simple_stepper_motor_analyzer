@@ -469,40 +469,35 @@ The electronic schematic, PCB layout, gerber files, and the firmware source file
 
 [Schematic](./kicad/stepper_analyzer.pdf)
 
-[BOM](https://github.com/zapta/simple_stepper_motor_analyzer/blob/master/kicad/BOM.csv)
-
-<span style="color:red"><b>
-ERRATA: The current PCB version leaves the RD input on the TFT (pin 26) floating which can  interfere with the operation of the display. One workaround is to patch the board with a resistor to pull the input to +3.3v (but not to +5V!!!). See the errata in the latest schematic for more details.</b></span>
+[BOM]()./kicad/BOM.xlsx)
 
 &nbsp;
 
-**Instructions:** Build the PCB, use DFU or SWD protocols to program the released binary into the Blackpill, plugin the TFT screen, power and use. See instructions below on how to flash the firmware release you can find on this github repository.
+**Instructions:** Order the PCB with JLCPB with SMD service (see JLCPCB directory with gerbers and bom and pos files). Attach the Pico with XFasten tape and solder. Cut the bottom pins of the KF2510 connectors to 1mm length and solder from the top of the PCB only. Solder the current sensors, attach the TFT to the back of the PCB with XFasten tape and carefully connect the two FPC cables. Program the Pico by connecting it to a computer while it's bootsel button is pressed and drag he uf2 release file to the virtual disk you will see on your computer.
 
-**NOTE:** These instructions are for the simpler  version which uses an open frame base. For ordering parts and building the enclosed version see https://github.com/zapta/simple_stepper_motor_analyzer/blob/master/case_option.md .
 
-![](./www/board1.jpg)
+
+![](./www/assembly1.jpg)
 
 &nbsp;
 
-![](./www/board2.jpg)
+![](./www/assembly2.jpg)
 
-## Flashing a new firmware
-Flashing the Analyzer with firmware can be done in a few ways. For software developers we recommend using StLink V2 and SWD which are well supported by the platformio IDE and enable debugging ans single stepping. A simpler approach that is recommended for end users is to use the builtin DFU protocol of the Analyzer's STM32 processor such as the one we use here. Adafruit has a [good description of the process](https://learn.adafruit.com/adafruit-stm32f405-feather-express/dfu-bootloader-details). The only difference that to enable the DFU bootloader mode connect the analyzer to the computer while its BOOT0 on button on the back is pressed.
+&nbsp;
 
-**ONLINE LOADER:** We also had good results with Google Chrome browser and this online loader https://devanlai.github.io/webdfu/dfu-util/ . The Analyzer should appear as STM32 BOOTLOADER and should be programmed with the configuration Internal Flash 0x08000000.
+![](./www/assembly3.jpg)
 
-## How to modify the firmware?
-The source code of the Analyzer is available on this github repository. It is a STM32 C++ Platformio project that uses the Arduino framework. The user interface is based on the LVGL library and the project includes its own port to support TFT/Touch used.  Knowledge of C++ and Platformio is required and is outside the scope of this document.
+&nbsp;
+
+![](./www/assembly4.jpg)
+
+&nbsp;
+
+![](./www/assembly5.jpg)
+
 
 ## Mechanical
-We provide here a [3D model of a simple open frame carrier](./3d/base.stl). This design does not requires attaching the analyzer and the TFT board with screws or spacers and guarantees proper separation on the loose end. If you have an interesting design which you would like to share, please post in a model sharing site such as cults3d, thingiverse or grabcad and we will link it here.
-
-This open frame base does not require any spacers between the two boards and was designed 
-to prevent them from unintentionally touching each other.
-
-
-![](./3d/base.png)
-
+3D print the two part of the enclosure (STL files in this github repository), insert the four M2.5x3.5x3 heated inserts with a solder iron, drill the four  2.5 holes in the cover, insert the PCB to the front part, make sure the TFT seats flush with front and secure the back with four M2.5x10 hex cup screws.
 
 
 ## Ideas for improvements
@@ -514,19 +509,36 @@ The Analyzer is provided as a fully functional reference design and changes and 
 
 ## FAQ
 
+#### Q: Can I buy from you a few units?
+
+A: We cannot provide assembled units for the general public. For that reason, we released the design with CC Zero license with the hope that other entrepreneurs will do so.
+
+#### Q: Where do you source the TFT panels?
+
+A: We buy the '3.5 LCD CTP' variant here https://www.aliexpress.com/item/32862869103.html. The choice of TFT panel and the mechanical design of the PCB follows Dustin Watts' ESP32 Touchdown project https://www.tindie.com/products/dustinwattsnl/esp32-touchdown/ (with extra 2mm to the PCB's length for extra clearance for the threaded heat inserts).
+
+#### Q: Can the firmware of the analyzer be updated?
+
+A: Yes. New firmware is released as .uf2 files. To flash the analyzer with a compatible .uf2 follow the standard procedure of the Raspberry Pi Pico. Access to the BOTSEL button is provided by a hole at the back of the 3D printed enclosure.
+
+#### Q: Why some footprints on the PCB are not populated?
+
+A: The PCB design includes circuitry that helps developing firmware for the analyzer that is not necessary or helpful for normal opeation of the analyzer.
+
+#### Q: Can the current scale of the two channels increased from +/-2.5A?
+
+A: The PCB was designed to accept also +/-5A variants of the current sensors and the optionals resistors R8 R9 were added to allow configuring the firmware to know about the larger current scale. This however was not tried yet since most 3D printer steppers do not exceed currents of 2.5A.
+
 #### Q: Why not a SPI based TFT?
 
-A: We could not achieve fast enough display refresh rate with SPI so switched to 16 bit parallel data transfers.
+A: We could not achieve fast enough display refresh rate with SPI so switched to 16 bit parallel data transfers. With the optimized firmware we can update rate equivalent to 200Mhz SPI. 
 
 #### Q: Can a cheaper TFT/touch be used?
-A: Yes, but it may require firmware changes.
+A: Yes, but it will require design changes.
 
 #### Q: Can the TFT screen be eliminated?
 A: Yes. The Analyzer has a USB/Serial output can a small Analyzer dongle can communicate with a computer program. This will require firmware changes.
- 
-#### Q: Can I connect the Analyzer to the TFT using a FFC cable?
-
-A: Yes. The PCB was designed for both 0.1" header and 40 pins 1.0mm FFC cable connections.  You will need a short (e.g. 60mm or less) type B ('reversed') FFC cable. Cables longer than let's say 100mm may introduce noises the will interfere with the operation of the display. 
+  
 
 #### Q: Can you add feature X or customization Y?
 
@@ -534,7 +546,7 @@ A: Most likely not. The reference design is provided for the community to change
 
 #### Q: I want to commercialize or crowd source it, can you help me?
 
-A: Most likely not. The reference design is open source and you will need to find others to help you.
+A: Not really. The reference design is open source and you will need to find others to help you. We don't mind though to answer questions.
 
 #### Q: Where do I file a bug?
 
@@ -552,17 +564,10 @@ A: At the time of writing this, the LVGL license is available here https://githu
 
 A: It's not needed. LVGL is supported by platform.io so the Analyzer's project is set for platform.io to fetch LVGL automatically.
 
-#### Q: Can I use a STM32F401CE MCU with a 8Mhz crystal.
+#### Q: Can the firmware be built with the standard Raspberry Pi Pico C++ SDK?
 
-A: The provided firmware assumes a 25Mhz crystal. For a 8Mhz crystal you will need to change the firmware.
+A: It should be but we didn't try it. Installing the SDK, libraries and tools using platformio and the WizIO Pico 'baremetal' distribution is easier.
 
-#### Q: I can't find a STM32F401CE/25Mhz blackpill but I can find an STM32F411CE/25Mhz, will this work?
-
-A: Most like it will work with the provided firmware as is (and with no performance benefits), but we do not guarantee it. We may switch the official reference design to the STMF411CE/25Mhz if the STM32F401CE/25Mhz, which is less expensive, will not be available.
-
-#### Q: Can I use a blackpill with different pinout than WeAct ?
-
-A: No, unless if you are willing to change the PCB.
 
 
 
