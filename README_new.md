@@ -35,7 +35,7 @@ Michael from the Teaching Tech youtube channel made [a great video explaining ho
 * Microstepping resolution of 1% of a full step.
 * Provides momentary readings, signal patterns, and statistical measurements.
 * Hardware and software are open sourced with a generous license.
-* Based on free tools (Kicad, platformio, LVGL, STM32Duino).
+* Based on free tools (Kicad, platformio, LVGL) and the Raspberry Pi Pico.
 * Can be easily customized (new featured, cost reduction, data link to a computer, etc).
 * Powered 5VDC, 200ma via a USB-C connector.
 
@@ -50,13 +50,6 @@ The Analyzer is provided to the community as a public domain reference design th
 ---
 ## Disclaimer
 THE DESIGN IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE DESIGN OR THE USE OR OTHER DEALINGS IN THE DESIGN.
-
----
-
-## Alternative construction option (enclosed case)
-**NOTE:** This pages outlines the open base construction options which is easier and straight forward. For a more involved and potentially more satisfying construction option, which is also featured in the Teaching Tech youtube video, see https://github.com/zapta/simple_stepper_motor_analyzer/blob/master/case_option.md
-
-![](./www/case_001_small.jpg)
 
 
 ---
@@ -83,7 +76,7 @@ The principle of operation is very simple, and so is the hardware design. The st
 
 **NOTE:** The only requirement for proper wiring is that the two wires of one coil should go through pins pair 1,2 and the two wires of the other coil should go through pin pair 3,4. The Analyzer doesn't care about the +/- polarity of the wires in each pair, nor does it care which of the two pass-through connectors is on the controller side and which one is on the stepper side.
 
-**TRIVIA:**: The pin out and the connector type of the Analyzer follows the Duet3D conventions, except that is uses right angle connector to save space.
+**TRIVIA:**: The pin-out and the connector type of the Analyzer follows the Duet3D conventions, except that is uses right angle connector to save space.
 
 ---
 ## The Home Page
@@ -443,25 +436,26 @@ Item | Specification
 :------------ | :------------- 
 Power consumption | 5V, 175ma.
 Power connector | micro USB
-MCU | 32bit ARM STM32F401CE @ 84Mhz.
-Flashing | USB/DFU or SWD/Stlink V2.
+MCU | Raspberry Pi RP2040 (Pico module).
+Flashing | Drag and drop to a virtual disk.
 Data link | USB/Serial link available but not used.
-Current measurement | +/-2.5A per coil. +/-5A sensors available.
-Dimensions | 97 x 66 mm
-TFT Resolution | 480 x 320, Color. Landscape mode.
+Current measurement | +/-2.5A per coil. (+/-5A sensors optional).
+PCB | 102mm x 57mm, two layers
+Enclosure | 3D printed, 108.4mm x 63.4mm x 16.6mm
+Display | 3.5" 480 x 320, Color, Landscape mode.
 Touch screen | Capacitive
 Sensor isolation | See ACS70331 data sheet
 Sampling rate | 100Khz per channel.
 Sampling resolution | 12bits
 Current accuracy | estimated at +/- 1%
-Max speed | Software dependent. Currently 2K full steps/sec.
+Max step rate | Software dependent. Currently 2K full steps/sec.
 Step resolution | 1/100th of a full step.
-Partial steps measurement | Software dependent. Not implemented.
-Settings storage | On board EEPROM chip.
+User settings storage | On board FLASH.
 GUI framework | LVGL library. R3G3B2 color depth.
 Programming language | C++
-Programming IDE | Platform.io. Arduino/STM32.
-Cad package | Kicad.
+Programming IDE | VSCode, Platformio, WizIO.
+Electronic design software | Kicad.
+Mechanical design software | Onshape. 
 
 
 &nbsp;
@@ -473,7 +467,7 @@ Cad package | Kicad.
 
 The electronic schematic, PCB layout, gerber files, and the firmware source files and released binary are all available on this github repository.
 
-[Schematic](./www/stepper_analyzer-sch.pdf)
+[Schematic](./kicad/stepper_analyzer.pdf)
 
 [BOM](https://github.com/zapta/simple_stepper_motor_analyzer/blob/master/kicad/BOM.csv)
 
