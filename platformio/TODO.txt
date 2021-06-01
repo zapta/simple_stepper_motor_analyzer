@@ -1,0 +1,34 @@
+
+* Switch to LVGL 8, when released.
+
+* In the oscilloscope and phase charts, make the major division lines thicker. (Requires LVGL 8).
+
+
+============= DONE
+
+* In the home page, call the coils A, B, not 1, 2.
+
+* Consider to set WR_HL in the first gpio color table. //Didn't work. Insufficient hold time.
+
+* Increase tft driver render loop inline to 20 pixels (currently 8)
+
+* Increase chart horizontal resolution (and update rate). Display resoluion is 400 pixels.
+
+* Consider to double the update rate of the steps and retraction charts to have
+a more smooth graph animation.
+
+* COnvert the java table generator to python
+
+* When reentering the steps or retraction charts, clear them.
+
+* Double the resolution of the capture buffer.
+
+* Can we reduce the delays in the screen dump code?
+
+* Consider to slightly increase the LVGL heap, just in case, since we have sufficient RAM.  // currently 32k, seems ok.
+
+
+
+
+
+

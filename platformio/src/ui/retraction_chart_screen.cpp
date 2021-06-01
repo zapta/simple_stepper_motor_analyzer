@@ -1,0 +1,101 @@
+#include "retraction_chart_screen.h"
+
+#include "acquisition/analyzer.h"
+#include "ui.h"
+#include "ui_events.h"
+
+// NOTE: As of Mar 2021, the rendering is 12M pixels/sec
+// which allows up to42 fps. We don't double this to 40 to
+// keep some CPU margin.
+static constexpr uint8_t kUpdatesPerSecond = 20;
+
+static constexpr uint32_t kUpdateIntervalMillis = 1000 / kUpdatesPerSecond;
+
+// Update the retraction field once every N times the chart is updated.
+static constexpr int kFieldUpdateRatio = 2;
+
+static const ui::ChartAxisConfigs kScaleAxisConfigs[] = {
+    {.y_range = {.min = 0, .max = 100},
+     .x = {.labels = "0\n2s\n4s\n6s\n8s\n10s", .num_ticks = 4, .dividers = 4},
+     .y = {.labels = "100\n80\n60\n40\n20\n0", .num_ticks = 4, .dividers = 4}},
+
+    {.y_range = {.min = 0, .max = 500},
+     .x = {.labels = "0\n2s\n4s\n6s\n8s\n10s", .num_ticks = 4, .dividers = 4},
+     .y = {.labels = "500\n400\n300\n200\n100\n0",
+           .num_ticks = 4,
+           .dividers = 4}},
+
+    {.y_range = {.min = 0, .max = 30},
+     .x = {.labels = "0\n2s\n4s\n6s\n8s\n10s", .num_ticks = 4, .dividers = 4},
+     .y = {.labels = "30\n20\n10\n0", .num_ticks = 2, .dividers = 2}}};
+
+void RetractionChartScreen::setup(uint8_t screen_num) {
+  // y_offset_ = 0;
+  field_update_divider_ = kFieldUpdateRatio;
+  // points_buffer_.clear();
+  ui::create_screen(&screen_);
+  ui::create_page_elements(screen_, "RETRACTION CHART", screen_num, nullptr);
+  ui::create_chart(screen_, kNumPoints, 1, kScaleAxisConfigs[0],
+                   ui_events::UI_EVENT_SCALE, &chart_);
+
+  ui::create_label(screen_, 110, 120, 293, "", ui::kFontNumericDataFields,
+                   LV_LABEL_ALIGN_CENTER, LV_COLOR_YELLOW, &retraction_field_);
+};
+
+void RetractionChartScreen::on_load() {
+  chart_.ser1.clear();
+
+  // Force display update on first loop.
+  display_update_elapsed_.set(kUpdateIntervalMillis + 1);
+};
+
+void RetractionChartScreen::on_unload(){};
+
+void RetractionChartScreen::on_event(ui_events::UiEventId ui_event_id) {
+  switch (ui_event_id) {
+    case ui_events::UI_EVENT_RESET:
+      field_update_divider_ = kFieldUpdateRatio;
+      retraction_field_.set_text("");
+
+      chart_.ser1.clear();
+      break;
+
+    case ui_events::UI_EVENT_SCALE:
+      // TODO: make 3 a const (derive from the config table size).
+      scale_ = (scale_ + 1) % 3;
+      chart_.set_scale(kScaleAxisConfigs[scale_]);
+      lv_chart_refresh(chart_.lv_chart);
+
+    default:
+      break;
+  }
+}
+
+void RetractionChartScreen::loop() {
+  // We update at a fixed rate.
+  if (display_update_elapsed_.elapsed_millis() < kUpdateIntervalMillis) {
+    return;
+  }
+  // Instead of reset() we advance to avoid accomulating
+  // an error.
+  display_update_elapsed_.advance(kUpdateIntervalMillis);
+
+  const analyzer::State* state = analyzer::sample_state();
+
+  int retraction_steps = state->max_full_steps - state->full_steps;
+
+  // Add a data point to the chart.
+  chart_.ser1.set_next((lv_coord_t)retraction_steps);
+
+  // We first update the chart and then the occasional field
+  // update. This affects the ordering of the rendering and results in
+  // somewhat more consistent chart rendering intervals (?).
+  if (++field_update_divider_ >= kFieldUpdateRatio) {
+    field_update_divider_ = 0;
+    retraction_field_.set_text_int(retraction_steps);
+  }
+
+  // Force screen rendering now rather than waiting for the next LVGL screen
+  // update timeslot.
+  lv_refr_now(NULL);
+}
