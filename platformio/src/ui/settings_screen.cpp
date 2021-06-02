@@ -23,7 +23,7 @@ static void update_eeprom() {
   analyzer::get_settings(&settings);
   config_eeprom::write_acquisition_settings(settings);
   printf("%s\n", config_eeprom::last_status);
-  // Since the flash writing disable interrupts temporarly, analyzer
+  // Since the flash writing disable interrupts temporarily, analyzer
   // state may be impacted so clearing it.
   analyzer::reset_state();
 }
@@ -55,7 +55,7 @@ static void create_set_zero_button(lv_obj_t* lv_screen) {
   const lv_event_cb_t event_cb =
       ui_events::get_event_handler(ui_events::UI_EVENT_ZERO_CALIBRATION);
 
-  // Nulls are traped.
+  // Nulls are trapped.
   lv_obj_set_event_cb(lv_button, event_cb);
 
   lv_obj_set_style_local_bg_color(lv_button, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
