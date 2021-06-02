@@ -1,7 +1,7 @@
 
 #pragma once
 
-#define VERSION_STRING "1.0.0"
+#define VERSION_STRING "1.0.1-dev"
 
 namespace config {
 
