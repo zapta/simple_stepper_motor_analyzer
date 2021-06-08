@@ -1,9 +1,11 @@
 
 #pragma once
 
+#include "tft_driver.h"
+
 namespace lvgl_adapter {
 
-extern void setup();
+extern void setup(TftDriver* driver);
 
 // For developement.
 extern void dump_stats();

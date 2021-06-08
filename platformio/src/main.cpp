@@ -5,11 +5,13 @@
 #include "acquisition/analyzer.h"
 #include "display/lvgl_adapter.h"
 #include "display/tft_driver.h"
+#include "display/tft_driver_mk2.h"
 #include "display/touch_driver.h"
 #include "io.h"
 #include "lvgl.h"
 #include "misc/config_eeprom.h"
 #include "misc/elapsed.h"
+#include "misc/hardware_version.h"
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
@@ -26,15 +28,33 @@ static Elapsed elapsed_from_last_dump;
 static repeating_timer_t lvgl_ticker;
 
 // LVGL time ticks IRQ.
-static bool timer_callback(repeating_timer_t *rt) {
+static bool timer_callback(repeating_timer_t* rt) {
   lv_tick_inc(5);
   return true;  // keep repeating
 }
 
 static Elapsed timer;
 
+//static TftDriverMk2 tft_driver_mk2;
+static TftDriver* tft_driver = nullptr;
+
 void setup() {
   stdio_init_all();
+  const hardware_version::Version version = hardware_version::determine();
+
+  // Query the underlying hardware to determine the
+  // TFT driver to use.
+  // driver_config = read_config_pin(18);
+  switch (version) {
+    case hardware_version::HARDWARE_MK2:
+      // Floating pin 18. Must be MK2.
+      tft_driver = new TftDriverMk2();
+      break;
+    default:
+      // Delay to allow establishing USB/serial connection.
+      sleep_ms(5000);
+      panic("Unexpected driver config [%s]", hardware_version::get_name());
+  }
 
   io::setup();
 
@@ -53,9 +73,9 @@ void setup() {
 
   touch_driver::setup();
 
-  tft_driver::begin();
+  tft_driver->begin();
 
-  lvgl_adapter::setup();
+  lvgl_adapter::setup(tft_driver);
 
   analyzer::reset_state();
 
@@ -67,12 +87,10 @@ void setup() {
   // Force a blocking screen redraw.
   lv_refr_now(NULL);
 
-  //lv_task_handler();
-
   sleep_ms(50);  // let the screen process the data to avoid initial flicker.
 
   // Turn on the backlight. User can now see the screen.
-  TFT_BL_LOW;
+  tft_driver->backlight_on();
 }
 
 void loop() {
@@ -94,13 +112,14 @@ void loop() {
   // Periodic report over USB/Serial.
   if (elapsed_from_last_dump.elapsed_millis() > 5000) {
     elapsed_from_last_dump.reset();
-    
+
     static uint print_cycle = 0;
 
     switch (print_cycle) {
       default:
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
+        printf("Hardware: [%s]\n", hardware_version::get_name());
         print_cycle = 1;
         break;
       case 1:
