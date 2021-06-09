@@ -5,7 +5,7 @@
 
 #include "tft_driver.h"
 
-class TftDriverMk2 : public TftDriver {
+class TftDriverMk3 : public TftDriver {
  public:
   virtual void begin() override;
 

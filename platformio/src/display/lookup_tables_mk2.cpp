@@ -1,8 +1,8 @@
-#include "gpio_tables.h"
+#include "lookup_tables_mk2.h"
 
 // Tables were generated using the gpio_tables_generator.py script.
 
-namespace gpio_tables {
+namespace lookup_tables_mk2 {
 
 // PIN MAP:
 //   WR     1
@@ -292,4 +292,4 @@ const uint32_t gpio_color_clr_table[] = {
     0x100001ca, 0x10000142, 0x0000008a, 0x00000002,  // 0xfc - 0xff
 };
 
-}  // namespace gpio_tables
+}  // namespace lookup_tables_mk2

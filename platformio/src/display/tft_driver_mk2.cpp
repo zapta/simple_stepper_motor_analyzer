@@ -2,9 +2,9 @@
 
 #include "tft_driver_mk2.h"
 
-#include "gpio_tables.h"
 #include "hardware/gpio.h"
 #include "io.h"
+#include "lookup_tables_mk2.h"
 #include "pico/stdlib.h"
 
 // // Assuming landscape mode per memory access command 0x36.
@@ -56,22 +56,19 @@
 #define TFT_DC_LOW gpio_clr_mask(1ul << TFT_DC_PIN)
 #define TFT_BL_LOW gpio_clr_mask(1ul << TFT_BL_PIN)
 
+void TftDriverMk2::backlight_on() { TFT_BL_LOW; }
 
-void TftDriverMk2::backlight_on() {
-  TFT_BL_LOW;
-}
-
-// Send a byte to the TFT. Since the interface to the TFT is 
+// Send a byte to the TFT. Since the interface to the TFT is
 // 16 bits parallel, it writes a 16 bits value where the upper
 // 8 bits  are all zero.
 //
 // Note that actual pixels are written by separate code in this file
 // which sends them as 16 bits color values.
 static inline void write_byte(uint8_t c) {
-  sio_hw->gpio_set = gpio_tables::gpio_direct_set_table[c];
+  sio_hw->gpio_set = lookup_tables_mk2::gpio_direct_set_table[c];
   // NOTE: The gpio_direct_clr_table is configured to also do the
   // equivalent of TFT_WR_LOW.
-  sio_hw->gpio_clr = gpio_tables::gpio_direct_clr_table[c];
+  sio_hw->gpio_clr = lookup_tables_mk2::gpio_direct_clr_table[c];
   //  __asm volatile ("nop\n");
   //  __asm volatile ("nop\n");
   TFT_WR_HIGH;
@@ -88,16 +85,15 @@ static void write_data_byte(uint8_t c) {
 }
 
 void TftDriverMk2::begin() {
-    // A mask with all gpio output pins we use.
+  // A mask with all gpio output pins we use.
   constexpr uint kOutputMask =
-       1ul << TFT_D0_PIN |
-      1ul << TFT_D1_PIN | 1ul << TFT_D2_PIN | 1ul << TFT_D3_PIN |
-      1ul << TFT_D4_PIN | 1ul << TFT_D5_PIN | 1ul << TFT_D6_PIN |
-      1ul << TFT_D7_PIN | 1ul << TFT_D8_PIN | 1ul << TFT_D9_PIN |
-      1ul << TFT_D10_PIN | 1ul << TFT_D11_PIN | 1ul << TFT_D12_PIN |
-      1ul << TFT_D13_PIN | 1ul << TFT_D14_PIN | 1ul << TFT_D15_PIN |
-      1ul << TFT_RST_PIN | 1ul << TFT_WR_PIN | 1ul << TFT_DC_PIN |
-      1ul << TFT_BL_PIN;
+      1ul << TFT_D0_PIN | 1ul << TFT_D1_PIN | 1ul << TFT_D2_PIN |
+      1ul << TFT_D3_PIN | 1ul << TFT_D4_PIN | 1ul << TFT_D5_PIN |
+      1ul << TFT_D6_PIN | 1ul << TFT_D7_PIN | 1ul << TFT_D8_PIN |
+      1ul << TFT_D9_PIN | 1ul << TFT_D10_PIN | 1ul << TFT_D11_PIN |
+      1ul << TFT_D12_PIN | 1ul << TFT_D13_PIN | 1ul << TFT_D14_PIN |
+      1ul << TFT_D15_PIN | 1ul << TFT_RST_PIN | 1ul << TFT_WR_PIN |
+      1ul << TFT_DC_PIN | 1ul << TFT_BL_PIN;
 
   gpio_init_mask(kOutputMask);
   // Start with backlight non active. Before we set it as a direction,
@@ -177,7 +173,8 @@ void TftDriverMk2::begin() {
   write_command_byte(0xB4);  // Display Inversion Control
   write_data_byte(0x02);     // 2-dot
 
-  write_command_byte(0XB6);  // Display Function Control  RGB/MCU Interface Control
+  write_command_byte(
+      0XB6);  // Display Function Control  RGB/MCU Interface Control
 
   write_data_byte(0x02);  // MCU
   write_data_byte(0x02);  // Source,Gate scan direction
@@ -219,17 +216,17 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 }
 
 // NOTE: The gpio_color_clr_table is configured to also do the
-// equivalent of TFT_WR_LOW. This macro was optimized for pixel 
+// equivalent of TFT_WR_LOW. This macro was optimized for pixel
 // transfer speed while still maintaining data setup and hold
 // time relative to the positive transition of the WR signal.
-#define SEND_PIXEL(i)                                          \
-  color = p[i];                                                \
-  TFT_WR_HIGH;                                                 \
-  sio_hw->gpio_set = gpio_tables::gpio_color_set_table[color]; \
-  sio_hw->gpio_clr = gpio_tables::gpio_color_clr_table[color];
+#define SEND_PIXEL(i)                                                \
+  color = p[i];                                                      \
+  TFT_WR_HIGH;                                                       \
+  sio_hw->gpio_set = lookup_tables_mk2::gpio_color_set_table[color]; \
+  sio_hw->gpio_clr = lookup_tables_mk2::gpio_color_clr_table[color];
 
-void TftDriverMk2::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-                   const uint8_t* color8_p) {
+void TftDriverMk2::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
+                                 uint16_t y2, const uint8_t* color8_p) {
   setAddrWindow(x1, y1, x2, y2);
 
   const int32_t w_pixels = x2 - x1 + 1;
@@ -285,32 +282,6 @@ static inline void update_pin(uint32_t bit_mask, uint32_t pin_mask,
     gpio_set_mask(pin_mask);
   } else {
     gpio_clr_mask(pin_mask);
-  }
-}
-
-void TftDriverMk2::hardware_test() {
-  for (;;) {
-    uint32_t ticks = to_us_since_boot(get_absolute_time()) >> 5;
-
-    update_pin(1ul << 0, 1ul << TFT_D0_PIN, ticks);
-    update_pin(1ul << 1, 1ul << TFT_D1_PIN, ticks);
-    update_pin(1ul << 2, 1ul << TFT_D2_PIN, ticks);
-    update_pin(1ul << 3, 1ul << TFT_D3_PIN, ticks);
-
-    update_pin(1ul << 4, 1ul << TFT_D4_PIN, ticks);
-    update_pin(1ul << 5, 1ul << TFT_D5_PIN, ticks);
-    update_pin(1ul << 6, 1ul << TFT_D6_PIN, ticks);
-    update_pin(1ul << 7, 1ul << TFT_D7_PIN, ticks);
-
-    update_pin(1ul << 8, 1ul << TFT_D8_PIN, ticks);
-    update_pin(1ul << 9, 1ul << TFT_D9_PIN, ticks);
-    update_pin(1ul << 10, 1ul << TFT_D10_PIN, ticks);
-    update_pin(1ul << 11, 1ul << TFT_D11_PIN, ticks);
-
-    update_pin(1ul << 12, 1ul << TFT_D12_PIN, ticks);
-    update_pin(1ul << 13, 1ul << TFT_D13_PIN, ticks);
-    update_pin(1ul << 14, 1ul << TFT_D14_PIN, ticks);
-    update_pin(1ul << 15, 1ul << TFT_D15_PIN, ticks);
   }
 }
 

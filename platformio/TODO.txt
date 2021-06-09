@@ -3,6 +3,10 @@
 
 * In the oscilloscope and phase charts, make the major division lines thicker. (Requires LVGL 8).
 
+* Add driver for MK3.
+
+* In settings screen, show hardware version.
+
 
 ============= DONE
 
