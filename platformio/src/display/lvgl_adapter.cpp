@@ -9,7 +9,6 @@
 #include "lvgl.h"
 #include "pico/stdlib.h"
 #include "tft_driver.h"
-#include "tft_driver_mk2.h"
 #include "touch_driver.h"
 
 #if LV_COLOR_DEPTH != 8
@@ -17,7 +16,6 @@
 #endif
 
 namespace lvgl_adapter {
-
 
 // Initialized during setup.
 static TftDriver* tft_driver = nullptr;
@@ -27,8 +25,9 @@ static TftDriver* tft_driver = nullptr;
 // A static variable to store the buffers.
 static lv_disp_buf_t disp_buf;
 
-// LVGL renders up to this number of pixels at a time.
-//static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 40;
+// LVGL renders up to this number of pixels at a time. By
+// Using 8 bit colors, we can fit in RAM a buffer that can
+// contains the entire screen.
 static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 320;
 
 // Static buffer(s). Since we don't use DMA, we use only a
@@ -107,8 +106,8 @@ static void capture_buffer(const lv_area_t* area, lv_color_t* bfr) {
       printf(",%hu:%hx", pending_pixels_count, pending_pixel_color);
     }
     printf("\n");
-    // This prevents loss of data.
-    //sleep_ms(25);
+    // This prevents loss of data(?).
+    // sleep_ms(25);
   }
 }
 
@@ -173,7 +172,7 @@ void static init_touch_driver() {
 // Called once from main on program start.
 void setup(TftDriver* driver) {
   tft_driver = driver;
-  
+
   lv_init();
 
   // lv_log_print_g_cb_t

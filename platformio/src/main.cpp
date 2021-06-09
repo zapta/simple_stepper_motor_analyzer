@@ -4,8 +4,9 @@
 #include "acquisition/adc_dma.h"
 #include "acquisition/analyzer.h"
 #include "display/lvgl_adapter.h"
+#include "display/mk2_tft_driver.h"
+#include "display/mk3_tft_driver.h"
 #include "display/tft_driver.h"
-#include "display/tft_driver_mk2.h"
 #include "display/touch_driver.h"
 #include "io.h"
 #include "lvgl.h"
@@ -18,10 +19,7 @@
 
 constexpr uint8_t kColor8Blue = 0x3;
 
-// TODO: move the lvgl tick timer to the lv_adapter files.
-//
-// Doc: https://github.com/stm32duino/wiki/wiki/HardwareTimer-library
-// HardwareTimer tim2(TIM2);
+// TODO: move the lvgl tick timer to the lv_adapter file.
 
 static Elapsed elapsed_from_last_dump;
 
@@ -35,20 +33,24 @@ static bool timer_callback(repeating_timer_t* rt) {
 
 static Elapsed timer;
 
-//static TftDriverMk2 tft_driver_mk2;
+// Initialized to TFT driver to use based on hardware version.
 static TftDriver* tft_driver = nullptr;
 
 void setup() {
   stdio_init_all();
-  const hardware_version::Version version = hardware_version::determine();
+  hardware_version::determine();
 
   // Query the underlying hardware to determine the
   // TFT driver to use.
   // driver_config = read_config_pin(18);
-  switch (version) {
+  switch (hardware_version::get()) {
     case hardware_version::HARDWARE_MK2:
       // Floating pin 18. Must be MK2.
-      tft_driver = new TftDriverMk2();
+      tft_driver = new Mk2TftDriver();
+      break;
+    case hardware_version::HARDWARE_MK3:
+      // Floating pin 18. Must be MK2.
+      tft_driver = new Mk3TftDriver();
       break;
     default:
       // Delay to allow establishing USB/serial connection.

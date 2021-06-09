@@ -2,10 +2,9 @@
 #pragma once
 
 #include <stdint.h>
-
 #include "tft_driver.h"
 
-class TftDriverMk2 : public TftDriver {
+class Mk2TftDriver : public TftDriver {
  public:
   virtual void begin() override;
 

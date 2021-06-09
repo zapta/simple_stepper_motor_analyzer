@@ -1,9 +1,9 @@
-# A python program to generate the gpio tables in display/gpio_tables.cpp.
+# A python program to generate the gpio tables in display/lookup_tables_mk2.cpp.
 #
-# Usage: run with no arguments, paste the output to display/gpio_tables.cc,
+# Usage: run with no arguments, paste the output to display/lookup_tables_mk2.cc,
 # and reformat the file.
 #
-# python gpio_tables_generator.py
+# python lookup_tables_generator_mk2.py
 #
 
 import sys

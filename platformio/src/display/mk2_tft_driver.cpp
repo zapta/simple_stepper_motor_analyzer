@@ -1,10 +1,8 @@
-
-
-#include "tft_driver_mk2.h"
+#include "mk2_tft_driver.h"
 
 #include "hardware/gpio.h"
 #include "io.h"
-#include "lookup_tables_mk2.h"
+#include "mk2_lookup_tables.h"
 #include "pico/stdlib.h"
 
 // // Assuming landscape mode per memory access command 0x36.
@@ -56,7 +54,7 @@
 #define TFT_DC_LOW gpio_clr_mask(1ul << TFT_DC_PIN)
 #define TFT_BL_LOW gpio_clr_mask(1ul << TFT_BL_PIN)
 
-void TftDriverMk2::backlight_on() { TFT_BL_LOW; }
+void Mk2TftDriver::backlight_on() { TFT_BL_LOW; }
 
 // Send a byte to the TFT. Since the interface to the TFT is
 // 16 bits parallel, it writes a 16 bits value where the upper
@@ -65,10 +63,10 @@ void TftDriverMk2::backlight_on() { TFT_BL_LOW; }
 // Note that actual pixels are written by separate code in this file
 // which sends them as 16 bits color values.
 static inline void write_byte(uint8_t c) {
-  sio_hw->gpio_set = lookup_tables_mk2::gpio_direct_set_table[c];
+  sio_hw->gpio_set = mk2_lookup_tables::gpio_direct_set_table[c];
   // NOTE: The gpio_direct_clr_table is configured to also do the
   // equivalent of TFT_WR_LOW.
-  sio_hw->gpio_clr = lookup_tables_mk2::gpio_direct_clr_table[c];
+  sio_hw->gpio_clr = mk2_lookup_tables::gpio_direct_clr_table[c];
   //  __asm volatile ("nop\n");
   //  __asm volatile ("nop\n");
   TFT_WR_HIGH;
@@ -84,7 +82,7 @@ static void write_data_byte(uint8_t c) {
   write_byte(c);
 }
 
-void TftDriverMk2::begin() {
+void Mk2TftDriver::begin() {
   // A mask with all gpio output pins we use.
   constexpr uint kOutputMask =
       1ul << TFT_D0_PIN | 1ul << TFT_D1_PIN | 1ul << TFT_D2_PIN |
@@ -222,10 +220,10 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 #define SEND_PIXEL(i)                                                \
   color = p[i];                                                      \
   TFT_WR_HIGH;                                                       \
-  sio_hw->gpio_set = lookup_tables_mk2::gpio_color_set_table[color]; \
-  sio_hw->gpio_clr = lookup_tables_mk2::gpio_color_clr_table[color];
+  sio_hw->gpio_set = mk2_lookup_tables::gpio_color_set_table[color]; \
+  sio_hw->gpio_clr = mk2_lookup_tables::gpio_color_clr_table[color];
 
-void TftDriverMk2::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
+void Mk2TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
                                  uint16_t y2, const uint8_t* color8_p) {
   setAddrWindow(x1, y1, x2, y2);
 

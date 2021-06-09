@@ -1,7 +1,4 @@
 
-// // Based on ESP32 port
-// //
-// https://github.com/lvgl/lv_port_esp32/blob/ace36bf14af1ca96faa56ea9dedc3cba6fb2415a/components/lvgl_esp32_drivers/lvgl_touch/ft6x36.c
 #include "touch_driver.h"
 
 #include <stdio.h>
