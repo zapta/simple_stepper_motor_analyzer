@@ -17,8 +17,8 @@ $Comp
 L stepper_motor_analyzer:Pico U3
 U 1 1 609C8FE2
 P 4200 5700
-F 0 "U3" H 4200 6915 50  0000 C CNN
-F 1 "Pico" H 4200 6824 50  0000 C CNN
+F 0 "U3" H 3750 6900 50  0000 C CNN
+F 1 "Pico" H 4200 6824 50  0001 C CNN
 F 2 "stepper_motor_analyzer:Pico_smd_dedicated" V 4200 5700 50  0001 C CNN
 F 3 "" H 4200 5700 50  0001 C CNN
 	1    4200 5700
@@ -195,7 +195,7 @@ F 3 "" H 3850 2050 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3850 2000 3850 2050
-Text Label 5000 1500 2    50   ~ 0
+Text Label 4750 1500 2    50   ~ 0
 CHB
 Wire Wire Line
 	3850 900  3850 1000
@@ -303,10 +303,10 @@ Text Notes 1250 1650 2    70   ~ 0
 A
 Wire Wire Line
 	1500 1550 2150 1550
-Text Label 5000 2600 2    50   ~ 0
+Text Label 4750 2600 2    50   ~ 0
 CHA
 NoConn ~ 4900 5250
-Text Notes 2950 1000 2    50   ~ 0
+Text Notes 3550 3650 2    50   ~ 0
 CURRENT SENSORS
 $Comp
 L stepper_motor_analyzer:+3V3 #PWR0102
@@ -514,55 +514,11 @@ F 3 "" H 5650 3500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Mechanical:MountingHole H1
-U 1 1 60A92EA6
-P 4500 7650
-F 0 "H1" H 4600 7696 50  0000 L CNN
-F 1 "MountingHole" H 4600 7605 50  0001 L CNN
-F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 4500 7650 50  0001 C CNN
-F 3 "~" H 4500 7650 50  0001 C CNN
-	1    4500 7650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H2
-U 1 1 60A93F04
-P 4800 7650
-F 0 "H2" H 4900 7696 50  0000 L CNN
-F 1 "MountingHole" H 4900 7605 50  0001 L CNN
-F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 4800 7650 50  0001 C CNN
-F 3 "~" H 4800 7650 50  0001 C CNN
-	1    4800 7650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H3
-U 1 1 60A9417C
-P 5100 7650
-F 0 "H3" H 5200 7696 50  0000 L CNN
-F 1 "MountingHole" H 5200 7605 50  0001 L CNN
-F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 5100 7650 50  0001 C CNN
-F 3 "~" H 5100 7650 50  0001 C CNN
-	1    5100 7650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H4
-U 1 1 60A94418
-P 5400 7650
-F 0 "H4" H 5500 7696 50  0000 L CNN
-F 1 "MountingHole" H 5500 7605 50  0001 L CNN
-F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 5400 7650 50  0001 C CNN
-F 3 "~" H 5400 7650 50  0001 C CNN
-	1    5400 7650
-	1    0    0    -1  
-$EndComp
-$Comp
 L stepper_motor_analyzer:ACS70331_soic8 U2
 U 1 1 60AEB4AA
 P 3900 1600
-F 0 "U2" H 4400 1250 50  0000 C CNN
-F 1 "ACS70331EOLCTR-2P5B3" H 4450 1150 50  0000 C CNN
+F 0 "U2" H 3250 2200 50  0000 C CNN
+F 1 "ACS70331EOLCTR-2P5B3" H 3250 2050 50  0000 C CNN
 F 2 "stepper_motor_analyzer:SOIC-8_3.9x4.9mm_P1.27mm" H 4300 1550 50  0001 L CIN
 F 3 "" H 3900 1600 50  0001 C CNN
 	1    3900 1600
@@ -723,12 +679,12 @@ Text Notes 6400 7150 0    100  ~ 0
 Simple Stepper Motor Analyzer MK3
 Text Notes 7550 4850 2    50   ~ 0
 BACKLIGHT\nCONTROL
-Text Notes 8550 6350 0    50   ~ 0
+Text Notes 8200 6400 0    50   ~ 0
 TFT 320x480 ILI9488 16bit data.\n0.5mm pitch FPC, TOP contacts.
-Text Notes 5800 3850 0    50   ~ 0
+Text Notes 5750 4000 0    50   ~ 0
 Capacitive touch FT6206 I2C,\n0.5mm pitch FPC, BOTTOM contacts.
-Text Notes 4700 4400 2    50   ~ 0
-Raspberry PI Pico RP2040
+Text Notes 4300 7050 2    50   ~ 0
+MCU
 $Comp
 L stepper_motor_analyzer:TestPoint TP3
 U 1 1 60B14A2B
@@ -946,7 +902,51 @@ RESERVED FOR\nFUTURE\nFEATURES
 Text Notes 7450 5800 0    50   ~ 0
 C20917
 Wire Wire Line
-	4300 1500 5000 1500
+	4300 1500 4750 1500
 Wire Wire Line
-	3350 2600 5000 2600
+	3350 2600 4750 2600
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 60A94418
+P 5750 7650
+F 0 "H4" H 5850 7696 50  0000 L CNN
+F 1 "MountingHole" H 5850 7605 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 5750 7650 50  0001 C CNN
+F 3 "~" H 5750 7650 50  0001 C CNN
+	1    5750 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 60A9417C
+P 5450 7650
+F 0 "H3" H 5550 7696 50  0000 L CNN
+F 1 "MountingHole" H 5550 7605 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 5450 7650 50  0001 C CNN
+F 3 "~" H 5450 7650 50  0001 C CNN
+	1    5450 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 60A93F04
+P 5150 7650
+F 0 "H2" H 5250 7696 50  0000 L CNN
+F 1 "MountingHole" H 5250 7605 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 5150 7650 50  0001 C CNN
+F 3 "~" H 5150 7650 50  0001 C CNN
+	1    5150 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 60A92EA6
+P 4850 7650
+F 0 "H1" H 4950 7696 50  0000 L CNN
+F 1 "MountingHole" H 4950 7605 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad_Via" H 4850 7650 50  0001 C CNN
+F 3 "~" H 4850 7650 50  0001 C CNN
+	1    4850 7650
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

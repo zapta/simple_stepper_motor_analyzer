@@ -313,10 +313,11 @@ ENDDEF
 #
 DEF stepper_motor_analyzer_Pico U 0 40 Y Y 1 F N
 F0 "U" -550 1100 50 H V C CNN
-F1 "stepper_motor_analyzer_Pico" 0 750 50 H V C CNN
+F1 "stepper_motor_analyzer_Pico" 0 600 50 H I C CNN
 F2 "RPi_Pico:RPi_Pico_SMD_TH" 0 0 50 V I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
+T 0 0 700 50 0 0 0 Pico Normal 0 C C
 T 0 0 850 50 0 0 0 "Raspberry Pi" Normal 0 C C
 S -600 1050 600 -1050 0 1 0 f
 X GP0 1 -700 950 100 R 50 50 1 1 I

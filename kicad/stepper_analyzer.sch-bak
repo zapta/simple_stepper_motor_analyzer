@@ -195,22 +195,6 @@ F 3 "" H 3850 2050 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	3850 2000 3850 2050
-$Comp
-L stepper_motor_analyzer:TestPoint TP2
-U 1 1 60A27A27
-P 4650 1500
-F 0 "TP2" H 4600 1700 50  0000 L CNN
-F 1 "TestPoint" H 4708 1527 50  0001 L CNN
-F 2 "stepper_motor_analyzer:testpoint_one_side" H 4850 1500 50  0001 C CNN
-F 3 "" H 4850 1500 50  0001 C CNN
-	1    4650 1500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	4300 1500 4650 1500
-Connection ~ 4650 1500
-Wire Wire Line
-	4650 1500 5000 1500
 Text Label 5000 1500 2    50   ~ 0
 CHB
 Wire Wire Line
@@ -292,8 +276,6 @@ $EndComp
 Wire Wire Line
 	2900 3150 2900 3100
 Wire Wire Line
-	3350 2600 4650 2600
-Wire Wire Line
 	2900 2300 2900 2150
 $Comp
 L power:GND #PWR0110
@@ -321,20 +303,6 @@ Text Notes 1250 1650 2    70   ~ 0
 A
 Wire Wire Line
 	1500 1550 2150 1550
-$Comp
-L stepper_motor_analyzer:TestPoint TP1
-U 1 1 60B0FCCE
-P 4650 2600
-F 0 "TP1" H 4708 2672 50  0000 L CNN
-F 1 "TestPoint" H 4708 2627 50  0001 L CNN
-F 2 "stepper_motor_analyzer:testpoint_one_side" H 4850 2600 50  0001 C CNN
-F 3 "" H 4850 2600 50  0001 C CNN
-	1    4650 2600
-	1    0    0    -1  
-$EndComp
-Connection ~ 4650 2600
-Wire Wire Line
-	4650 2600 5000 2600
 Text Label 5000 2600 2    50   ~ 0
 CHA
 NoConn ~ 4900 5250
@@ -977,4 +945,8 @@ Text Notes 1400 6650 0    50   ~ 0
 RESERVED FOR\nFUTURE\nFEATURES
 Text Notes 7450 5800 0    50   ~ 0
 C20917
+Wire Wire Line
+	4300 1500 5000 1500
+Wire Wire Line
+	3350 2600 5000 2600
 $EndSCHEMATC
