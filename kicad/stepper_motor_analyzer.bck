@@ -6,4 +6,10 @@ K connector
 F ~
 $ENDCMP
 #
+$CMP SolderJumper_3_Open
+D Solder Jumper, 3-pole, open
+K Solder Jumper SPDT
+F ~
+$ENDCMP
+#
 #End Doc Library
