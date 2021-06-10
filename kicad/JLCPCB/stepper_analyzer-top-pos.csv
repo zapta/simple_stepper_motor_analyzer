@@ -1,7 +1,7 @@
 Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
 C1,100nf,SMD 0805,87.16,46.468,0,top
 C2,100nf,SMD 0805,52.226,46.849,0,top
-C3,10u,EIA-3216-18,43.2815,46.214,90,top
+C3,10u,EIA-3216-18,43.345,46.3815,90,top
 FPC1,"FPC connector 40pins,  0.5mm,  TOP contacts",FH12-40S-0.5SH_1x40-1MP_P0.50mm_Horizontal_flipped,50.3,28.9,90,top
 FPC2,"FPC connector, 6 pins, 0.5mm, BOTTOM contacts",FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal,72.68,35.93,90,top
 Q1,AO3400A ,SOT-23,43.218,8.6855,90,top

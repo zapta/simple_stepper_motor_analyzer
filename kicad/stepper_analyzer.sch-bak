@@ -758,7 +758,7 @@ BACKLIGHT\nCONTROL
 Text Notes 8550 6350 0    50   ~ 0
 TFT 320x480 ILI9488 16bit data.\n0.5mm pitch FPC, TOP contacts.
 Text Notes 5800 3850 0    50   ~ 0
-Capacitive touch FT6236 I2C,\n0.5mm pitch FPC, BOTTOM contacts.
+Capacitive touch FT6206 I2C,\n0.5mm pitch FPC, BOTTOM contacts.
 Text Notes 4700 4400 2    50   ~ 0
 Raspberry PI Pico RP2040
 $Comp
