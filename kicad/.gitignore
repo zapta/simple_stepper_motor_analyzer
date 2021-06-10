@@ -3,4 +3,5 @@
 *-rescue.dcm
 *-rescue.lib
 *-cache.lib
+*.bck
 fp-info-cache
