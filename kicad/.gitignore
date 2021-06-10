@@ -2,3 +2,4 @@
 *.sch-bak
 *-rescue.dcm
 *-rescue.lib
+fp-info-cache
