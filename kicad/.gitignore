@@ -1,2 +1,4 @@
 *.kicad_pcb-bak
 *.sch-bak
+*-rescue.dcm
+*-rescue.lib
