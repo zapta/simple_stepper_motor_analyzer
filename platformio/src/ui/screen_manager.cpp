@@ -1,21 +1,33 @@
 #include "screen_manager.h"
 
+#include <stdio.h>
+
 #include "acquisition/analyzer.h"
 #include "current_histogram_screen.h"
 #include "display/lvgl_adapter.h"
 #include "home_screen.h"
-#include "retraction_chart_screen.h"
-#include "settings_screen.h"
 #include "osciloscope_screen.h"
 #include "phase_screen.h"
+#include "pico/time.h"
+#include "retraction_chart_screen.h"
+#include "settings_screen.h"
 #include "speed_gauge_screen.h"
 #include "steps_chart_screen.h"
 #include "steps_histogram_screen.h"
 #include "time_histogram_screen.h"
-#include "pico/time.h"
-#include <stdio.h>
 
 namespace screen_manager {
+
+// A temp formatting buffer for the screens.
+static char format_buffer[300];
+
+const char* Screen::format(const char* format, ...) {
+  va_list vl;
+  va_start(vl, format);
+  vsnprintf(format_buffer, sizeof(format_buffer), format, vl);
+  va_end(vl);
+  return format_buffer;
+}
 
 // Landing screen upon program start.
 static constexpr ScreenId kInitialScreen = SCREEN_HOME;
@@ -162,7 +174,8 @@ void loop() {
     lv_refr_now(NULL);
     lvgl_adapter::stop_screen_capture();
     screen_cpature_requested = false;
-    printf("Screen dump: %lu sec", (to_ms_since_boot(get_absolute_time()) - start_millis) / 1000);
+    printf("Screen dump: %lu sec",
+           (to_ms_since_boot(get_absolute_time()) - start_millis) / 1000);
   }
 };
 

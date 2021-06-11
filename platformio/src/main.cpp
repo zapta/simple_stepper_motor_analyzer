@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include <stdio.h>
 
 #include "acquisition/adc_dma.h"

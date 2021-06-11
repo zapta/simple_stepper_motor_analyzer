@@ -5,30 +5,29 @@
 
 namespace screen_manager {
 
-
 class Screen {
  public:
-
   // Called once after lvgl library was initialized. Screen_num ignored if zero.
   virtual void setup(uint8_t screen_num) = 0;
   // Called before becoming the active screen.
-  virtual void on_load() {};
+  virtual void on_load(){};
   // Called when the active screen before becoming inactive,
   // before calling the on_load() of next screen.
-  virtual void on_unload() {};
+  virtual void on_unload(){};
   // Called periodically when this is the active screen.
-  virtual void loop() {};
+  virtual void loop(){};
   // On event. Should ignore unknown events.
   virtual void on_event(ui_events::UiEventId ui_event_id) {}
 
-  lv_obj_t* lv_scr() {
-    return screen_.lv_screen;
-  }
-  
-  protected:
-      ui::Screen screen_;
+  lv_obj_t* lv_scr() { return screen_.lv_screen; }
 
-  private: 
+ protected:
+  ui::Screen screen_;
+  // Uses an internal temp formatting buffer that is
+  // share by all screens.
+  static const char* format(const char* format, ...);
+
+ private:
 };
 
 enum ScreenId {

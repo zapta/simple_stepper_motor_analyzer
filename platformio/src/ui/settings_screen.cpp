@@ -1,19 +1,21 @@
 #include "settings_screen.h"
 
+#include <stdio.h>
+
 #include "acquisition/analyzer.h"
 #include "config.h"
 #include "misc/config_eeprom.h"
+#include "misc/hardware_version.h"
 #include "ui.h"
 #include "ui_events.h"
-#include <stdio.h>
 //#include "pico/stdlib.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 350;
 
-static constexpr const char* kFootnotText =
-    "To calibrate the current sensors, disconnect\n"
-    "the analyzer and press the SET ZERO button.\n"
-    "Firmware version " VERSION_STRING;
+static constexpr const char* kFootnotFormat =
+    "To calibrate the sensors, disconnect the \n"
+    "stepper motors and press SET ZERO.\n"
+    "Hardware: %s, firmware: %s.";
 
 // Must be static. LV keeps a reference to it.
 static lv_style_t style;
@@ -61,9 +63,9 @@ static void create_set_zero_button(lv_obj_t* lv_screen) {
   lv_obj_set_style_local_bg_color(lv_button, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
                                   LV_COLOR_ORANGE);
 
-                                    lv_obj_set_style_local_bg_color(lv_button, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
+  lv_obj_set_style_local_bg_color(lv_button, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
                                   LV_COLOR_GREEN);
- 
+
   lv_obj_set_style_local_text_color(lv_label, LV_LABEL_PART_MAIN,
                                     LV_STATE_DEFAULT, LV_COLOR_BLACK);
   lv_obj_set_style_local_border_color(lv_button, LV_LABEL_PART_MAIN,
@@ -81,8 +83,9 @@ void SettingsScreen::setup(uint8_t screen_num) {
 
   create_set_zero_button(screen_.lv_screen);
 
-  ui::create_button(screen_, 50, 410, ui::kBottomButtonsPosY - 10, ui::kSymbolOk,
-                    LV_COLOR_GREEN, ui_events::UI_EVENT_HOME_PAGE, nullptr);
+  ui::create_button(screen_, 50, 410, ui::kBottomButtonsPosY - 10,
+                    ui::kSymbolOk, LV_COLOR_GREEN,
+                    ui_events::UI_EVENT_HOME_PAGE, nullptr);
 
   // We don't bother to keep references to the fixed labels.
   constexpr lv_coord_t w1 = 100;
@@ -115,7 +118,9 @@ void SettingsScreen::setup(uint8_t screen_num) {
                       ui_events::UI_EVENT_DIRECTION, &reverse_checkbox_);
   reverse_checkbox_.set_is_checked(is_reversed_direction());
 
-  ui::create_label(screen_, 0, 5, 270, kFootnotText, ui::kFontSmallText,
+  const char* footnote_text =
+      format(kFootnotFormat,  hardware_version::get_name(), VERSION_STRING);
+  ui::create_label(screen_, 0, 5, 270, footnote_text, ui::kFontSmallText,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_OLIVE, nullptr);
 };
 
@@ -153,8 +158,6 @@ void SettingsScreen::loop() {
   // Sample data and update screen.
   const analyzer::State* state = analyzer::sample_state();
 
-  ch_a_field_.set_text_float(analyzer::adc_value_to_amps(state->v1),
-                             2);
-  ch_b_field_.set_text_float(analyzer::adc_value_to_amps(state->v2),
-                             2);
+  ch_a_field_.set_text_float(analyzer::adc_value_to_amps(state->v1), 2);
+  ch_b_field_.set_text_float(analyzer::adc_value_to_amps(state->v2), 2);
 }
