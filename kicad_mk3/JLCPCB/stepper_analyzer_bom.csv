@@ -1,6 +1,6 @@
 Comment,Designator,Footprint,LCSC Part Number
-100nf,"C1,C2",SMD 0805,C49678 
-10u,C3,EIA-3216-18,C7171 
+100nf ceramic,"C1,C2",SMD 0805,C49678 
+10u ceramic,C3,SMD 0805,C15850 
 "FPC connector 40pins,  0.5mm,  TOP contacts",FPC1,FH12-40S-0.5SH_1x40-1MP_P0.50mm_Horizontal_flipped,C11097
 "FPC connector, 6 pins, 0.5mm, BOTTOM contacts",FPC2,FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal,C262262
 AO3400A,Q1,SOT-23,C20917 

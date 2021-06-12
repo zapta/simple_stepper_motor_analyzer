@@ -629,18 +629,6 @@ F 4 "C25330" V 7650 5050 50  0001 C CNN "LCSC"
 	1    7650 5050
 	-1   0    0    1   
 $EndComp
-$Comp
-L Device:CP1 C3
-U 1 1 609D5EC7
-P 5950 1100
-F 0 "C3" H 6065 1146 50  0000 L CNN
-F 1 "10u" H 6065 1055 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder" H 5950 1100 50  0001 C CNN
-F 3 "~" H 5950 1100 50  0001 C CNN
-F 4 "C7171 " H 5950 1100 50  0001 C CNN "LCSC"
-	1    5950 1100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	8700 2150 8700 2550
 Wire Wire Line
@@ -730,8 +718,6 @@ Text Notes 4200 900  0    50   ~ 0
 C49678 
 Text Notes 3400 2250 0    50   ~ 0
 C49678 
-Text Notes 6050 950  0    50   ~ 0
-C7171 
 Wire Wire Line
 	8900 3750 8700 3750
 Connection ~ 8700 3750
@@ -949,4 +935,18 @@ Wire Wire Line
 Text Label 2800 4850 0    50   ~ 0
 ~TFT_RST
 NoConn ~ 4900 5850
+$Comp
+L Device:C C3
+U 1 1 60C5DA5D
+P 5950 1100
+F 0 "C3" H 6100 1050 50  0000 L CNN
+F 1 "10u" H 6100 1150 50  0000 L CNN
+F 2 "stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 5988 950 50  0001 C CNN
+F 3 "~" H 5950 1100 50  0001 C CNN
+F 4 "C15850 " V 5950 1100 50  0001 C CNN "LCSC"
+	1    5950 1100
+	-1   0    0    1   
+$EndComp
+Text Notes 5550 900  0    50   ~ 0
+C15850 
 $EndSCHEMATC

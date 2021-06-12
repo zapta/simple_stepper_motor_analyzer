@@ -1,4 +1,5 @@
 
+Replace 10u tantalum with cermaic (cost)
 
 
 * Delete junk kicad and model files.
