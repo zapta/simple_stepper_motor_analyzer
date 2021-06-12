@@ -66,8 +66,6 @@ Wire Wire Line
 	4900 5950 5150 5950
 Connection ~ 5150 5950
 Wire Wire Line
-	5150 5950 5150 6350
-Wire Wire Line
 	4900 6450 5150 6450
 Connection ~ 5150 6450
 Wire Wire Line
@@ -662,7 +660,7 @@ F 3 "~" H 10150 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 6400 7150 0    100  ~ 0
-Simple Stepper Motor Analyzer MK3
+Simple Stepper Motor Analyzer MK2
 Text Notes 7550 4850 2    50   ~ 0
 BACKLIGHT\nCONTROL
 Text Notes 8200 6400 0    50   ~ 0
@@ -800,21 +798,6 @@ Wire Wire Line
 Text Label 7200 5600 0    50   ~ 0
 TFT_BL
 Wire Wire Line
-	4900 6350 5150 6350
-Connection ~ 5150 6350
-Wire Wire Line
-	5150 6350 5150 6450
-Text Notes 5300 6500 0    50   ~ 0
-GP18 LOW:
-Text Notes 5300 6400 0    50   ~ 0
-GP18 FLOAT:
-Text Notes 5850 6500 0    50   ~ 0
-MK3
-Text Notes 5850 6400 0    50   ~ 0
-MK2
-Text Notes 5300 6300 0    50   ~ 0
-HARDWARE VERSION
-Wire Wire Line
 	8700 4950 8700 5250
 Wire Wire Line
 	8900 5050 8500 5050
@@ -837,48 +820,7 @@ Wire Wire Line
 	3500 6550 2800 6550
 Text Label 2800 6550 0    50   ~ 0
 CONFIG
-$Comp
-L stepper_motor_analyzer:SolderJumper_3_Open JP1
-U 1 1 60C14AFF
-P 900 6550
-F 0 "JP1" V 1050 6300 50  0000 L CNN
-F 1 "SolderJumper_3_Open" V 855 6617 50  0001 L CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Open_Pad1.0x1.5mm_NumberLabels" H 900 6550 50  0001 C CNN
-F 3 "~" H 900 6550 50  0001 C CNN
-	1    900  6550
-	0    -1   -1   0   
-$EndComp
-$Comp
-L power:GND #PWR0111
-U 1 1 60C1CA9F
-P 900 6800
-F 0 "#PWR0111" H 900 6550 50  0001 C CNN
-F 1 "GND" H 905 6627 50  0000 C CNN
-F 2 "" H 900 6800 50  0001 C CNN
-F 3 "" H 900 6800 50  0001 C CNN
-	1    900  6800
-	1    0    0    -1  
-$EndComp
-$Comp
-L stepper_motor_analyzer:+3V3 #PWR0112
-U 1 1 60C1CED0
-P 900 6300
-F 0 "#PWR0112" H 900 6150 50  0001 C CNN
-F 1 "+3V3" H 915 6473 50  0000 C CNN
-F 2 "" H 900 6300 50  0001 C CNN
-F 3 "" H 900 6300 50  0001 C CNN
-	1    900  6300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	900  6300 900  6350
-Wire Wire Line
-	900  6750 900  6800
-Wire Wire Line
-	1050 6550 1350 6550
-Text Label 1350 6550 2    50   ~ 0
-CONFIG
-Text Notes 1400 6650 0    50   ~ 0
+Text Notes 1550 6950 0    50   ~ 0
 RESERVED FOR\nFUTURE\nFEATURES
 Text Notes 7450 5800 0    50   ~ 0
 C20917
@@ -949,4 +891,66 @@ F 4 "C15850 " V 5950 1100 50  0001 C CNN "LCSC"
 $EndComp
 Text Notes 5550 900  0    50   ~ 0
 C15850 
+$Comp
+L Device:R_US R4
+U 1 1 60C58F3C
+P 1350 6850
+F 0 "R4" H 1150 6800 50  0000 L CNN
+F 1 "DNP" H 1150 6900 50  0000 L CNN
+F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1390 6840 50  0001 C CNN
+F 3 "~" H 1350 6850 50  0001 C CNN
+F 4 "" V 1350 6850 50  0001 C CNN "LCSC"
+	1    1350 6850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R5
+U 1 1 60C597F7
+P 1350 6450
+F 0 "R5" H 1450 6500 50  0000 L CNN
+F 1 "DNP" H 1400 6400 50  0000 L CNN
+F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1390 6440 50  0001 C CNN
+F 3 "~" H 1350 6450 50  0001 C CNN
+F 4 "" V 1350 6450 50  0001 C CNN "LCSC"
+	1    1350 6450
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR02
+U 1 1 60C608BA
+P 1350 7050
+F 0 "#PWR02" H 1350 6800 50  0001 C CNN
+F 1 "GND" H 1355 6877 50  0000 C CNN
+F 2 "" H 1350 7050 50  0001 C CNN
+F 3 "" H 1350 7050 50  0001 C CNN
+	1    1350 7050
+	1    0    0    -1  
+$EndComp
+$Comp
+L stepper_motor_analyzer:+3V3 #PWR01
+U 1 1 60C6DCDB
+P 1350 6250
+F 0 "#PWR01" H 1350 6100 50  0001 C CNN
+F 1 "+3V3" H 1300 6400 50  0000 C CNN
+F 2 "" H 1350 6250 50  0001 C CNN
+F 3 "" H 1350 6250 50  0001 C CNN
+	1    1350 6250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1350 6250 1350 6300
+Wire Wire Line
+	1350 6600 1350 6650
+Wire Wire Line
+	1350 7000 1350 7050
+Wire Wire Line
+	1350 6650 1800 6650
+Connection ~ 1350 6650
+Wire Wire Line
+	1350 6650 1350 6700
+Text Label 1800 6650 2    50   ~ 0
+CONFIG
+Wire Wire Line
+	5150 5950 5150 6450
+NoConn ~ 4900 6350
 $EndSCHEMATC
