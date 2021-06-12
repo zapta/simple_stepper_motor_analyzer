@@ -10,13 +10,13 @@
 #include "pico/stdlib.h"
 
 // Plain GPIO output pins.
-#define TFT_RST_PIN 2  // Active low.
-#define TFT_DC_PIN 28  // 1: data, 0: command.
+#define TFT_RST_PIN 1  // Active low.
+#define TFT_DC_PIN  2  // 1: data, 0: command.
 #define TFT_BL_PIN 15  // Active high
 
 // Outputs managed by PioTft.
 #define TFT_D0_PIN 6   // First of 8 data pins, [GPIO_6, GPIO_13]
-#define TFT_WR_PIN 22  // Active low
+#define TFT_WR_PIN 28  // Active low
 
 #define TFT_RST_HIGH gpio_set_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_HIGH gpio_set_mask(1ul << TFT_DC_PIN)
