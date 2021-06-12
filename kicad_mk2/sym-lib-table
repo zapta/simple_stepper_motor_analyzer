@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name stepper_motor_analyzer)(type Legacy)(uri ${KIPRJMOD}/stepper_motor_analyzer.lib)(options "")(descr ""))
-)
