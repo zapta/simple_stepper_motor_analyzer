@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>C:\projects\simple_stepper_motor_analyzer\repo\kicad\stepper_analyzer.sch</source>
+    <date>5/31/2021 9:23:24 PM</date>
+    <tool>Eeschema (5.1.10)-1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>stepper_analyzer.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="U3">
+      <value>Pico</value>
+      <footprint>stepper_motor_analyzer:Pico_smd_dedicated</footprint>
+      <libsource lib="stepper_motor_analyzer" part="Pico" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>609C8FE2</tstamp>
+    </comp>
+    <comp ref="J1">
+      <value>Connector_Conn_01x04_Male</value>
+      <footprint>stepper_motor_analyzer:connector_4pins_horizontal</footprint>
+      <libsource lib="stepper_motor_analyzer" part="Connector_Conn_01x04_Male" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>609CDEF6</tstamp>
+    </comp>
+    <comp ref="FPC1">
+      <value>Connector_Conn_01x40_Female</value>
+      <footprint>stepper_motor_analyzer:JUSHUO-AFC07-S40ECC-00_40P_05mm_flipped</footprint>
+      <fields>
+        <field name="LCSC">C11097</field>
+      </fields>
+      <libsource lib="stepper_motor_analyzer" part="Connector_Conn_01x40_Female" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>609CEBE2</tstamp>
+    </comp>
+    <comp ref="TP2">
+      <value>TestPoint</value>
+      <footprint>stepper_motor_analyzer:testpoint_one_side</footprint>
+      <libsource lib="stepper_motor_analyzer" part="TestPoint" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A27A27</tstamp>
+    </comp>
+    <comp ref="J2">
+      <value>Connector_Conn_01x04_Male</value>
+      <footprint>stepper_motor_analyzer:connector_4pins_horizontal</footprint>
+      <libsource lib="stepper_motor_analyzer" part="Connector_Conn_01x04_Male" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A3C8AB</tstamp>
+    </comp>
+    <comp ref="D2">
+      <value>LED</value>
+      <footprint>stepper_motor_analyzer:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder_double_side_no_3d</footprint>
+      <libsource lib="stepper_motor_analyzer" part="LED" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A6C7A4</tstamp>
+    </comp>
+    <comp ref="TP1">
+      <value>TestPoint</value>
+      <footprint>stepper_motor_analyzer:testpoint_one_side</footprint>
+      <libsource lib="stepper_motor_analyzer" part="TestPoint" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B0FCCE</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>LED</value>
+      <footprint>stepper_motor_analyzer:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder_double_side_no_3d</footprint>
+      <libsource lib="stepper_motor_analyzer" part="LED" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A70CA5</tstamp>
+    </comp>
+    <comp ref="TPL2">
+      <value>TestPoint</value>
+      <footprint>stepper_motor_analyzer:testpoint_double_side</footprint>
+      <libsource lib="stepper_motor_analyzer" part="TestPoint" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B217B4</tstamp>
+    </comp>
+    <comp ref="TPL1">
+      <value>TestPoint</value>
+      <footprint>stepper_motor_analyzer:testpoint_double_side</footprint>
+      <libsource lib="stepper_motor_analyzer" part="TestPoint" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B2271D</tstamp>
+    </comp>
+    <comp ref="Q1">
+      <value>SI2301</value>
+      <footprint>stepper_motor_analyzer:SOT-23_hand_soldering</footprint>
+      <datasheet>http://www.vishay.com/docs/63924/si2371eds.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C10487</field>
+      </fields>
+      <libsource lib="Transistor_FET" part="Si2371EDS" description="-3.6A Id, -30V Vds, P-Channel MOSFET, SOT-23"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60F68A08</tstamp>
+    </comp>
+    <comp ref="FPC2">
+      <value>FPC connector, 6 pins, 0.5mm, BOTTOM contacts</value>
+      <footprint>stepper_motor_analyzer:JUSHUO-AFC01-S06FCC-00_6p_05mm</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C262262</field>
+      </fields>
+      <libsource lib="Connector" part="Conn_01x06_Female" description="Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A0E4CD</tstamp>
+    </comp>
+    <comp ref="H1">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.5mm_Pad_Via</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A92EA6</tstamp>
+    </comp>
+    <comp ref="H2">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.5mm_Pad_Via</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A93F04</tstamp>
+    </comp>
+    <comp ref="H3">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.5mm_Pad_Via</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A9417C</tstamp>
+    </comp>
+    <comp ref="H4">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.5mm_Pad_Via</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A94418</tstamp>
+    </comp>
+    <comp ref="U2">
+      <value>ACS70331EOLCTR-2P5B3</value>
+      <footprint>stepper_motor_analyzer:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <libsource lib="stepper_motor_analyzer" part="ACS70331_soic8" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60AEB4AA</tstamp>
+    </comp>
+    <comp ref="U1">
+      <value>ACS70331EOLCTR-2P5B3</value>
+      <footprint>stepper_motor_analyzer:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <libsource lib="stepper_motor_analyzer" part="ACS70331_soic8" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B5D76B</tstamp>
+    </comp>
+    <comp ref="C1">
+      <value>0.1u</value>
+      <footprint>stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C49678 </field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A5D335</tstamp>
+    </comp>
+    <comp ref="C2">
+      <value>0.1u</value>
+      <footprint>stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C49678 </field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A0EB39</tstamp>
+    </comp>
+    <comp ref="R7">
+      <value>3K3</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C25330</field>
+      </fields>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60F866D2</tstamp>
+    </comp>
+    <comp ref="R6">
+      <value>8R2</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C17398</field>
+      </fields>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60C944CD</tstamp>
+    </comp>
+    <comp ref="R5">
+      <value>8R2</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C17398</field>
+      </fields>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60C9422D</tstamp>
+    </comp>
+    <comp ref="R4">
+      <value>8R2</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C17398</field>
+      </fields>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60C7B2FA</tstamp>
+    </comp>
+    <comp ref="C4">
+      <value>10u</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C7171 </field>
+      </fields>
+      <libsource lib="Device" part="CP1" description="Polarized capacitor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>609D5EC7</tstamp>
+    </comp>
+    <comp ref="R1">
+      <value>3K3</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A72154</tstamp>
+    </comp>
+    <comp ref="R2">
+      <value>3K3</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A718E1</tstamp>
+    </comp>
+    <comp ref="R3">
+      <value>1K</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60AB8B20</tstamp>
+    </comp>
+    <comp ref="J3">
+      <value>Conn_01x01</value>
+      <footprint>stepper_motor_analyzer:SolderWire-0.1sqmm_1x01_D0.4mm_OD1mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x01" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60AF45C2</tstamp>
+    </comp>
+    <comp ref="C3">
+      <value>0.1u</value>
+      <footprint>stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60AB82B3</tstamp>
+    </comp>
+    <comp ref="D3">
+      <value>BAT43W</value>
+      <footprint>stepper_motor_analyzer:D_SOD-123_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="D_Schottky" description="Schottky diode"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60AB7756</tstamp>
+    </comp>
+    <comp ref="LOGO1">
+      <value>Logo_Open_Hardware_Small</value>
+      <footprint>Symbol:OSHW-Logo2_9.8x8mm_SilkScreen</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Graphic" part="Logo_Open_Hardware_Small" description="Open Hardware logo, small"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A0C5E4</tstamp>
+    </comp>
+    <comp ref="TP3">
+      <value>TestPoint</value>
+      <footprint>stepper_motor_analyzer:testpoint_double_side</footprint>
+      <libsource lib="stepper_motor_analyzer" part="TestPoint" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B14A2B</tstamp>
+    </comp>
+    <comp ref="M1">
+      <value>Motor</value>
+      <footprint>stepper_motor_analyzer:null_footprint</footprint>
+      <libsource lib="stepper_motor_analyzer" part="Motor" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A13B95</tstamp>
+    </comp>
+    <comp ref="SW2">
+      <value>switch</value>
+      <footprint>stepper_motor_analyzer:SW_Push_1P1T_NO_CK_KMR2_double_size_no_3d</footprint>
+      <libsource lib="stepper_motor_analyzer" part="switch" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A706E8</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>switch</value>
+      <footprint>stepper_motor_analyzer:SW_Push_1P1T_NO_CK_KMR2_double_size_no_3d</footprint>
+      <libsource lib="stepper_motor_analyzer" part="switch" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60A83456</tstamp>
+    </comp>
+    <comp ref="R8">
+      <value>DNP</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B9DF26</tstamp>
+    </comp>
+    <comp ref="R9">
+      <value>DNP</value>
+      <footprint>stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="R_US" description="Resistor, US symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60B9EC31</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector" part="Conn_01x06_Female">
+      <description>Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x06_Female</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x01">
+      <description>Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x01</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C">
+      <description>Unpolarized capacitor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="CP1">
+      <description>Polarized capacitor, US symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>CP_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">CP1</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="D_Schottky">
+      <description>Schottky diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TO-???*</fp>
+        <fp>*_Diode_*</fp>
+        <fp>*SingleDiode*</fp>
+        <fp>D_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D_Schottky</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="R_US">
+      <description>Resistor, US symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R_US</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Graphic" part="Logo_Open_Hardware_Small">
+      <description>Open Hardware logo, small</description>
+      <docs>~</docs>
+      <fields>
+        <field name="Reference">#LOGO</field>
+        <field name="Value">Logo_Open_Hardware_Small</field>
+      </fields>
+    </libpart>
+    <libpart lib="Mechanical" part="MountingHole">
+      <description>Mounting Hole without connection</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>MountingHole*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MountingHole</field>
+      </fields>
+    </libpart>
+    <libpart lib="Transistor_FET" part="TP0610T">
+      <aliases>
+        <alias>VP0610T</alias>
+        <alias>BSS84</alias>
+        <alias>NTR2101P</alias>
+        <alias>BSS83P</alias>
+        <alias>Si2319CDS</alias>
+        <alias>IRLML6401</alias>
+        <alias>IRLML6402</alias>
+        <alias>DMG2301L</alias>
+        <alias>AO3401A</alias>
+        <alias>IRLML9301</alias>
+        <alias>IRLML5203</alias>
+        <alias>Si2371EDS</alias>
+        <alias>TSM2301ACX</alias>
+        <alias>FDN340P</alias>
+      </aliases>
+      <description>-0.18A Id, -60V Vds, P-Channel MOSFET, SOT-23</description>
+      <docs>http://www.vishay.com/docs/70209/70209.pdf</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">TP0610T</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+      </fields>
+      <pins>
+        <pin num="1" name="G" type="input"/>
+        <pin num="2" name="S" type="passive"/>
+        <pin num="3" name="D" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="ACS70331_soic8">
+      <footprints>
+        <fp>Allegro*QFN*EP*3x3mm*P0.5mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">ACS70331_soic8</field>
+        <field name="Footprint">Sensor_Current:Allegro_QFN-12-10-1EP_3x3mm_P0.5mm</field>
+      </fields>
+      <pins>
+        <pin num="1" name="+" type="passive"/>
+        <pin num="2" name="+" type="passive"/>
+        <pin num="3" name="-" type="passive"/>
+        <pin num="4" name="-" type="passive"/>
+        <pin num="5" name="GND" type="power_in"/>
+        <pin num="6" name="NC" type="NotConnected"/>
+        <pin num="7" name="VIOUT" type="output"/>
+        <pin num="8" name="VCC" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="Connector_Conn_01x04_Male">
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Connector_Conn_01x04_Male</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="Connector_Conn_01x40_Female">
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Connector_Conn_01x40_Female</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+        <pin num="11" name="Pin_11" type="passive"/>
+        <pin num="12" name="Pin_12" type="passive"/>
+        <pin num="13" name="Pin_13" type="passive"/>
+        <pin num="14" name="Pin_14" type="passive"/>
+        <pin num="15" name="Pin_15" type="passive"/>
+        <pin num="16" name="Pin_16" type="passive"/>
+        <pin num="17" name="Pin_17" type="passive"/>
+        <pin num="18" name="Pin_18" type="passive"/>
+        <pin num="19" name="Pin_19" type="passive"/>
+        <pin num="20" name="Pin_20" type="passive"/>
+        <pin num="21" name="Pin_21" type="passive"/>
+        <pin num="22" name="Pin_22" type="passive"/>
+        <pin num="23" name="Pin_23" type="passive"/>
+        <pin num="24" name="Pin_24" type="passive"/>
+        <pin num="25" name="Pin_25" type="passive"/>
+        <pin num="26" name="Pin_26" type="passive"/>
+        <pin num="27" name="Pin_27" type="passive"/>
+        <pin num="28" name="Pin_28" type="passive"/>
+        <pin num="29" name="Pin_29" type="passive"/>
+        <pin num="30" name="Pin_30" type="passive"/>
+        <pin num="31" name="Pin_31" type="passive"/>
+        <pin num="32" name="Pin_32" type="passive"/>
+        <pin num="33" name="Pin_33" type="passive"/>
+        <pin num="34" name="Pin_34" type="passive"/>
+        <pin num="35" name="Pin_35" type="passive"/>
+        <pin num="36" name="Pin_36" type="passive"/>
+        <pin num="37" name="Pin_37" type="passive"/>
+        <pin num="38" name="Pin_38" type="passive"/>
+        <pin num="39" name="Pin_39" type="passive"/>
+        <pin num="40" name="Pin_40" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="LED">
+      <footprints>
+        <fp>LED*</fp>
+        <fp>LED_SMD:*</fp>
+        <fp>LED_THT:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="Motor">
+      <footprints>
+        <fp>PinHeader*P2.54mm*Vertical*</fp>
+        <fp>TerminalBlock*</fp>
+        <fp>Motor*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">M</field>
+        <field name="Value">Motor</field>
+      </fields>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="Pico">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">Pico</field>
+        <field name="Footprint">RPi_Pico:RPi_Pico_SMD_TH</field>
+      </fields>
+      <pins>
+        <pin num="1" name="GP0" type="output"/>
+        <pin num="2" name="GP1" type="output"/>
+        <pin num="3" name="GND" type="power_in"/>
+        <pin num="4" name="GP2" type="output"/>
+        <pin num="5" name="GP3" type="output"/>
+        <pin num="6" name="SDA" type="BiDi"/>
+        <pin num="7" name="SCL" type="output"/>
+        <pin num="8" name="GND" type="power_in"/>
+        <pin num="9" name="GP6" type="output"/>
+        <pin num="10" name="GP7" type="output"/>
+        <pin num="11" name="GP8" type="output"/>
+        <pin num="12" name="GP9" type="output"/>
+        <pin num="13" name="GND" type="power_in"/>
+        <pin num="14" name="GP10" type="output"/>
+        <pin num="15" name="GP11" type="output"/>
+        <pin num="16" name="GP12" type="output"/>
+        <pin num="17" name="GP13" type="output"/>
+        <pin num="18" name="GND" type="power_in"/>
+        <pin num="19" name="GP14" type="output"/>
+        <pin num="20" name="GP15" type="output"/>
+        <pin num="21" name="GP16" type="output"/>
+        <pin num="22" name="GP17" type="output"/>
+        <pin num="23" name="GND" type="power_in"/>
+        <pin num="24" name="GP18" type="output"/>
+        <pin num="25" name="GP19" type="output"/>
+        <pin num="26" name="GP20" type="output"/>
+        <pin num="27" name="GP21" type="output"/>
+        <pin num="28" name="GND" type="power_in"/>
+        <pin num="29" name="GP22" type="output"/>
+        <pin num="30" name="RUN" type="input"/>
+        <pin num="31" name="ADC0" type="input"/>
+        <pin num="32" name="ADC1" type="input"/>
+        <pin num="33" name="AGND" type="power_in"/>
+        <pin num="34" name="GP28" type="output"/>
+        <pin num="35" name="ADC_VREF" type="unspc"/>
+        <pin num="36" name="3V3" type="power_out"/>
+        <pin num="37" name="3V3_EN" type="input"/>
+        <pin num="38" name="GND" type="power_out"/>
+        <pin num="39" name="VSYS" type="unspc"/>
+        <pin num="40" name="VBUS" type="unspc"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="TestPoint">
+      <footprints>
+        <fp>Pin*</fp>
+        <fp>Test*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">TP</field>
+        <field name="Value">TestPoint</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="stepper_motor_analyzer" part="switch">
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">switch</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Connector.lib</uri>
+    </library>
+    <library logical="Connector_Generic">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Connector_Generic.lib</uri>
+    </library>
+    <library logical="Device">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Device.lib</uri>
+    </library>
+    <library logical="Graphic">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Graphic.lib</uri>
+    </library>
+    <library logical="Mechanical">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Mechanical.lib</uri>
+    </library>
+    <library logical="Transistor_FET">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Transistor_FET.lib</uri>
+    </library>
+    <library logical="stepper_motor_analyzer">
+      <uri>C:\projects\simple_stepper_motor_analyzer\repo\kicad/stepper_motor_analyzer.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="/D1">
+      <node ref="U3" pin="5"/>
+      <node ref="FPC1" pin="18"/>
+    </net>
+    <net code="2" name="/D0">
+      <node ref="U3" pin="34"/>
+      <node ref="FPC1" pin="17"/>
+    </net>
+    <net code="3" name="/D15">
+      <node ref="U3" pin="24"/>
+      <node ref="FPC1" pin="32"/>
+    </net>
+    <net code="4" name="/D14">
+      <node ref="U3" pin="19"/>
+      <node ref="FPC1" pin="31"/>
+      <node ref="R9" pin="2"/>
+    </net>
+    <net code="5" name="/D13">
+      <node ref="FPC1" pin="30"/>
+      <node ref="U3" pin="25"/>
+    </net>
+    <net code="6" name="/D11">
+      <node ref="FPC1" pin="28"/>
+      <node ref="U3" pin="26"/>
+    </net>
+    <net code="7" name="/D10">
+      <node ref="FPC1" pin="27"/>
+      <node ref="U3" pin="16"/>
+      <node ref="R8" pin="2"/>
+    </net>
+    <net code="8" name="/D9">
+      <node ref="FPC1" pin="26"/>
+      <node ref="U3" pin="27"/>
+    </net>
+    <net code="9" name="/D8">
+      <node ref="FPC1" pin="25"/>
+      <node ref="U3" pin="15"/>
+    </net>
+    <net code="10" name="/D7">
+      <node ref="FPC1" pin="24"/>
+      <node ref="U3" pin="14"/>
+    </net>
+    <net code="11" name="/D6">
+      <node ref="U3" pin="29"/>
+      <node ref="FPC1" pin="23"/>
+    </net>
+    <net code="12" name="/D5">
+      <node ref="U3" pin="12"/>
+      <node ref="FPC1" pin="22"/>
+    </net>
+    <net code="13" name="/D4">
+      <node ref="U3" pin="11"/>
+      <node ref="FPC1" pin="21"/>
+    </net>
+    <net code="14" name="/D3">
+      <node ref="U3" pin="10"/>
+      <node ref="FPC1" pin="20"/>
+    </net>
+    <net code="15" name="/D2">
+      <node ref="FPC1" pin="19"/>
+      <node ref="U3" pin="9"/>
+    </net>
+    <net code="16" name="/~TFT_BL">
+      <node ref="R7" pin="1"/>
+      <node ref="U3" pin="20"/>
+      <node ref="Q1" pin="1"/>
+    </net>
+    <net code="17" name="+3V3">
+      <node ref="FPC1" pin="7"/>
+      <node ref="FPC1" pin="39"/>
+      <node ref="FPC1" pin="6"/>
+      <node ref="R7" pin="2"/>
+      <node ref="R3" pin="1"/>
+      <node ref="FPC1" pin="12"/>
+      <node ref="U2" pin="8"/>
+      <node ref="C4" pin="1"/>
+      <node ref="U1" pin="8"/>
+      <node ref="C2" pin="2"/>
+      <node ref="C1" pin="2"/>
+      <node ref="U3" pin="36"/>
+      <node ref="FPC2" pin="1"/>
+      <node ref="Q1" pin="2"/>
+    </net>
+    <net code="18" name="Net-(U3-Pad37)">
+      <node ref="U3" pin="37"/>
+    </net>
+    <net code="19" name="GND">
+      <node ref="R6" pin="1"/>
+      <node ref="U3" pin="23"/>
+      <node ref="C2" pin="1"/>
+      <node ref="FPC2" pin="6"/>
+      <node ref="R5" pin="1"/>
+      <node ref="R4" pin="1"/>
+      <node ref="U3" pin="33"/>
+      <node ref="U3" pin="38"/>
+      <node ref="FPC1" pin="16"/>
+      <node ref="U3" pin="28"/>
+      <node ref="U3" pin="3"/>
+      <node ref="C4" pin="2"/>
+      <node ref="FPC1" pin="13"/>
+      <node ref="FPC1" pin="38"/>
+      <node ref="FPC1" pin="40"/>
+      <node ref="FPC1" pin="5"/>
+      <node ref="U3" pin="13"/>
+      <node ref="U3" pin="18"/>
+      <node ref="FPC1" pin="9"/>
+      <node ref="FPC1" pin="37"/>
+      <node ref="C1" pin="1"/>
+      <node ref="SW1" pin="1"/>
+      <node ref="TP3" pin="1"/>
+      <node ref="U2" pin="5"/>
+      <node ref="SW2" pin="1"/>
+      <node ref="D2" pin="1"/>
+      <node ref="D1" pin="1"/>
+      <node ref="U1" pin="5"/>
+      <node ref="U3" pin="8"/>
+    </net>
+    <net code="20" name="Net-(FPC2-Pad5)">
+      <node ref="FPC2" pin="5"/>
+    </net>
+    <net code="21" name="Net-(FPC2-Pad4)">
+      <node ref="FPC2" pin="4"/>
+    </net>
+    <net code="22" name="Net-(FPC1-Pad33)">
+      <node ref="FPC1" pin="33"/>
+      <node ref="Q1" pin="3"/>
+    </net>
+    <net code="23" name="/TFT_RST">
+      <node ref="FPC1" pin="15"/>
+      <node ref="U3" pin="4"/>
+    </net>
+    <net code="24" name="Net-(FPC1-Pad14)">
+      <node ref="FPC1" pin="14"/>
+    </net>
+    <net code="25" name="/~TFT_WR">
+      <node ref="FPC1" pin="11"/>
+      <node ref="U3" pin="2"/>
+    </net>
+    <net code="26" name="/TFT_DC">
+      <node ref="FPC1" pin="10"/>
+      <node ref="U3" pin="1"/>
+    </net>
+    <net code="27" name="Net-(FPC1-Pad8)">
+      <node ref="FPC1" pin="8"/>
+    </net>
+    <net code="28" name="Net-(FPC1-Pad4)">
+      <node ref="FPC1" pin="4"/>
+    </net>
+    <net code="29" name="Net-(FPC1-Pad3)">
+      <node ref="FPC1" pin="3"/>
+    </net>
+    <net code="30" name="Net-(FPC1-Pad2)">
+      <node ref="FPC1" pin="2"/>
+    </net>
+    <net code="31" name="Net-(FPC1-Pad1)">
+      <node ref="FPC1" pin="1"/>
+    </net>
+    <net code="32" name="Net-(FPC1-Pad34)">
+      <node ref="R4" pin="2"/>
+      <node ref="FPC1" pin="34"/>
+    </net>
+    <net code="33" name="Net-(FPC1-Pad35)">
+      <node ref="R5" pin="2"/>
+      <node ref="FPC1" pin="35"/>
+    </net>
+    <net code="34" name="Net-(FPC1-Pad36)">
+      <node ref="R6" pin="2"/>
+      <node ref="FPC1" pin="36"/>
+    </net>
+    <net code="35" name="/SCL">
+      <node ref="U3" pin="7"/>
+      <node ref="FPC2" pin="3"/>
+    </net>
+    <net code="36" name="/SDA">
+      <node ref="U3" pin="6"/>
+      <node ref="FPC2" pin="2"/>
+    </net>
+    <net code="37" name="/~RESET">
+      <node ref="SW2" pin="2"/>
+      <node ref="U3" pin="30"/>
+      <node ref="C3" pin="1"/>
+    </net>
+    <net code="38" name="/LED1">
+      <node ref="TPL1" pin="1"/>
+      <node ref="U3" pin="22"/>
+      <node ref="R1" pin="1"/>
+    </net>
+    <net code="39" name="/LED2">
+      <node ref="U3" pin="21"/>
+      <node ref="TPL2" pin="1"/>
+      <node ref="R2" pin="1"/>
+    </net>
+    <net code="40" name="Net-(U1-Pad6)">
+      <node ref="U1" pin="6"/>
+    </net>
+    <net code="41" name="Net-(J1-Pad2)">
+      <node ref="U1" pin="2"/>
+      <node ref="J1" pin="2"/>
+      <node ref="U1" pin="1"/>
+    </net>
+    <net code="42" name="Net-(J2-Pad2)">
+      <node ref="J2" pin="2"/>
+      <node ref="U1" pin="3"/>
+      <node ref="U1" pin="4"/>
+    </net>
+    <net code="43" name="Net-(J2-Pad3)">
+      <node ref="J2" pin="3"/>
+      <node ref="U2" pin="4"/>
+      <node ref="U2" pin="3"/>
+    </net>
+    <net code="44" name="Net-(U2-Pad6)">
+      <node ref="U2" pin="6"/>
+    </net>
+    <net code="45" name="Net-(D3-Pad2)">
+      <node ref="J3" pin="1"/>
+      <node ref="D3" pin="2"/>
+    </net>
+    <net code="46" name="Net-(C3-Pad2)">
+      <node ref="D3" pin="1"/>
+      <node ref="C3" pin="2"/>
+      <node ref="R3" pin="2"/>
+      <node ref="SW1" pin="2"/>
+    </net>
+    <net code="47" name="Net-(D2-Pad2)">
+      <node ref="R2" pin="2"/>
+      <node ref="D2" pin="2"/>
+    </net>
+    <net code="48" name="/CHA">
+      <node ref="U1" pin="7"/>
+      <node ref="U3" pin="31"/>
+      <node ref="TP1" pin="1"/>
+    </net>
+    <net code="49" name="/CHB">
+      <node ref="U3" pin="32"/>
+      <node ref="U2" pin="7"/>
+      <node ref="TP2" pin="1"/>
+    </net>
+    <net code="50" name="Net-(U3-Pad35)">
+      <node ref="U3" pin="35"/>
+    </net>
+    <net code="51" name="/D12">
+      <node ref="R8" pin="1"/>
+      <node ref="FPC1" pin="29"/>
+      <node ref="R9" pin="1"/>
+      <node ref="U3" pin="17"/>
+    </net>
+    <net code="52" name="Net-(J1-Pad3)">
+      <node ref="U2" pin="2"/>
+      <node ref="J1" pin="3"/>
+      <node ref="U2" pin="1"/>
+    </net>
+    <net code="53" name="Net-(U3-Pad40)">
+      <node ref="U3" pin="40"/>
+    </net>
+    <net code="54" name="Net-(U3-Pad39)">
+      <node ref="U3" pin="39"/>
+    </net>
+    <net code="55" name="Net-(J1-Pad4)">
+      <node ref="J1" pin="4"/>
+      <node ref="J2" pin="4"/>
+    </net>
+    <net code="56" name="Net-(J1-Pad1)">
+      <node ref="J1" pin="1"/>
+      <node ref="J2" pin="1"/>
+    </net>
+    <net code="57" name="Net-(D1-Pad2)">
+      <node ref="R1" pin="2"/>
+      <node ref="D1" pin="2"/>
+    </net>
+  </nets>
+</export>

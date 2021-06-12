@@ -1,0 +1,11 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+C1,100nf,SMD 0805,87.16,46.468,0,top
+C2,100nf,SMD 0805,52.226,46.849,0,top
+C4,10u,EIA-3216-18,43.415,46.5655,90,top
+FPC1,"FPC connector 40pins,  0.5mm,  TOP contacts",FH12-40S-0.5SH_1x40-1MP_P0.50mm_Horizontal_flipped,50.3,28.9,90,top
+FPC2,"FPC connector, 6 pins, 0.5mm, BOTTOM contacts",FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal,72.68,35.93,90,top
+Q1,SI2301,SOT-23,43.669,15.81,90,top
+R4,8.2 Ohm,SMD 0805,54.718,12.605,90,top
+R5,8.2 Ohm,SMD 0805,51.543,12.593,90,top
+R6,8.2 Ohm,SMD 0805,48.44,12.602,90,top
+R7,3.3K,SMD 0805,43.645,11.303,0,top
