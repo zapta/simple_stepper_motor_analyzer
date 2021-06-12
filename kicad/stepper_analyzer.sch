@@ -819,7 +819,7 @@ C17398
 Wire Wire Line
 	3500 6550 2800 6550
 Text Label 2800 6550 0    50   ~ 0
-CONFIG
+OPTIONS
 Text Notes 1550 6950 0    50   ~ 0
 RESERVED FOR\nFUTURE\nFEATURES
 Text Notes 7450 5800 0    50   ~ 0
@@ -897,7 +897,7 @@ U 1 1 60C58F3C
 P 1350 6850
 F 0 "R4" H 1150 6800 50  0000 L CNN
 F 1 "DNP" H 1150 6900 50  0000 L CNN
-F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1390 6840 50  0001 C CNN
+F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d" V 1390 6840 50  0001 C CNN
 F 3 "~" H 1350 6850 50  0001 C CNN
 F 4 "" V 1350 6850 50  0001 C CNN "LCSC"
 	1    1350 6850
@@ -909,7 +909,7 @@ U 1 1 60C597F7
 P 1350 6450
 F 0 "R5" H 1450 6500 50  0000 L CNN
 F 1 "DNP" H 1400 6400 50  0000 L CNN
-F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 1390 6440 50  0001 C CNN
+F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder_no_3d" V 1390 6440 50  0001 C CNN
 F 3 "~" H 1350 6450 50  0001 C CNN
 F 4 "" V 1350 6450 50  0001 C CNN "LCSC"
 	1    1350 6450
@@ -949,7 +949,7 @@ Connection ~ 1350 6650
 Wire Wire Line
 	1350 6650 1350 6700
 Text Label 1800 6650 2    50   ~ 0
-CONFIG
+OPTIONS
 Wire Wire Line
 	5150 5950 5150 6450
 NoConn ~ 4900 6350
