@@ -6,17 +6,17 @@
 #include "hardware/pio.h"
 #endif
 
-// ------ //
-// tft_io //
-// ------ //
+// -------------- //
+// tft_driver_pio //
+// -------------- //
 
-#define tft_io_wrap_target 0
-#define tft_io_wrap 9
+#define tft_driver_pio_wrap_target 0
+#define tft_driver_pio_wrap 9
 
-#define tft_io_offset_start_16 0u
-#define tft_io_offset_start_8 7u
+#define tft_driver_pio_offset_start_16 0u
+#define tft_driver_pio_offset_start_8 7u
 
-static const uint16_t tft_io_program_instructions[] = {
+static const uint16_t tft_driver_pio_program_instructions[] = {
             //     .wrap_target
     0x98a0, //  0: pull   block           side 1     
     0x6028, //  1: out    x, 8                       
@@ -32,15 +32,15 @@ static const uint16_t tft_io_program_instructions[] = {
 };
 
 #if !PICO_NO_HARDWARE
-static const struct pio_program tft_io_program = {
-    .instructions = tft_io_program_instructions,
+static const struct pio_program tft_driver_pio_program = {
+    .instructions = tft_driver_pio_program_instructions,
     .length = 10,
     .origin = -1,
 };
 
-static inline pio_sm_config tft_io_program_get_default_config(uint offset) {
+static inline pio_sm_config tft_driver_pio_program_get_default_config(uint offset) {
     pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + tft_io_wrap_target, offset + tft_io_wrap);
+    sm_config_set_wrap(&c, offset + tft_driver_pio_wrap_target, offset + tft_driver_pio_wrap);
     sm_config_set_sideset(&c, 2, true, false);
     return c;
 }

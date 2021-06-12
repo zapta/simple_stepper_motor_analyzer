@@ -18,7 +18,8 @@
 namespace lvgl_adapter {
 
 // Initialized during setup.
-static TftDriver* tft_driver = nullptr;
+//static TftDriver* tft_driver = nullptr;
+static TftDriver tft_driver;
 
 #define MY_DISP_HOR_RES (480)
 
@@ -122,7 +123,7 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
 
   // Per our lv config settings, LVGL uses 8 bits colors.
   const lv_color8_t* lv_color8 = static_cast<lv_color8_t*>(color_p);
-  tft_driver->render_buffer(area->x1, area->y1, area->x2, area->y2,
+  tft_driver.render_buffer(area->x1, area->y1, area->x2, area->y2,
                             (uint8_t*)lv_color8);
 
   // IMPORTANT!!! Inform the graphics library that flushing was done.
@@ -170,8 +171,8 @@ void static init_touch_driver() {
 }
 
 // Called once from main on program start.
-void setup(TftDriver* driver) {
-  tft_driver = driver;
+void setup() {
+  tft_driver.begin();
 
   lv_init();
 
@@ -204,5 +205,10 @@ void stop_screen_capture() {
   screen_capture_enabled = false;
   printf("###END screen capture\n");
 }
+
+ void backlight_on() {
+   tft_driver.backlight_on();
+ }
+
 
 }  // namespace lvgl_adapter

@@ -1,12 +1,12 @@
-#include "mk3_tft_driver.h"
+#include "tft_driver.h"
 
 #include <stdio.h>
 
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "io.h"
-#include "mk3_lookup_tables.h"
-#include "mk3_tft.pio.h"
+#include "tft_driver_lookup_tables.h"
+#include "tft_driver.pio.h"
 #include "pico/stdlib.h"
 
 // Plain GPIO output pins.
@@ -82,7 +82,7 @@ static void init_pio() {
 
   // Load the PIO program. Starting by default with 16 bits mode
   // since it's at the begining of the PIO program.
-  program_offset = pio_add_program(PIO, &tft_io_program);
+  program_offset = pio_add_program(PIO, &tft_driver_pio_program);
 
   // Associate pins with the PIO.
   pio_gpio_init(PIO, TFT_WR_PIN);
@@ -95,7 +95,7 @@ static void init_pio() {
   pio_sm_set_consecutive_pindirs(PIO, SM, TFT_D0_PIN, 8, true);
 
   // Configure the state machine.
-  pio_sm_config c = tft_io_program_get_default_config(program_offset);
+  pio_sm_config c = tft_driver_pio_program_get_default_config(program_offset);
   // The pio program declares that a single sideset pin is used.
   // Define it.
   sm_config_set_sideset_pins(&c, TFT_WR_PIN);
@@ -110,7 +110,7 @@ static void init_pio() {
   sm_config_set_out_shift(&c, true, false, 0);
   // Set the SM with the configuration we constructed above.
   // Default mode is single byte.
-  pio_sm_init(PIO, SM, program_offset + tft_io_offset_start_8, &c);
+  pio_sm_init(PIO, SM, program_offset + tft_driver_pio_offset_start_8, &c);
 
   // Start the state machine.
   pio_sm_set_enabled(PIO, SM, true);
@@ -127,13 +127,13 @@ static void flush() {
 static void set_mode_single_byte() {
   flush();
   // Force a SM jump.
-  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_io_offset_start_8));
+  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_driver_pio_offset_start_8));
 }
 
 static void set_mode_double_byte() {
   flush();
   // Force a SM jump.
-  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_io_offset_start_16));
+  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_driver_pio_offset_start_16));
 }
 
 // For testing.
@@ -161,7 +161,7 @@ inline void write_data_byte(uint8_t c) {
   // No need to flush. Ok to data bytes being queued.
 }
 
-void Mk3TftDriver::begin() {
+void TftDriver::begin() {
   init_gpio();
   init_pio();
 
@@ -288,9 +288,9 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   }
 
 #define SEND_PIXEL(x) \
-  PIO->txf[SM] = mk3_lookup_tables::color8_to_color16_table[x];
+  PIO->txf[SM] = tft_driver_lookup_tables::color8_to_color16_table[x];
 
-void Mk3TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
+void TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
                                  uint16_t y2, const uint8_t* color8_p) {
   setAddrWindow(x1, y1, x2, y2);
 
@@ -341,4 +341,4 @@ void Mk3TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
   }
 }
 
-void Mk3TftDriver::backlight_on() { TFT_BL_HIGH; }
+void TftDriver::backlight_on() { TFT_BL_HIGH; }

@@ -5,7 +5,9 @@
 
 namespace lvgl_adapter {
 
-extern void setup(TftDriver* driver);
+extern void setup();
+// Called once after the first LVGL screen was rendered.
+extern void backlight_on();
 
 // For developement.
 extern void dump_stats();

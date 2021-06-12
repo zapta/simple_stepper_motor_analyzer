@@ -4,7 +4,7 @@
 // Side set: 1 output pin, TFT_WR. Active low.
 // Data set: 8 consecutive output pins, TFT_D0 .. TFT_D7
 
-.program tft_io
+.program tft_driver_pio
 .side_set 1 opt ;  The TFT_WR output.
 
 // The C++ code switches between the 8 bits and 16 bits loops

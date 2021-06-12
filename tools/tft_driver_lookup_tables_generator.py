@@ -1,9 +1,10 @@
-# A python program to generate the lookup table in display/mk3_lookup_tables.cpp.
+# A python program to generate the lookup table used by the tft driver to 
+# map 8bits colors to 16bits colors to send to the TFT.
 #
-# Usage: run with no arguments, paste the output to display/mk3_lookup_tables.cc,
+# Usage: run with no arguments, paste the output to display/tft_driver_lookup_tables.cc,
 # and reformat the file.
 #
-# python mk3_lookup_tables_generator.py
+# python tft_driver_lookup_tables_generator.py
 #
 
 import sys

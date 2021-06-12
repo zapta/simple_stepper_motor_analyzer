@@ -5,7 +5,7 @@
 #include "acquisition/analyzer.h"
 #include "config.h"
 #include "misc/config_eeprom.h"
-#include "misc/hardware_version.h"
+#include "misc/hardware_config.h"
 #include "ui.h"
 #include "ui_events.h"
 //#include "pico/stdlib.h"
@@ -119,7 +119,7 @@ void SettingsScreen::setup(uint8_t screen_num) {
   reverse_checkbox_.set_is_checked(is_reversed_direction());
 
   const char* footnote_text =
-      format(kFootnotFormat,  hardware_version::get_name(), VERSION_STRING);
+      format(kFootnotFormat,  hardware_config::get_name(), VERSION_STRING);
   ui::create_label(screen_, 0, 5, 270, footnote_text, ui::kFontSmallText,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_OLIVE, nullptr);
 };

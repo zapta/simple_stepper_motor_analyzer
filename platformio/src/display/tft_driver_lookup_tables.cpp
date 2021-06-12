@@ -1,8 +1,8 @@
-#include "mk3_lookup_tables.h"
+#include "tft_driver_lookup_tables.h"
 
-// Tables were generated using the mk3_lookup_tables_generator.py script.
+// Tables were generated using the tft_driver_lookup_tables_generator.py script.
 
-namespace mk3_lookup_tables {
+namespace tft_driver_lookup_tables {
 
 const uint16_t color8_to_color16_table[] = {
     0x0000, 0x000a, 0x0015, 0x001f,  // 0x00 - 0x03
@@ -71,4 +71,4 @@ const uint16_t color8_to_color16_table[] = {
     0xffe0, 0xffea, 0xfff5, 0xffff,  // 0xfc - 0xff
 };
 
-}  // namespace mk3_lookup_tables
+}  // namespace tft_driver_lookup_tables

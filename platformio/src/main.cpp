@@ -3,15 +3,16 @@
 #include "acquisition/adc_dma.h"
 #include "acquisition/analyzer.h"
 #include "display/lvgl_adapter.h"
-#include "display/mk2_tft_driver.h"
-#include "display/mk3_tft_driver.h"
+//#include "display/mk2_tft_driver.h"
+//#include "display/mk3_tft_driver.h"
+//#include "display/tft_driver.h"
 #include "display/tft_driver.h"
 #include "display/touch_driver.h"
 #include "io.h"
 #include "lvgl.h"
 #include "misc/config_eeprom.h"
 #include "misc/elapsed.h"
-#include "misc/hardware_version.h"
+#include "misc/hardware_config.h"
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
@@ -33,29 +34,30 @@ static bool timer_callback(repeating_timer_t* rt) {
 static Elapsed timer;
 
 // Initialized to TFT driver to use based on hardware version.
-static TftDriver* tft_driver = nullptr;
+//static TftDriver* tft_driver = nullptr;
+//static TftDriver tft_driver;
 
 void setup() {
   stdio_init_all();
-  hardware_version::determine();
+  hardware_config::determine();
 
   // Query the underlying hardware to determine the
   // TFT driver to use.
   // driver_config = read_config_pin(18);
-  switch (hardware_version::get()) {
-    case hardware_version::HARDWARE_MK2:
-      // Floating pin 18. Must be MK2.
-      tft_driver = new Mk2TftDriver();
-      break;
-    case hardware_version::HARDWARE_MK3:
-      // Floating pin 18. Must be MK2.
-      tft_driver = new Mk3TftDriver();
-      break;
-    default:
-      // Delay to allow establishing USB/serial connection.
-      sleep_ms(5000);
-      panic("Unexpected driver config [%s]", hardware_version::get_name());
-  }
+  // switch (hardware_version::get()) {
+  //   case hardware_version::HARDWARE_MK2:
+  //     // Floating pin 18. Must be MK2.
+  //     tft_driver = new Mk2TftDriver();
+  //     break;
+  //   case hardware_version::HARDWARE_MK3:
+  //     // Floating pin 18. Must be MK2.
+  //     tft_driver = new Mk3TftDriver();
+  //     break;
+  //   default:
+  //     // Delay to allow establishing USB/serial connection.
+  //     sleep_ms(5000);
+  //     panic("Unexpected driver config [%s]", hardware_version::get_name());
+  // }
 
   io::setup();
 
@@ -74,9 +76,9 @@ void setup() {
 
   touch_driver::setup();
 
-  tft_driver->begin();
+  //ver.begin();
 
-  lvgl_adapter::setup(tft_driver);
+  lvgl_adapter::setup();
 
   analyzer::reset_state();
 
@@ -91,7 +93,8 @@ void setup() {
   sleep_ms(50);  // let the screen process the data to avoid initial flicker.
 
   // Turn on the backlight. User can now see the screen.
-  tft_driver->backlight_on();
+  lvgl_adapter::backlight_on();
+  //tft_driver.backlight_on();
 }
 
 void loop() {
@@ -120,7 +123,7 @@ void loop() {
       default:
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
-        printf("Hardware: [%s]\n", hardware_version::get_name());
+        printf("Hardware: [%s]\n", hardware_config::get_name());
         print_cycle = 1;
         break;
       case 1:
