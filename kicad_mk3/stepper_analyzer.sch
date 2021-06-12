@@ -143,12 +143,10 @@ Wire Wire Line
 	3500 6650 2800 6650
 NoConn ~ 4900 4750
 NoConn ~ 4900 4850
-Text Label 5650 5350 2    50   ~ 0
-TFT_DC
-Text Label 5650 5850 2    50   ~ 0
-~TFT_WR
 Text Label 2800 5050 0    50   ~ 0
-~TFT_RST
+TFT_DC
+Text Label 5650 5350 2    50   ~ 0
+~TFT_WR
 Text Label 2800 5250 0    50   ~ 0
 SDA
 Text Label 2800 5350 0    50   ~ 0
@@ -847,9 +845,6 @@ Text Label 8050 2050 0    50   ~ 0
 TFT_SYN
 Text Notes 2150 4800 0    50   ~ 0
 TFT SYNC IS\nEXPERIMENTAL
-Wire Wire Line
-	4900 5850 5650 5850
-NoConn ~ 3500 4850
 Text Notes 7800 4600 0    50   ~ 0
 C17398
 Wire Wire Line
@@ -949,4 +944,9 @@ F 3 "~" H 4850 7650 50  0001 C CNN
 	1    4850 7650
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	3500 4850 2800 4850
+Text Label 2800 4850 0    50   ~ 0
+~TFT_RST
+NoConn ~ 4900 5850
 $EndSCHEMATC
