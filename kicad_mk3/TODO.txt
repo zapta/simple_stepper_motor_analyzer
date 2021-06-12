@@ -1,5 +1,4 @@
 
-* Revisit all SMD pads and verify that they have PASTE.
 
 
 * Delete junk kicad and model files.
