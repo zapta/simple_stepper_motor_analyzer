@@ -1,13 +1,17 @@
 
-Replace 10u tantalum with cermaic (cost)
 
 
 * Delete junk kicad and model files.
+
+* Replace backlight mosfet with NPN (e.g. SS8050) and a resistor (reduce cost).
+
 
 
 
 
 ----- Done
+
+* Replace 10u tantalum with ceramic (cost)
 
 * Verify drill size of Molex pins
 
