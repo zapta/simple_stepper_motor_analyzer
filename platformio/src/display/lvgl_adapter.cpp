@@ -18,7 +18,6 @@
 namespace lvgl_adapter {
 
 // Initialized during setup.
-//static TftDriver* tft_driver = nullptr;
 static TftDriver tft_driver;
 
 #define MY_DISP_HOR_RES (480)
@@ -39,33 +38,6 @@ static lv_color_t buf_1[kBufferSize];
 // documentation. Do not release with this flag set.
 static bool screen_capture_enabled = false;
 
-// A handler to print lvgl log messages.
-// Log level is configured in lv_conf.h.
-static void my_log_cb(lv_log_level_t level, const char* file, uint32_t line,
-                      const char* fn_name, const char* dsc) {
-  // Send the logs via serial port.
-  // TODO: change to switch().
-  if (level == LV_LOG_LEVEL_ERROR)
-    printf("ERROR: ");
-  else if (level == LV_LOG_LEVEL_WARN)
-    printf("WARNING: ");
-  else if (level == LV_LOG_LEVEL_INFO)
-    printf("INFO: ");
-  else if (level == LV_LOG_LEVEL_TRACE)
-    printf("TRACE: ");
-
-  // TODO: Merge to a single printf (?). Unless if it causes problems with the
-  // USB output.
-  printf("File: ");
-  printf("%s", file);
-  printf("#");
-  printf("%lu", line);
-  printf(": ");
-  printf("%s", fn_name);
-  printf(": ");
-  printf("%s", dsc);
-  printf("\n");
-}
 
 // NOTE: Capture the dumpped text using an external terminal emularot.
 // Platformio's own terminal drops line seperators in some cases.
@@ -124,7 +96,7 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
   // Per our lv config settings, LVGL uses 8 bits colors.
   const lv_color8_t* lv_color8 = static_cast<lv_color8_t*>(color_p);
   tft_driver.render_buffer(area->x1, area->y1, area->x2, area->y2,
-                            (uint8_t*)lv_color8);
+                           (uint8_t*)lv_color8);
 
   // IMPORTANT!!! Inform the graphics library that flushing was done.
   lv_disp_flush_ready(disp_drv);
@@ -176,9 +148,6 @@ void setup() {
 
   lv_init();
 
-  // lv_log_print_g_cb_t
-  lv_log_register_print_cb(my_log_cb);
-
   init_display_driver();
   init_touch_driver();
 }
@@ -206,9 +175,6 @@ void stop_screen_capture() {
   printf("###END screen capture\n");
 }
 
- void backlight_on() {
-   tft_driver.backlight_on();
- }
-
+void backlight_on() { tft_driver.backlight_on(); }
 
 }  // namespace lvgl_adapter
