@@ -36,7 +36,6 @@ void setup() {
   stdio_init_all();
   hardware_options::determine();
 
-
   io::setup();
 
   LED0_ON;
@@ -51,7 +50,7 @@ void setup() {
 
   touch_driver::setup();
 
-  //ver.begin();
+  // ver.begin();
 
   lvgl_adapter::setup();
 
@@ -73,7 +72,7 @@ void setup() {
   millis_to_first_screen = to_ms_since_boot(get_absolute_time());
 
   // Now that the first screen is display. We can spend some
-  // time setting up proactivly the other screens. Otherwise 
+  // time setting up proactivly the other screens. Otherwise
   // they will be setup on demand on first invocation.
   screen_manager::setup_screens_ahead();
 }
@@ -104,6 +103,7 @@ void loop() {
         printf("\nFree memory: %d\n", memory::free_memory());
         printf("Options: [%s]\n", hardware_options::get_name());
         printf("Millis to first screen: %lu\n", millis_to_first_screen);
+        puts("Pico SDK version: " PICO_SDK_VERSION_STRING);
         print_cycle = 1;
         break;
       case 1:
