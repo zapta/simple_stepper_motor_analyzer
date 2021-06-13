@@ -3,9 +3,6 @@
 #include "acquisition/adc_dma.h"
 #include "acquisition/analyzer.h"
 #include "display/lvgl_adapter.h"
-//#include "display/mk2_tft_driver.h"
-//#include "display/mk3_tft_driver.h"
-//#include "display/tft_driver.h"
 #include "display/tft_driver.h"
 #include "display/touch_driver.h"
 #include "io.h"
@@ -33,31 +30,12 @@ static bool timer_callback(repeating_timer_t* rt) {
 
 static Elapsed timer;
 
-// Initialized to TFT driver to use based on hardware version.
-//static TftDriver* tft_driver = nullptr;
-//static TftDriver tft_driver;
+static uint32_t millis_to_first_screen = 0;
 
 void setup() {
   stdio_init_all();
   hardware_config::determine();
 
-  // Query the underlying hardware to determine the
-  // TFT driver to use.
-  // driver_config = read_config_pin(18);
-  // switch (hardware_version::get()) {
-  //   case hardware_version::HARDWARE_MK2:
-  //     // Floating pin 18. Must be MK2.
-  //     tft_driver = new Mk2TftDriver();
-  //     break;
-  //   case hardware_version::HARDWARE_MK3:
-  //     // Floating pin 18. Must be MK2.
-  //     tft_driver = new Mk3TftDriver();
-  //     break;
-  //   default:
-  //     // Delay to allow establishing USB/serial connection.
-  //     sleep_ms(5000);
-  //     panic("Unexpected driver config [%s]", hardware_version::get_name());
-  // }
 
   io::setup();
 
@@ -66,9 +44,6 @@ void setup() {
   // TODO: Read settings from EEPROM
   analyzer::Settings acq_settings;
   config_eeprom::read_acquisition_settings(&acq_settings);
-  // acq_settings.offset1 = 1900;
-  // acq_settings.offset2 = 1900;
-  // acq_settings.reverse_direction = false;
 
   // Must setup analyzer before adc_dma.
   analyzer::setup(acq_settings);
@@ -87,21 +62,25 @@ void setup() {
   const bool timer_ok =
       add_repeating_timer_ms(5, timer_callback, NULL, &lvgl_ticker);
 
-  // Force a blocking screen redraw.
+  // Render the first page.
+  // lv_task_handler();
+  screen_manager::loop();
   lv_refr_now(NULL);
-
-  sleep_ms(50);  // let the screen process the data to avoid initial flicker.
+  sleep_ms(30);  // let the screen process the data to avoid initial flicker.
 
   // Turn on the backlight. User can now see the screen.
   lvgl_adapter::backlight_on();
-  //tft_driver.backlight_on();
+  millis_to_first_screen = to_ms_since_boot(get_absolute_time());
+
+  // Now that the first screen is display. We can spend some
+  // time setting up proactivly the other screens. Otherwise 
+  // they will be setup on demand on first invocation.
+  screen_manager::setup_screens_ahead();
 }
 
 void loop() {
   // LVGL processing and rendering.
   lv_task_handler();
-
-  // sleep_ms(5);
 
   // Screen updates.
   screen_manager::loop();
@@ -124,6 +103,7 @@ void loop() {
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
         printf("Hardware: [%s]\n", hardware_config::get_name());
+        printf("Millis to first screen: %lu\n", millis_to_first_screen);
         print_cycle = 1;
         break;
       case 1:

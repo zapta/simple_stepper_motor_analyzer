@@ -70,11 +70,21 @@ static const ScreenDesc settings_screen_descriptor = {SCREEN_SETTINGS,
 
 static const ScreenDesc* current_screen_desc = nullptr;
 
+// If screen is not setup yet do it now.
+static void maybe_setup_screen(const ScreenDesc* desc, uint8_t screen_num) {
+  if (desc->screen_ptr->is_setup()) {
+    return;
+  }
+  printf("Setting up screen %hhu\n", screen_num);
+  desc->screen_ptr->setup(screen_num);
+}
+
 // Finds the screen descriptor in table. Returns null if not found.
 static const ScreenDesc* find_screen_desc(ScreenId screen_id, int offset) {
   if (screen_id == SCREEN_SETTINGS) {
     // We ignore the offset since Setting screen is not in the
     // main screen sequence.
+    maybe_setup_screen(&settings_screen_descriptor, 0);
     return &settings_screen_descriptor;
   }
 
@@ -86,7 +96,9 @@ static const ScreenDesc* find_screen_desc(ScreenId screen_id, int offset) {
         idx += kNumScreens;
       }
       // Here idx is in [0, kNumScreens).
-      return &screen_table[idx];
+      const ScreenDesc* new_screen_desc = &screen_table[idx];
+      maybe_setup_screen(new_screen_desc, idx + 1);
+      return new_screen_desc;
     }
   }
   return nullptr;
@@ -141,17 +153,22 @@ static bool common_event_handler(ui_events::UiEventId ui_event_id) {
 }
 
 void setup() {
-  // Setup all screens.
-  for (int i = 0; i < kNumScreens; i++) {
-    screen_table[i].screen_ptr->setup(i + 1);
-  }
-
-  screen_settings.setup(0);
+  // We start with on demand setup() of first screen.
+  // Soon after this function return we setup the
+  // rest of the screen. This shaves about 1sec from
+  // the startup time up to first screen.
 
   // Select initial screen.
   current_screen_desc = find_screen_desc(kInitialScreen, 0);
   current_screen_desc->screen_ptr->on_load();
   lv_scr_load(current_screen_desc->screen_ptr->lv_scr());
+}
+
+void setup_screens_ahead() {
+  for (int i = 0; i < kNumScreens; i++) {
+    maybe_setup_screen(&screen_table[i], i + 1);
+  }
+  maybe_setup_screen(&settings_screen_descriptor, 0);
 }
 
 void loop() {
