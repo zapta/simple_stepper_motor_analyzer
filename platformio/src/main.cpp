@@ -9,7 +9,7 @@
 #include "lvgl.h"
 #include "misc/config_eeprom.h"
 #include "misc/elapsed.h"
-#include "misc/hardware_config.h"
+#include "misc/hardware_options.h"
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
@@ -34,7 +34,7 @@ static uint32_t millis_to_first_screen = 0;
 
 void setup() {
   stdio_init_all();
-  hardware_config::determine();
+  hardware_options::determine();
 
 
   io::setup();
@@ -102,7 +102,7 @@ void loop() {
       default:
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
-        printf("Hardware: [%s]\n", hardware_config::get_name());
+        printf("Options: [%s]\n", hardware_options::get_name());
         printf("Millis to first screen: %lu\n", millis_to_first_screen);
         print_cycle = 1;
         break;
