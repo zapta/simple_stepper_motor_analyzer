@@ -8,14 +8,14 @@
 #include "misc/hardware_options.h"
 #include "ui.h"
 #include "ui_events.h"
-//#include "pico/stdlib.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 350;
 
 static constexpr const char* kFootnotFormat =
     "To calibrate the sensors, disconnect the \n"
     "stepper motors and press SET ZERO.\n"
-    "Options: %s, firmware: %s.";
+    "Options: %s, firmware: %s.\n"
+    "Pico SDK: %s.";
 
 // Must be static. LV keeps a reference to it.
 static lv_style_t style;
@@ -119,8 +119,9 @@ void SettingsScreen::setup(uint8_t screen_num) {
   reverse_checkbox_.set_is_checked(is_reversed_direction());
 
   const char* footnote_text =
-      format(kFootnotFormat,  hardware_options::get_name(), VERSION_STRING);
-  ui::create_label(screen_, 0, 5, 270, footnote_text, ui::kFontSmallText,
+      format(kFootnotFormat, hardware_options::get_name(), VERSION_STRING,
+             PICO_SDK_VERSION_STRING);
+  ui::create_label(screen_, 0, 5, 255, footnote_text, ui::kFontSmallText,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_OLIVE, nullptr);
 };
 

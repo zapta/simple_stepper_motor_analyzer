@@ -1,6 +1,15 @@
 
 #pragma once
 
+// Releasees of Wizio Pico SDK are listed at
+// https://github.com/Wiz-IO/wizio-pico/wiki#last-news. As of June 2021 we use
+// version 1.1.2.
+#if PICO_SDK_VERSION_MAJOR != 1 || PICO_SDK_VERSION_MINOR != 1 || \
+    PICO_SDK_VERSION_REVISION != 2
+#error "Using an unexpected version of the SDK."
+#endif
+
+// Our own version.
 #define VERSION_STRING "1.0.1"
 
 namespace config {
