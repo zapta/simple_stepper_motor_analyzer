@@ -472,7 +472,7 @@ The electronic schematic, PCB layout, gerber files, and the firmware source file
 
 [Schematic](./kicad/stepper_analyzer.pdf)
 
-[BOM]()./kicad/BOM.xlsx)
+[Production files](./kicad/JLCPCB)
 
 &nbsp;
 
