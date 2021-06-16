@@ -2,7 +2,7 @@
 
 
 <span style="color:red"><b>
-NOTE (June 2021): The old design of the Simple Stepper Motor analyzer which was based on the STM32 was moved to https://github.com/zapta/simple_stepper_motor_analyzer. This is a new and improve design that is based on the Raspberry Pi Pico and a 'bare' TFT panel.</b></span> 
+NOTE (June 2021): The old design of the Simple Stepper Motor analyzer which was based on the STM32 was moved to https://github.com/zapta/legacy_stepper_motor_analyzer. This is a new and improve design that is based on the Raspberry Pi Pico and a 'bare' TFT panel.</b></span> 
 
 &nbsp;
 
