@@ -91,7 +91,7 @@ void loop() {
     LED0_OFF;
   }
 
-  // Periodic report over USB/Serial.
+  // Periodic report over USB/Serial. For debugging.
   if (elapsed_from_last_dump.elapsed_millis() > 5000) {
     elapsed_from_last_dump.reset();
 
@@ -115,6 +115,7 @@ void loop() {
         printf("\n");
         analyzer::sample_state();
         analyzer::dump_sampled_state();
+        adc_dma::dump_state();
         print_cycle = 0;
         break;
     }

@@ -1,9 +1,10 @@
 // Implementation of the acquisition module. It uses the ADC/DMA
 // interrupts to process the ADC sampling.
 
-// TODO: convert const naming style to kCammelCase.
 
 #include "adc_dma.h"
+
+#include <stdio.h>
 
 #include "hardware/adc.h"
 #include "hardware/dma.h"
@@ -20,11 +21,13 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2);
 namespace adc_dma {
 
 void disable_irq() {
-  irq_set_mask_enabled(1 << DMA_IRQ_0 | 1 << DMA_IRQ_1, false);
+  // irq_set_mask_enabled(1 << DMA_IRQ_0 | 1 << DMA_IRQ_1, false);
+  irq_set_mask_enabled(1 << DMA_IRQ_0, false);
 }
 
 void enable_irq() {
-  irq_set_mask_enabled(1 << DMA_IRQ_0 | 1 << DMA_IRQ_1, true);
+  // irq_set_mask_enabled(1 << DMA_IRQ_0 | 1 << DMA_IRQ_1, true);
+  irq_set_mask_enabled(1 << DMA_IRQ_0, true);
 }
 
 //------------------------------------------
@@ -57,27 +60,30 @@ static uint dma_chan2;
 
 static int irq_counter1 = 0;
 static int irq_counter2 = 0;
+static int irq_counter3 = 0;  // Should never count
 
-// Called when capture_buf1 is full.
-static void dma_handler1() {
+// Called when one of the DMA buffers is full
+static void dma_handler() {
   LED1_ON;
-  irq_counter1++;
-  // Clear the interrupt request.
-  dma_hw->ints0 = 1u << dma_chan1;
-  for (int i = 0; i < BUFFER_SIZE; i++) {
-    analyzer::isr_handle_one_sample(capture_buf1[i].v1, capture_buf1[i].v2);
-  }
-  LED1_OFF;
-}
-
-// Called when capture_buf2 is full.
-static void dma_handler2() {
-  LED1_ON;
-  irq_counter2++;
-  // Clear the interrupt request.
-  dma_hw->ints0 = 1u << dma_chan2;
-  for (int i = 0; i < BUFFER_SIZE; i++) {
-    analyzer::isr_handle_one_sample(capture_buf2[i].v1, capture_buf2[i].v2);
+  // DMA chan 1.
+  if (dma_hw->ints0 & 1u << dma_chan1) {
+    irq_counter1++;
+    // Clear the interrupt request.
+    dma_hw->ints0 = 1u << dma_chan1;
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+      analyzer::isr_handle_one_sample(capture_buf1[i].v1, capture_buf1[i].v2);
+    }
+    // DMA chan 2.
+  } else if (dma_hw->ints0 & 1u << dma_chan2) {
+    irq_counter2++;
+    // Clear the interrupt request.
+    dma_hw->ints0 = 1u << dma_chan2;
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+      analyzer::isr_handle_one_sample(capture_buf2[i].v1, capture_buf2[i].v2);
+    }
+  } else {
+    // Should neve happen.2
+    irq_counter3++;
   }
   LED1_OFF;
 }
@@ -130,9 +136,6 @@ void setup() {
     channel_config_set_chain_to(&dma_config1, dma_chan2);
     // Using interrupt channel 0
     dma_channel_set_irq0_enabled(dma_chan1, true);
-    // Set IRQ handler.
-    irq_set_exclusive_handler(DMA_IRQ_0, dma_handler1);
-    // irq_set_enabled(DMA_IRQ_0, true);
     dma_channel_configure(dma_chan1, &dma_config1,
                           capture_buf1,       // dst
                           &adc_hw->fifo,      // src
@@ -151,8 +154,8 @@ void setup() {
     channel_config_set_dreq(&dma_config2, DREQ_ADC);
     // When done, start the other channel.
     channel_config_set_chain_to(&dma_config2, dma_chan1);
-    dma_channel_set_irq1_enabled(dma_chan2, true);
-    irq_set_exclusive_handler(DMA_IRQ_1, dma_handler2);
+    dma_channel_set_irq0_enabled(dma_chan2, true);
+    // irq_set_exclusive_handler(DMA_IRQ_0, dma_handler2);
     //  irq_set_enabled(DMA_IRQ_1, true);
     dma_channel_configure(dma_chan2, &dma_config2,
                           capture_buf2,       // dst
@@ -162,10 +165,18 @@ void setup() {
     );
   }
 
+  // Set an IRQ handler for both channesl.
+  irq_set_exclusive_handler(DMA_IRQ_0, dma_handler);
+
   enable_irq();
 
   // Start the ADC free run sampling.
   adc_run(true);
+}
+
+void dump_state() {
+  printf("DMA counters: %lu, %lu, %lu\n", irq_counter1, irq_counter2,
+         irq_counter3);
 }
 
 }  // namespace adc_dma
