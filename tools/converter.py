@@ -1,5 +1,8 @@
 # Converts screenshot dump from the stepper analyzer to a png.
 # Crude and for developement purposes only.
+#
+# To install PIL package run:
+#   pip install Image
 
 import sys
 from PIL import Image, ImageDraw
