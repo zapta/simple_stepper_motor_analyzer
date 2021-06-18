@@ -108,6 +108,12 @@ lv_obj_t * lv_chart_create(lv_obj_t * par, const lv_obj_t * copy)
 
     ext->hdiv_cnt              = LV_CHART_HDIV_DEF;
     ext->vdiv_cnt              = LV_CHART_VDIV_DEF;
+    // Patch(zapta): Lines whose index has a set bit here use
+    // an alternative line specification. Used to draw minor
+    // division lines.
+    ext->hdiv_minor_div_lines_mask    = 0;
+    ext->vdiv_minor_div_lines_mask    = 0;
+    //
     ext->point_cnt             = LV_CHART_PNUM_DEF;
     ext->type                  = LV_CHART_TYPE_LINE;
     ext->update_mode           = LV_CHART_UPDATE_MODE_SHIFT;
@@ -147,6 +153,8 @@ lv_obj_t * lv_chart_create(lv_obj_t * par, const lv_obj_t * copy)
         ext->type       = ext_copy->type;
         ext->hdiv_cnt   = ext_copy->hdiv_cnt;
         ext->vdiv_cnt   = ext_copy->vdiv_cnt;
+        ext->hdiv_minor_div_lines_mask  = ext_copy->hdiv_minor_div_lines_mask;
+        ext->vdiv_minor_div_lines_mask  = ext_copy->vdiv_minor_div_lines_mask;
         ext->point_cnt  = ext_copy->point_cnt;
         _lv_memcpy_small(ext->ymin, ext_copy->ymin, sizeof(ext->ymin));
         _lv_memcpy_small(ext->ymax, ext_copy->ymax, sizeof(ext->ymax));
@@ -308,6 +316,20 @@ void lv_chart_set_div_line_count(lv_obj_t * chart, uint8_t hdiv, uint8_t vdiv)
 
     ext->hdiv_cnt = hdiv;
     ext->vdiv_cnt = vdiv;
+
+    lv_obj_invalidate(chart);
+}
+
+// Patch(zapta): Allows to specify division lines with alternative color, width,
+// etc.
+void lv_chart_set_minor_div_lines_masks(lv_obj_t * chart, uint32_t hdiv_mask, uint32_t vdiv_mask)
+{
+    LV_ASSERT_OBJ(chart, LV_OBJX_NAME);
+
+    lv_chart_ext_t * ext = lv_obj_get_ext_attr(chart);
+
+    ext->hdiv_minor_div_lines_mask = hdiv_mask;
+    ext->vdiv_minor_div_lines_mask = vdiv_mask;
 
     lv_obj_invalidate(chart);
 }
@@ -1070,6 +1092,14 @@ static void draw_series_bg(lv_obj_t * chart, const lv_area_t * series_area, cons
     lv_coord_t x_ofs = series_area->x1;
     lv_coord_t y_ofs = series_area->y1;
 
+    // Patch(zapta): For minor division line specification we use
+    // the line specification from that chart's BG part.
+    lv_draw_line_dsc_t minor_line_dsc;
+    lv_draw_line_dsc_init(&minor_line_dsc);
+    lv_obj_init_draw_line_dsc(chart, LV_CHART_PART_BG, &minor_line_dsc);
+    //
+
+    // Normal division line specification comes from the series BG part.
     lv_draw_line_dsc_t line_dsc;
     lv_draw_line_dsc_init(&line_dsc);
     lv_obj_init_draw_line_dsc(chart, LV_CHART_PART_SERIES_BG, &line_dsc);
@@ -1088,10 +1118,12 @@ static void draw_series_bg(lv_obj_t * chart, const lv_area_t * series_area, cons
         p1.x = 0 + x_ofs;
         p2.x = w - 1 + x_ofs;
         for(div_i = div_i_start; div_i <= div_i_end; div_i++) {
-            p1.y = (int32_t)((int32_t)(h - line_dsc.width) * div_i) / (ext->hdiv_cnt + 1);
+            const bool is_minor = ext->hdiv_minor_div_lines_mask & (1u << div_i);
+            lv_draw_line_dsc_t* const l_dsc = is_minor ? &minor_line_dsc : &line_dsc;
+            p1.y = (int32_t)((int32_t)(h - l_dsc->width) * div_i) / (ext->hdiv_cnt + 1);
             p1.y += y_ofs;
             p2.y = p1.y;
-            lv_draw_line(&p1, &p2, clip_area, &line_dsc);
+            lv_draw_line(&p1, &p2, clip_area, l_dsc);
         }
     }
 
@@ -1109,10 +1141,12 @@ static void draw_series_bg(lv_obj_t * chart, const lv_area_t * series_area, cons
         p1.y = 0 + y_ofs;
         p2.y = h + y_ofs - 1;
         for(div_i = div_i_start; div_i <= div_i_end; div_i++) {
+            const bool is_minor_line = ext->vdiv_minor_div_lines_mask & (1u << div_i);
+            lv_draw_line_dsc_t* const l_dsc = is_minor_line ? &minor_line_dsc : &line_dsc;
             p1.x = (int32_t)((int32_t)(w - line_dsc.width) * div_i) / (ext->vdiv_cnt + 1);
             p1.x += x_ofs;
             p2.x = p1.x;
-            lv_draw_line(&p1, &p2, clip_area, &line_dsc);
+            lv_draw_line(&p1, &p2, clip_area, l_dsc);
         }
     }
 }

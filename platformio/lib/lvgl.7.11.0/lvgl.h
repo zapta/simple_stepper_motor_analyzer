@@ -16,7 +16,9 @@ extern "C" {
 #define LVGL_VERSION_MAJOR 7
 #define LVGL_VERSION_MINOR 11
 #define LVGL_VERSION_PATCH 0
-#define LVGL_VERSION_INFO ""
+// Patches:
+// June 2021 zapta - Added to lv_chart specification of minor division lines.
+#define LVGL_VERSION_INFO "7.11.0.patched"
 
 /*********************
  *      INCLUDES

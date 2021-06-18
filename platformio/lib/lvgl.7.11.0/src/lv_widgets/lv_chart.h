@@ -118,6 +118,9 @@ typedef struct {
     lv_chart_axis_cfg_t x_axis;
     lv_chart_axis_cfg_t secondary_y_axis;
     uint8_t update_mode : 1;
+    // Patch(zapta): Masks for identifying minor division lines.
+    uint32_t hdiv_minor_div_lines_mask;
+    uint32_t vdiv_minor_div_lines_mask;
 } lv_chart_ext_t;
 
 /*Parts of the chart*/
@@ -195,6 +198,8 @@ void lv_chart_hide_series(lv_obj_t * chart, lv_chart_series_t * series, bool hid
  * @param vdiv number of vertical division lines
  */
 void lv_chart_set_div_line_count(lv_obj_t * chart, uint8_t hdiv, uint8_t vdiv);
+
+void lv_chart_set_minor_div_lines_masks(lv_obj_t * chart, uint32_t hdiv_mask, uint32_t vdiv_mask);
 
 /**
  * Set the minimal and maximal y values on an axis

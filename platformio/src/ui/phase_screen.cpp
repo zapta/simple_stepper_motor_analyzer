@@ -10,8 +10,8 @@ static lv_point_t points[analyzer::kCaptureBufferSize];
 
 static const ui::ChartAxisConfigs kAxisConfigs{
     .y_range = {.min = -2500, .max = 2500},
-    .x = {.labels = "-2.5A\n0\n2.5A", .num_ticks = 3, .dividers = 1},
-    .y = {.labels = "2.5A\n0\n-2.5A", .num_ticks = 3, .dividers = 1}};
+    .x = {.labels = "-2.5A\n0\n2.5A", .num_ticks = 3, .dividers = 9,  .minor_div_lines_mask = 0x03de},
+    .y = {.labels = "2.5A\n0\n-2.5A", .num_ticks = 3, .dividers = 9,  .minor_div_lines_mask = 0x03de}};
 
 void PhaseScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);

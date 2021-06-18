@@ -117,17 +117,22 @@ static void common_lv_chart_bg_style(lv_style_t* bg_style) {
 static void init_chart_styles() {
   // Background style
   lv_style_init(&chart_styles.bg);
-
   common_lv_chart_bg_style(&chart_styles.bg);
+  // Patch(zapta): Specifciation of minor division lines.
+  lv_style_set_line_color(&chart_styles.bg, LV_STATE_DEFAULT,
+                          LV_COLOR_MAKE(0x20, 0x20, 0x20));  // dark gray
+  lv_style_set_line_width(&chart_styles.bg, LV_STATE_DEFAULT, 1);
 
-  // Series style
+
+  // Series style (graph)
   lv_style_init(&chart_styles.series);
   lv_style_set_size(&chart_styles.series, LV_STATE_DEFAULT, 0);
   lv_style_set_line_width(&chart_styles.series, LV_STATE_DEFAULT, 2);
 
-  // Series bg style
+  // Series bg style (grid lines)
   lv_style_init(&chart_styles.series_bg);
   lv_style_set_line_dash_gap(&chart_styles.series_bg, LV_STATE_DEFAULT, 0);
+  lv_style_set_line_width(&chart_styles.series_bg, LV_STATE_DEFAULT, 1);
   lv_style_set_line_color(&chart_styles.series_bg, LV_STATE_DEFAULT,
                           LV_COLOR_MAKE(0x00, 0x40, 0x00));  // dark green
 }
@@ -137,6 +142,11 @@ static void init_polar_chart_styles() {
   lv_style_init(&polar_chart_styles.bg);
 
   common_lv_chart_bg_style(&polar_chart_styles.bg);
+
+  // Patch(zapta): Specifciation of minor division lines.
+  lv_style_set_line_color(&polar_chart_styles.bg, LV_STATE_DEFAULT,
+                           LV_COLOR_MAKE(0x20, 0x20, 0x20));  // dark gray
+  lv_style_set_line_width(&polar_chart_styles.bg, LV_STATE_DEFAULT, 1);
 
   // Series bg style (grid)
   lv_style_init(&polar_chart_styles.series_bg);
@@ -372,6 +382,7 @@ void set_chart_scale(lv_obj_t* lv_chart, const ChartAxisConfigs& axis_configs) {
   // include the frame.
   lv_chart_set_div_line_count(lv_chart, axis_configs.y.dividers,
                               axis_configs.x.dividers);
+  lv_chart_set_minor_div_lines_masks(lv_chart, axis_configs.y.minor_div_lines_mask, axis_configs.x.minor_div_lines_mask);
 
   lv_chart_set_y_tick_length(lv_chart, 0, 0);
   lv_chart_set_x_tick_length(lv_chart, 0, 0);

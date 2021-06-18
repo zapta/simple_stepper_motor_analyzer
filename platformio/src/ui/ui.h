@@ -85,6 +85,7 @@ struct ChartAxisConfig {
   uint8_t num_ticks = 0;
   // Vertical or horizontal internal grid lines.
   uint8_t dividers;
+  uint32_t minor_div_lines_mask = 0;
   bool is_enabled() const { return num_ticks > 0 && labels != nullptr; }
 };
 
