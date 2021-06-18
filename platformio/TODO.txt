@@ -1,4 +1,8 @@
 
+* Consider switching to 16 bits colors.
+
+* Consider switchting to dual buffer DMA screen update.
+
 * Switch to Pico SDK 1.2.x
 
 * Switch to LVGL 8.
