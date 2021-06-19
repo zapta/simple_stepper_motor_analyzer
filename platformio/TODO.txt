@@ -1,12 +1,13 @@
-* Restructure the tft driver as a namespace (currently a class)
 
 
+
+* Change the timing of the steps and retraction screens such as the value are captured by the ADC IRQ. Should 
+avoid distortions if the screen update is too slow.
 
 * Switch to Pico SDK 1.2.x
 
 * Switch to LVGL 8.
 
-* Fix screen capture.
 
 ============= DONE
 
