@@ -11,8 +11,8 @@
 #include "tft_driver.h"
 #include "touch_driver.h"
 
-#if LV_COLOR_DEPTH != 8
-#error "Expecting LVGL color depth of 8"
+#if LV_COLOR_DEPTH != 16
+#error "Expecting LVGL color depth of 16"
 #endif
 
 namespace lvgl_adapter {
@@ -25,11 +25,10 @@ static TftDriver tft_driver;
 // A static variable to store the buffers.
 static lv_disp_buf_t disp_buf;
 
-// LVGL renders up to this number of pixels at a time. By
-// Using 8 bit colors, we can fit in RAM a buffer that can
-// contains the entire screen.
-static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 320;
-
+// LVGL renders up to this number of pixels at a time. 
+//static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 320;
+static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 160;
+//
 // Static buffer(s). Since we don't use DMA, we use only a
 // single buffer and define the second one as NULL.
 static lv_color_t buf_1[kBufferSize];
@@ -54,7 +53,7 @@ static void capture_buffer(const lv_area_t* area, lv_color_t* bfr) {
     uint16_t pending_pixels_count = 0;
     uint8_t pending_pixel_color = 0;
     for (int x = 0; x < w_pixels; x++) {
-      uint8_t pixel_color = bfr[(uint32_t)y * w_pixels + x].full;
+      uint16_t pixel_color = bfr[(uint32_t)y * w_pixels + x].full;
 
       // Case 0: no pending.
       if (pending_pixels_count == 0) {
@@ -93,10 +92,10 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
     capture_buffer(area, color_p);
   }
 
-  // Per our lv config settings, LVGL uses 8 bits colors.
-  const lv_color8_t* lv_color8 = static_cast<lv_color8_t*>(color_p);
+  // Per our lv config settings, LVGL uses 16 bits colors.
+  const lv_color16_t* lv_color16 = static_cast<lv_color16_t*>(color_p);
   tft_driver.render_buffer(area->x1, area->y1, area->x2, area->y2,
-                           (uint8_t*)lv_color8);
+                           (uint16_t*)lv_color16);
 
   // IMPORTANT!!! Inform the graphics library that flushing was done.
   lv_disp_flush_ready(disp_drv);

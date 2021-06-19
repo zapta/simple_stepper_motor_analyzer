@@ -5,7 +5,7 @@
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "io.h"
-#include "tft_driver_lookup_tables.h"
+//#include "tft_driver_lookup_tables.h"
 #include "tft_driver.pio.h"
 #include "pico/stdlib.h"
 
@@ -288,19 +288,19 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   }
 
 #define SEND_PIXEL(x) \
-  PIO->txf[SM] = tft_driver_lookup_tables::color8_to_color16_table[x];
+  PIO->txf[SM] = (x);
 
 void TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
-                                 uint16_t y2, const uint8_t* color8_p) {
+                                 uint16_t y2, const uint16_t* color16_p) {
   setAddrWindow(x1, y1, x2, y2);
 
   const int32_t w_pixels = x2 - x1 + 1;
   const int32_t h_pixels = y2 - y1 + 1;
   const uint32_t n = w_pixels * h_pixels;
 
-  const uint8_t* p = color8_p;
-  const uint8_t* const p_limit = p + n;
-  const uint8_t* const p_limit_minus_20 = p_limit - 20;
+  const uint16_t* p = color16_p;
+  const uint16_t* const p_limit = p + n;
+  const uint16_t* const p_limit_minus_20 = p_limit - 20;
 
   while (p < p_limit_minus_20) {
     WAIT_FOR_FIFO_5_FREE;

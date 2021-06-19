@@ -11,6 +11,9 @@ static const lv_color_t kDebugBackgroundColor = LV_COLOR_MAKE(0x40, 0x40, 0x40);
 static void init_styles_if_needed();
 static bool styles_initialized = false;
 
+static const lv_color_t kMinorDivisionLineColor =  LV_COLOR_MAKE(0x28, 0x30, 0x28);
+static const lv_color_t kMajorDivisionLineColor =  LV_COLOR_MAKE(0x00, 0x60, 0x00);
+
 struct GaugeStyles {
   lv_style_t main;
   lv_style_t major;
@@ -120,7 +123,7 @@ static void init_chart_styles() {
   common_lv_chart_bg_style(&chart_styles.bg);
   // Patch(zapta): Specifciation of minor division lines.
   lv_style_set_line_color(&chart_styles.bg, LV_STATE_DEFAULT,
-                          LV_COLOR_MAKE(0x20, 0x20, 0x20));  // dark gray
+                        kMinorDivisionLineColor);  
   lv_style_set_line_width(&chart_styles.bg, LV_STATE_DEFAULT, 1);
 
 
@@ -134,7 +137,7 @@ static void init_chart_styles() {
   lv_style_set_line_dash_gap(&chart_styles.series_bg, LV_STATE_DEFAULT, 0);
   lv_style_set_line_width(&chart_styles.series_bg, LV_STATE_DEFAULT, 1);
   lv_style_set_line_color(&chart_styles.series_bg, LV_STATE_DEFAULT,
-                          LV_COLOR_MAKE(0x00, 0x40, 0x00));  // dark green
+                         kMajorDivisionLineColor); 
 }
 
 static void init_polar_chart_styles() {
@@ -145,7 +148,7 @@ static void init_polar_chart_styles() {
 
   // Patch(zapta): Specifciation of minor division lines.
   lv_style_set_line_color(&polar_chart_styles.bg, LV_STATE_DEFAULT,
-                           LV_COLOR_MAKE(0x20, 0x20, 0x20));  // dark gray
+                          kMinorDivisionLineColor);  
   lv_style_set_line_width(&polar_chart_styles.bg, LV_STATE_DEFAULT, 1);
 
   // Series bg style (grid)
@@ -153,26 +156,15 @@ static void init_polar_chart_styles() {
   lv_style_set_line_dash_gap(&polar_chart_styles.series_bg, LV_STATE_DEFAULT,
                              0);
   lv_style_set_line_color(&polar_chart_styles.series_bg, LV_STATE_DEFAULT,
-                          LV_COLOR_MAKE(0x00, 0x40, 0x00));  // dark green
+                         kMajorDivisionLineColor);  
 
   // Line style
   lv_style_init(&polar_chart_styles.line);
 
-  // static lv_style_t style_line;
-  //           lv_style_init(&style_line);
   lv_style_set_line_width(&polar_chart_styles.line, LV_STATE_DEFAULT, 2);
   lv_style_set_line_color(&polar_chart_styles.line, LV_STATE_DEFAULT,
                           LV_COLOR_YELLOW);
-  // lv_style_set_line_rounded(&style_line, LV_STATE_DEFAULT, true);
 
-  // lv_style_set_size(&chart_styles.series, LV_STATE_DEFAULT, 0);
-  // lv_style_set_line_width(&chart_styles.series, LV_STATE_DEFAULT, 2);
-
-  // Series bg style
-  // lv_style_init(&chart_styles.series_bg);
-  // lv_style_set_line_dash_gap(&chart_styles.series_bg, LV_STATE_DEFAULT, 0);
-  // lv_style_set_line_color(&chart_styles.series_bg, LV_STATE_DEFAULT,
-  //                         LV_COLOR_MAKE(0x00, 0x40, 0x00));  // dark green
 }
 
 static void init_histogram_styles() {
@@ -192,7 +184,7 @@ static void init_histogram_styles() {
   lv_style_set_line_dash_gap(&histogram_styles.series_bg, LV_STATE_DEFAULT, 0);
 
   lv_style_set_line_color(&histogram_styles.series_bg, LV_STATE_DEFAULT,
-                          LV_COLOR_MAKE(0x00, 0x40, 0x00));  // dark green
+                         kMajorDivisionLineColor); 
 }
 
 void create_screen(Screen* screen) {

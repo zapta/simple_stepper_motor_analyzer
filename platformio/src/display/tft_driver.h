@@ -8,7 +8,7 @@ class TftDriver {
   void begin();
 
   void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-                     const uint8_t* color8_p);
+                     const uint16_t* color16_p);
 
   void backlight_on();
 };
