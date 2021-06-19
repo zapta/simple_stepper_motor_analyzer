@@ -44,11 +44,11 @@ static void capture_buffer(const lv_area_t* area, lv_color_t* bfr) {
   const int32_t w_pixels = area->x2 - area->x1 + 1;
   const int32_t h_pixels = area->y2 - area->y1 + 1;
 
-  // x,y are relative to the area.
+  // x,y are relative to the buffer rect.
   for (int y = 0; y < h_pixels; y++) {
     printf("#%d,%d,%ld", area->x1, area->y1 + y, w_pixels);
     uint16_t pending_pixels_count = 0;
-    uint8_t pending_pixel_color = 0;
+    uint16_t pending_pixel_color = 0;
     for (int x = 0; x < w_pixels; x++) {
       uint16_t pixel_color = bfr[(uint32_t)y * w_pixels + x].full;
 
