@@ -15,7 +15,7 @@ static bool styles_initialized = false;
 static const lv_color_t kMinorDivisionLineColor =
     LV_COLOR_MAKE(0x28, 0x30, 0x28);
 static const lv_color_t kMajorDivisionLineColor =
-    LV_COLOR_MAKE(0x00, 0x60, 0x00);
+    LV_COLOR_MAKE(0x00, 0x50, 0x00);
 
 struct GaugeStyles {
   lv_style_t main;
