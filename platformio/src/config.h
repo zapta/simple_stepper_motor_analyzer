@@ -13,13 +13,12 @@ namespace config {
 // dump over the USB/serial connection.
 static constexpr bool kEnableScreenshots = false;
 
-// For UI debugging. Shows the boundaries of UI objects.
-static constexpr bool kDebugBackgrounds = false;
-
-
 // For developers only. When enabled, clicking on a
 // screen's title field generates a Debug event for that
 // screen.
 static constexpr bool kEnableDebugEvents = false;
+
+// For UI debugging. Shows the boundaries of UI objects.
+static constexpr bool kDebugBackgrounds = false;
 
 }  // namespace config

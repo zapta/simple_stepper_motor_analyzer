@@ -1,8 +1,9 @@
 #include "ui.h"
 
+#include <stdio.h>
+
 #include "config.h"
 #include "lvgl.h"
-#include <stdio.h>
 
 namespace ui {
 
@@ -11,8 +12,10 @@ static const lv_color_t kDebugBackgroundColor = LV_COLOR_MAKE(0x40, 0x40, 0x40);
 static void init_styles_if_needed();
 static bool styles_initialized = false;
 
-static const lv_color_t kMinorDivisionLineColor =  LV_COLOR_MAKE(0x28, 0x30, 0x28);
-static const lv_color_t kMajorDivisionLineColor =  LV_COLOR_MAKE(0x00, 0x60, 0x00);
+static const lv_color_t kMinorDivisionLineColor =
+    LV_COLOR_MAKE(0x28, 0x30, 0x28);
+static const lv_color_t kMajorDivisionLineColor =
+    LV_COLOR_MAKE(0x00, 0x60, 0x00);
 
 struct GaugeStyles {
   lv_style_t main;
@@ -51,7 +54,6 @@ struct PolarChartStyles {
 };
 
 static PolarChartStyles polar_chart_styles;
-
 
 const lv_font_t* const kFontSmallText = &font_montserrat_alphanum_12;
 const lv_font_t* const kFontPageTitles = &font_montserrat_alphanum_16;
@@ -123,9 +125,8 @@ static void init_chart_styles() {
   common_lv_chart_bg_style(&chart_styles.bg);
   // Patch(zapta): Specifciation of minor division lines.
   lv_style_set_line_color(&chart_styles.bg, LV_STATE_DEFAULT,
-                        kMinorDivisionLineColor);  
+                          kMinorDivisionLineColor);
   lv_style_set_line_width(&chart_styles.bg, LV_STATE_DEFAULT, 1);
-
 
   // Series style (graph)
   lv_style_init(&chart_styles.series);
@@ -137,7 +138,7 @@ static void init_chart_styles() {
   lv_style_set_line_dash_gap(&chart_styles.series_bg, LV_STATE_DEFAULT, 0);
   lv_style_set_line_width(&chart_styles.series_bg, LV_STATE_DEFAULT, 1);
   lv_style_set_line_color(&chart_styles.series_bg, LV_STATE_DEFAULT,
-                         kMajorDivisionLineColor); 
+                          kMajorDivisionLineColor);
 }
 
 static void init_polar_chart_styles() {
@@ -148,7 +149,7 @@ static void init_polar_chart_styles() {
 
   // Patch(zapta): Specifciation of minor division lines.
   lv_style_set_line_color(&polar_chart_styles.bg, LV_STATE_DEFAULT,
-                          kMinorDivisionLineColor);  
+                          kMinorDivisionLineColor);
   lv_style_set_line_width(&polar_chart_styles.bg, LV_STATE_DEFAULT, 1);
 
   // Series bg style (grid)
@@ -156,7 +157,7 @@ static void init_polar_chart_styles() {
   lv_style_set_line_dash_gap(&polar_chart_styles.series_bg, LV_STATE_DEFAULT,
                              0);
   lv_style_set_line_color(&polar_chart_styles.series_bg, LV_STATE_DEFAULT,
-                         kMajorDivisionLineColor);  
+                          kMajorDivisionLineColor);
 
   // Line style
   lv_style_init(&polar_chart_styles.line);
@@ -164,7 +165,6 @@ static void init_polar_chart_styles() {
   lv_style_set_line_width(&polar_chart_styles.line, LV_STATE_DEFAULT, 2);
   lv_style_set_line_color(&polar_chart_styles.line, LV_STATE_DEFAULT,
                           LV_COLOR_YELLOW);
-
 }
 
 static void init_histogram_styles() {
@@ -184,7 +184,7 @@ static void init_histogram_styles() {
   lv_style_set_line_dash_gap(&histogram_styles.series_bg, LV_STATE_DEFAULT, 0);
 
   lv_style_set_line_color(&histogram_styles.series_bg, LV_STATE_DEFAULT,
-                         kMajorDivisionLineColor); 
+                          kMajorDivisionLineColor);
 }
 
 void create_screen(Screen* screen) {
@@ -192,6 +192,30 @@ void create_screen(Screen* screen) {
   lv_obj_set_style_local_bg_color(lv_screen, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
                                   LV_COLOR_BLACK);
   lv_obj_set_click(lv_screen, false);
+
+  // If enabled, create hidden button for screenshot or debug event.
+  if (config::kEnableScreenshots || config::kEnableDebugEvents) {
+    lv_obj_t* lv_debug_obj = lv_obj_create(lv_screen, NULL);
+    lv_obj_set_size(lv_debug_obj, 80, 60);
+    lv_obj_set_pos(lv_debug_obj, 399, 0);
+    lv_obj_set_click(lv_debug_obj, true);
+
+    const lv_event_cb_t event_cb = ui_events::get_event_handler(
+        config::kEnableScreenshots ? ui_events::UI_EVENT_SCREENSHOT
+                                   : ui_events::UI_EVENT_DEBUG);
+    lv_obj_set_event_cb(lv_debug_obj, event_cb);
+    lv_obj_set_style_local_bg_opa(lv_debug_obj, LV_OBJ_PART_MAIN,
+                                  LV_STATE_DEFAULT, LV_OPA_COVER);
+    lv_obj_set_style_local_bg_color(
+        lv_debug_obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
+        config::kDebugBackgrounds ? kDebugBackgroundColor : LV_COLOR_BLACK);
+    lv_obj_set_style_local_border_width(lv_debug_obj, LV_OBJ_PART_MAIN,
+                                        LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_width(lv_debug_obj, LV_OBJ_PART_MAIN,
+                                         LV_STATE_DEFAULT, 0);
+    screen->lv_debug_obj = lv_debug_obj;
+  }
+
   screen->lv_screen = lv_screen;
 }
 
@@ -374,7 +398,9 @@ void set_chart_scale(lv_obj_t* lv_chart, const ChartAxisConfigs& axis_configs) {
   // include the frame.
   lv_chart_set_div_line_count(lv_chart, axis_configs.y.dividers,
                               axis_configs.x.dividers);
-  lv_chart_set_minor_div_lines_masks(lv_chart, axis_configs.y.minor_div_lines_mask, axis_configs.x.minor_div_lines_mask);
+  lv_chart_set_minor_div_lines_masks(lv_chart,
+                                     axis_configs.y.minor_div_lines_mask,
+                                     axis_configs.x.minor_div_lines_mask);
 
   lv_chart_set_y_tick_length(lv_chart, 0, 0);
   lv_chart_set_x_tick_length(lv_chart, 0, 0);
@@ -576,14 +602,6 @@ void create_page_title(const Screen& screen, const char* title, Label* label) {
 
   ui::create_label(screen, 220, 480 - 220 - 5, 0, title, kFontPageTitles,
                    LV_LABEL_ALIGN_RIGHT, LV_COLOR_GRAY, title_label_ptr);
-
-  if (config::kEnableScreenshots || config::kEnableDebugEvents) {
-    lv_obj_set_click(title_label_ptr->lv_label, true);
-    const lv_event_cb_t event_cb = ui_events::get_event_handler(
-        config::kEnableScreenshots ? ui_events::UI_EVENT_SCREENSHOT
-                                   : ui_events::UI_EVENT_DEBUG);
-    lv_obj_set_event_cb(title_label_ptr->lv_label, event_cb);
-  }
 }
 
 void create_page_elements(const Screen& screen, const char* title,

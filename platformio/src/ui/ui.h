@@ -28,6 +28,8 @@ constexpr const char* kSymbolSettings = "3";
 
 struct Screen {
   lv_obj_t* lv_screen = nullptr;
+  // For debugging and screenshots.
+  lv_obj_t* lv_debug_obj;
 };
 
 struct GaugeAxisConfig {
