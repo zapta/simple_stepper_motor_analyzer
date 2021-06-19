@@ -3,12 +3,21 @@
 
 #include <stdint.h>
 
-class TftDriver {
- public:
-  void begin();
+namespace tft_driver {
 
-  void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-                     const uint16_t* color16_p);
+void begin();
 
-  void backlight_on();
-};
+// Sets the DMA and returns. On actual completion, dma_completion_irq_cb
+// is called, at an IRQ level.
+void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                   const uint16_t* color16_p);
+
+void backlight_on();
+
+}  // namespace tft_driver
+
+namespace lvgl_adapter {
+// DMA completion handler. Implmeented by lvgl_adapter. Called at
+// IRQ level.
+void dma_completion_irq_cb();
+}  // namespace lvgl_adapter

@@ -1,14 +1,12 @@
+* Restructure the tft driver as a namespace (currently a class)
 
-* Consider switching to 16 bits colors.
 
-* Consider switchting to dual buffer DMA screen update.
 
 * Switch to Pico SDK 1.2.x
 
 * Switch to LVGL 8.
 
-* In the oscilloscope and phase charts, make the major division lines thicker. (Requires LVGL 8).
-
+* Fix screen capture.
 
 ============= DONE
 

@@ -5,9 +5,8 @@
 #include "ui.h"
 #include "ui_events.h"
 
-// NOTE: As of Mar 2021, the rendering is 12M pixels/sec
-// which allows up to42 fps. We don't double this to 40 to
-// keep some CPU margin.
+// NOTE: We would like to have a higher update rate but LVGL
+// rendering is slow when the graph is 'wild'.
 static constexpr uint8_t kUpdatesPerSecond = 20;
 
 static constexpr uint32_t kUpdateIntervalMillis = 1000 / kUpdatesPerSecond;

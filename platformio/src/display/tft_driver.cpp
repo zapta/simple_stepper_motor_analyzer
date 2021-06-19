@@ -2,16 +2,19 @@
 
 #include <stdio.h>
 
+#include "hardware/dma.h"
 #include "hardware/gpio.h"
+#include "hardware/irq.h"
 #include "hardware/pio.h"
 #include "io.h"
-//#include "tft_driver_lookup_tables.h"
-#include "tft_driver.pio.h"
 #include "pico/stdlib.h"
+#include "tft_driver.pio.h"
+
+namespace tft_driver {
 
 // Plain GPIO output pins.
 #define TFT_RST_PIN 1  // Active low.
-#define TFT_DC_PIN  2  // 1: data, 0: command.
+#define TFT_DC_PIN 2   // 1: data, 0: command.
 #define TFT_BL_PIN 15  // Active high
 
 // Outputs managed by PioTft.
@@ -45,15 +48,6 @@ constexpr uint16_t PIO_CLOCK_DIV = 1;
 
 #define PIO (pio0)
 #define SM 0
-
-// namespace pio_tft {
-
-// This is a trickey thing. It provides a mask for pio->flevel register
-// to test if the TX Fifo of sm0 has atleast 5 free words or not. It
-// is done by testing that the four bits of fifo level has the pattern
-// 00xx, which means no more than 3 occupied entries in the 8 entries
-// TX buffer.
-static constexpr uint32_t SM_FLEVEL_FREE_5_MASK = 0x000c << (SM * 8);
 
 // Masks for the FDEBUG register.
 static constexpr uint32_t SM_STALL_MASK = 1u << (PIO_FDEBUG_TXSTALL_LSB + SM);
@@ -127,13 +121,15 @@ static void flush() {
 static void set_mode_single_byte() {
   flush();
   // Force a SM jump.
-  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_driver_pio_offset_start_8));
+  pio_sm_exec(PIO, SM,
+              pio_encode_jmp(program_offset + tft_driver_pio_offset_start_8));
 }
 
 static void set_mode_double_byte() {
   flush();
   // Force a SM jump.
-  pio_sm_exec(PIO, SM, pio_encode_jmp(program_offset + tft_driver_pio_offset_start_16));
+  pio_sm_exec(PIO, SM,
+              pio_encode_jmp(program_offset + tft_driver_pio_offset_start_16));
 }
 
 // For testing.
@@ -161,7 +157,37 @@ inline void write_data_byte(uint8_t c) {
   // No need to flush. Ok to data bytes being queued.
 }
 
-void TftDriver::begin() {
+static volatile uint32_t irq_counter;
+static uint dma_chan;
+static dma_channel_config dma_config;
+
+static void dma_irq_handler() {
+  // TODO: Add verification that this is always true.
+  if (dma_hw->ints1 & 1u << dma_chan) {
+    irq_counter++;
+    // Clear the interrupt request.
+    dma_hw->ints1 = 1u << dma_chan;
+    // Call the client's completion callback.
+    lvgl_adapter::dma_completion_irq_cb();
+  }
+}
+
+static void init_dma() {
+  LED1_OFF;
+  dma_chan = dma_claim_unused_channel(true);
+
+  dma_config = dma_channel_get_default_config(dma_chan);
+  channel_config_set_transfer_data_size(&dma_config, DMA_SIZE_16);
+  channel_config_set_read_increment(&dma_config, true);    // Pixel buffer
+  channel_config_set_write_increment(&dma_config, false);  // PIO.
+  // TODO: Derive the target from the PIO and SM specification.
+  channel_config_set_dreq(&dma_config, DREQ_PIO0_TX0);
+  dma_channel_set_irq1_enabled(dma_chan, true);
+  irq_set_exclusive_handler(DMA_IRQ_1, dma_irq_handler);
+  irq_set_mask_enabled(1 << DMA_IRQ_1, true);
+}
+
+void begin() {
   init_gpio();
   init_pio();
 
@@ -255,9 +281,7 @@ void TftDriver::begin() {
   sleep_ms(120);
   write_command_byte(ILI9488_DISPON);  // Display on
 
-  // fill_rect(0, 0, 479, 319, 0x1234);
-  // sleep_ms(50);
-  // TFT_BL_HIGH;  // Backlight on
+  init_dma();
 }
 
 // This is followed by a stream of pixels to render in this
@@ -281,64 +305,28 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   TFT_DC_HIGH;
 }
 
-// A macro to wait until the TX FIFO has at least
-// 5 free words.
-#define WAIT_FOR_FIFO_5_FREE                      \
-  while ((PIO->flevel) & SM_FLEVEL_FREE_5_MASK) { \
-  }
-
-#define SEND_PIXEL(x) \
-  PIO->txf[SM] = (x);
-
-void TftDriver::render_buffer(uint16_t x1, uint16_t y1, uint16_t x2,
-                                 uint16_t y2, const uint16_t* color16_p) {
+void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                   const uint16_t* color16_p) {
   setAddrWindow(x1, y1, x2, y2);
 
   const int32_t w_pixels = x2 - x1 + 1;
   const int32_t h_pixels = y2 - y1 + 1;
   const uint32_t n = w_pixels * h_pixels;
 
-  const uint16_t* p = color16_p;
-  const uint16_t* const p_limit = p + n;
-  const uint16_t* const p_limit_minus_20 = p_limit - 20;
+  // Start the DMA transfer
+  dma_channel_configure(dma_chan, &dma_config,
+                        &PIO->txf[SM],  // dst
+                        color16_p,      // src
+                        n,              // transfer count
+                        true            // start immediately
+  );
 
-  while (p < p_limit_minus_20) {
-    WAIT_FOR_FIFO_5_FREE;
-    SEND_PIXEL(p[0]);
-    SEND_PIXEL(p[1]);
-    SEND_PIXEL(p[2]);
-    SEND_PIXEL(p[3]);
-    SEND_PIXEL(p[4]);
-
-    WAIT_FOR_FIFO_5_FREE;
-    SEND_PIXEL(p[5]);
-    SEND_PIXEL(p[6]);
-    SEND_PIXEL(p[7]);
-    SEND_PIXEL(p[8]);
-    SEND_PIXEL(p[9]);
-
-    WAIT_FOR_FIFO_5_FREE;
-    SEND_PIXEL(p[10]);
-    SEND_PIXEL(p[11]);
-    SEND_PIXEL(p[12]);
-    SEND_PIXEL(p[13]);
-    SEND_PIXEL(p[14]);
-
-    WAIT_FOR_FIFO_5_FREE;
-    SEND_PIXEL(p[15]);
-    SEND_PIXEL(p[16]);
-    SEND_PIXEL(p[17]);
-    SEND_PIXEL(p[18]);
-    SEND_PIXEL(p[19]);
-
-    p += 20;
-  }
-
-  while (p < p_limit) {
-    // NOTE: 1 free would be sufficient.
-    WAIT_FOR_FIFO_5_FREE;
-    SEND_PIXEL(*p++);
-  }
+  // For testing, simulated blocking DMA transfer.
+  // if (false) {
+  //  while (dma_channel_is_busy(dma_chan)) {
+  //}
 }
 
-void TftDriver::backlight_on() { TFT_BL_HIGH; }
+void backlight_on() { TFT_BL_HIGH; }
+
+}  // namespace tft_driver

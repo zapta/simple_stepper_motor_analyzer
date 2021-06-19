@@ -17,26 +17,23 @@
 
 namespace lvgl_adapter {
 
-// Initialized during setup.
-static TftDriver tft_driver;
-
 #define MY_DISP_HOR_RES (480)
 
 // A static variable to store the buffers.
 static lv_disp_buf_t disp_buf;
+static lv_disp_drv_t disp_drv;
 
-// LVGL renders up to this number of pixels at a time. 
-//static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 320;
-static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 160;
+// LVGL renders up to this number of pixels at a time.
+// We use two buffers, each with a 1/4 screen size and alternate
+// render/DMA.
+static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 80;
 //
-// Static buffer(s). Since we don't use DMA, we use only a
-// single buffer and define the second one as NULL.
 static lv_color_t buf_1[kBufferSize];
+static lv_color_t buf_2[kBufferSize];
 
 // For developer's usage. Eatables screen capture for
 // documentation. Do not release with this flag set.
 static bool screen_capture_enabled = false;
-
 
 // NOTE: Capture the dumpped text using an external terminal emularot.
 // Platformio's own terminal drops line seperators in some cases.
@@ -94,20 +91,18 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
 
   // Per our lv config settings, LVGL uses 16 bits colors.
   const lv_color16_t* lv_color16 = static_cast<lv_color16_t*>(color_p);
-  tft_driver.render_buffer(area->x1, area->y1, area->x2, area->y2,
-                           (uint16_t*)lv_color16);
+  tft_driver::render_buffer(area->x1, area->y1, area->x2, area->y2,
+                            (uint16_t*)lv_color16);
 
-  // IMPORTANT!!! Inform the graphics library that flushing was done.
-  lv_disp_flush_ready(disp_drv);
-  LED2_OFF;
+  // NOTE: The DMA completion callback will call lv_disp_flush_ready(disp_drv)
+  // once the DMA to the TFT is completed.
 }
 
 void static init_display_driver() {
   // Initialize `disp_buf` with the buffer. We pass NULL for
   // the second (optional) buffer since we don't use DMA.
-  lv_disp_buf_init(&disp_buf, buf_1, NULL, kBufferSize);
+  lv_disp_buf_init(&disp_buf, buf_1, buf_2, kBufferSize);
 
-  lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
 
   // Sets an initialized buffer.
@@ -141,9 +136,12 @@ void static init_touch_driver() {
   lv_indev_drv_register(&indev_drv);
 }
 
+// DMA completion callback from the tft_driver.
+void dma_completion_irq_cb() { lv_disp_flush_ready(&disp_drv); }
+
 // Called once from main on program start.
 void setup() {
-  tft_driver.begin();
+  tft_driver::begin();
 
   lv_init();
 
@@ -174,6 +172,6 @@ void stop_screen_capture() {
   printf("###END screen capture\n");
 }
 
-void backlight_on() { tft_driver.backlight_on(); }
+void backlight_on() { tft_driver::backlight_on(); }
 
 }  // namespace lvgl_adapter
