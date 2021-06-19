@@ -1,7 +1,6 @@
 #pragma once
 
 #include "misc/circular_buffer.h"
-#include "misc/elapsed.h"
 #include "screen_manager.h"
 
 class RetractionChartScreen : public screen_manager::Screen {
@@ -18,7 +17,6 @@ class RetractionChartScreen : public screen_manager::Screen {
 
   // NOTE: Chart's area width is 400 pixels.
   static constexpr int16_t kNumPoints = 200;
-  Elapsed display_update_elapsed_;
   // Counter to update the steps field once every N chart updates.
   uint8_t field_update_divider_ = 0;
   ui::Label retraction_field_;

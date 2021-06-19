@@ -1,7 +1,6 @@
 #pragma once
 
 #include "misc/circular_buffer.h"
-#include "misc/elapsed.h"
 #include "screen_manager.h"
 
 class StepsChartScreen : public screen_manager::Screen {

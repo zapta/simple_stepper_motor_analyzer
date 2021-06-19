@@ -1,15 +1,13 @@
 #include "retraction_chart_screen.h"
 
+#include <limits>
+
 #include "acquisition/analyzer.h"
 #include "ui.h"
 #include "ui_events.h"
 
-// NOTE: As of Mar 2021, the rendering is 12M pixels/sec
-// which allows up to42 fps. We don't double this to 40 to
-// keep some CPU margin.
-static constexpr uint8_t kUpdatesPerSecond = 20;
-
-static constexpr uint32_t kUpdateIntervalMillis = 1000 / kUpdatesPerSecond;
+// Axis configuration below assumes 20 samples/secs.
+static_assert(analyzer::kStepsCaptursPerSec == 20);
 
 // Update the retraction field once every N times the chart is updated.
 static constexpr int kFieldUpdateRatio = 2;
@@ -44,9 +42,6 @@ void RetractionChartScreen::setup(uint8_t screen_num) {
 
 void RetractionChartScreen::on_load() {
   chart_.ser1.clear();
-
-  // Force display update on first loop.
-  display_update_elapsed_.set(kUpdateIntervalMillis + 1);
 };
 
 void RetractionChartScreen::on_unload(){};
@@ -72,27 +67,39 @@ void RetractionChartScreen::on_event(ui_events::UiEventId ui_event_id) {
 }
 
 void RetractionChartScreen::loop() {
-  // We update at a fixed rate.
-  if (display_update_elapsed_.elapsed_millis() < kUpdateIntervalMillis) {
+  const analyzer::StepsCaptureBuffer* steps_sample =
+      analyzer::sample_steps_capture();
+
+  if (steps_sample->is_empty()) {
     return;
   }
-  // Instead of reset() we advance to avoid accomulating
-  // an error.
-  display_update_elapsed_.advance(kUpdateIntervalMillis);
 
-  const analyzer::State* state = analyzer::sample_state();
+  // Add the new samples to the chart.
+  const int new_items = steps_sample->size();
+  for (int i = 0; i < new_items; i++) {
+    const analyzer::StepsCaptureItem* sample = steps_sample->get(i);
 
-  int retraction_steps = state->max_full_steps - state->full_steps;
+    int retraction_steps = sample->max_full_steps - sample->full_steps;
 
-  // Add a data point to the chart.
-  chart_.ser1.set_next((lv_coord_t)retraction_steps);
+    // Limit range to avoid over/underflow.
+    constexpr lv_coord_t kMaxLvCoord = std::numeric_limits<lv_coord_t>::max();
+    constexpr lv_coord_t kMinLvCoord = std::numeric_limits<lv_coord_t>::min();
+    if (retraction_steps > kMaxLvCoord) {
+      retraction_steps = kMaxLvCoord;
+    } else if (retraction_steps < kMinLvCoord) {
+      retraction_steps = kMinLvCoord;
+    }
 
-  // We first update the chart and then the occasional field
-  // update. This affects the ordering of the rendering and results in
-  // somewhat more consistent chart rendering intervals (?).
-  if (++field_update_divider_ >= kFieldUpdateRatio) {
-    field_update_divider_ = 0;
-    retraction_field_.set_text_int(retraction_steps);
+    // Add a data point to the chart.
+    chart_.ser1.set_next((lv_coord_t)retraction_steps);
+
+    // We first update the chart and then the occasional field
+    // update. This affects the ordering of the rendering and results in
+    // somewhat more consistent chart rendering intervals (?).
+    if (++field_update_divider_ >= kFieldUpdateRatio) {
+      field_update_divider_ = 0;
+      retraction_field_.set_text_int(retraction_steps);
+    }
   }
 
   // Force screen rendering now rather than waiting for the next LVGL screen
