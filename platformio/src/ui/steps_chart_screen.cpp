@@ -76,6 +76,9 @@ void StepsChartScreen::loop() {
   if (display_update_elapsed_.elapsed_millis() < kUpdateIntervalMillis) {
     return;
   }
+
+  LED2_ON;
+
   // Instead of reset() we advance to avoid accomulating
   // an error.
   display_update_elapsed_.advance(kUpdateIntervalMillis);
@@ -122,4 +125,6 @@ void StepsChartScreen::loop() {
   // Force screen rendering now rather than waiting for the next LVGL screen
   // update timeslot.
   lv_refr_now(NULL);
+
+  LED2_OFF;
 }

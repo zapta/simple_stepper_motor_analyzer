@@ -84,7 +84,7 @@ static void capture_buffer(const lv_area_t* area, lv_color_t* bfr) {
 // color is uint16_t RGB565.
 static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
                         lv_color_t* color_p) {
-  LED2_ON;
+  //LED2_ON;
   if (screen_capture_enabled) {
     capture_buffer(area, color_p);
   }
@@ -94,6 +94,7 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
   tft_driver::render_buffer(area->x1, area->y1, area->x2, area->y2,
                             (uint16_t*)lv_color16);
 
+  //LED2_OFF;
   // NOTE: The DMA completion callback will call lv_disp_flush_ready(disp_drv)
   // once the DMA to the TFT is completed.
 }
