@@ -14,9 +14,10 @@ class StepsChartScreen : public screen_manager::Screen {
   virtual void on_event(ui_events::UiEventId ui_event_id) override;
 
  private:
-  // NOTE: Chart's area width is 400 pixels.
+  // NOTE: Chart's area width is 400 pixels. Note that
+  // the more points we have, the slower is the LVGL 
+  // in memory rendering.
   static constexpr int16_t kNumPoints = 200;
-  Elapsed display_update_elapsed_;
   // Counter to update the steps field once every N chart updates.
   uint8_t field_update_divider_ = 0;
   ui::Label steps_field_;
