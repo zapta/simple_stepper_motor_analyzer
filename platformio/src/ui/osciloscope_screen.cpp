@@ -20,7 +20,7 @@ static const ui::ChartAxisConfigs kAxisConfigsAlternative{
 void OsciloscopeScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "CURRENT PATTERNS", screen_num, nullptr);
-  ui::create_chart(screen_, analyzer::kCaptureBufferSize, 2,
+  ui::create_chart(screen_, analyzer::kAdcCaptureBufferSize, 2,
                    kAxisConfigsNormal, ui_events::UI_EVENT_SCALE, &chart_);
   capture_controls_.setup(screen_);
 };
@@ -67,7 +67,7 @@ void OsciloscopeScreen::update_display() {
 
   // Has capture data.
   const analyzer::CaptureBuffer* capture_buffer =  capture_util::capture_buffer();
-  for (int i = 0; i < analyzer::kCaptureBufferSize; i++) {
+  for (int i = 0; i < analyzer::kAdcCaptureBufferSize; i++) {
     const analyzer::CaptureItem* item =
         capture_buffer->items.get(i);
     // Currents in millamps [-2500, 2500].

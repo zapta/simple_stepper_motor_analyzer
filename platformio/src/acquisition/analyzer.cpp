@@ -314,7 +314,7 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
     switch (isr_data.capture_state) {
       // In this sate we blindly fill half of the buffer.
       case CAPTURE_HALF_FILL:
-        if (isr_data.capture_buffer.items.size() >= kCaptureBufferSize / 2) {
+        if (isr_data.capture_buffer.items.size() >= kAdcCaptureBufferSize / 2) {
           isr_data.capture_state = CAPTURE_PRE_TRIGGER;
         }
         break;
@@ -338,7 +338,7 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
         if (old_v1 < -10 && v1 >= 0) {
           // Keep only the last n/2 points. This way the trigger will
           // always be in the middle of the buffer.
-          isr_data.capture_buffer.items.keep_at_most(kCaptureBufferSize / 2);
+          isr_data.capture_buffer.items.keep_at_most(kAdcCaptureBufferSize / 2);
           isr_data.capture_buffer.trigger_found = true;
           isr_data.capture_state = CAPTURE_POST_TRIGER;
         }

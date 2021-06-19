@@ -6,7 +6,7 @@
 // NOTE: Capture deviders are configured in capture_util.cpp.
 
 // TODO: Make class member? Share with other screen?
-static lv_point_t points[analyzer::kCaptureBufferSize];
+static lv_point_t points[analyzer::kAdcCaptureBufferSize];
 
 static const ui::ChartAxisConfigs kAxisConfigs{
     .y_range = {.min = -2500, .max = 2500},
@@ -70,7 +70,7 @@ void PhaseScreen::update_display() {
   }
 
   // Update both chart series with the new captured data.
-  for (int i = 0; i < analyzer::kCaptureBufferSize; i++) {
+  for (int i = 0; i < analyzer::kAdcCaptureBufferSize; i++) {
     const analyzer::CaptureItem* item =
         capture_util::capture_buffer()->items.get(i);
     // Currents in millamps [-2500, 2500].
@@ -83,7 +83,7 @@ void PhaseScreen::update_display() {
 
   // The line keeps a reference to our points buffer.
   lv_line_set_points(polar_chart_.lv_line, points,
-                     analyzer::kCaptureBufferSize);
+                     analyzer::kAdcCaptureBufferSize);
 }
 
 void PhaseScreen::loop() {

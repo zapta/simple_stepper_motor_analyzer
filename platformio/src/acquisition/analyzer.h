@@ -29,7 +29,7 @@ struct Settings {
 //
 // NOTE: 400 is the width in pixels of the active plot area of the 
 // osciloscope screen.
-constexpr int kCaptureBufferSize = 400;
+constexpr int kAdcCaptureBufferSize = 400;
 
 // A single captured item. These are the signed values
 // in adc counts of the two curent sensing channels.
