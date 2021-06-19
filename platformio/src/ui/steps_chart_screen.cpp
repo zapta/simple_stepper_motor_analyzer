@@ -1,18 +1,17 @@
 #include "steps_chart_screen.h"
 
+#include <stdio.h>
+
 #include "acquisition/analyzer.h"
 #include "io.h"
 #include "ui.h"
 #include "ui_events.h"
 
-// NOTE: We would like to have a higher update rate but LVGL
-// rendering is slow when the graph is 'wild'.
-static constexpr uint8_t kUpdatesPerSecond = 20;
-
-static constexpr uint32_t kUpdateIntervalMillis = 1000 / kUpdatesPerSecond;
+// Axis configuration below assumes 20 samples/secs.
+static_assert(analyzer::kStepsCaptursPerSec == 20);
 
 // Update the steps field once every N time the chart is updated.
-static constexpr int kFieldUpdateRatio = 2;
+static constexpr int kFieldUpdateRatio = 5;
 
 static const ui::ChartAxisConfigs kAxisConfigsNormal{
     .y_range = {.min = 0, .max = 1000},
@@ -41,9 +40,7 @@ void StepsChartScreen::setup(uint8_t screen_num) {
 
 void StepsChartScreen::on_load() {
   chart_.ser1.clear();
-
-  // Force display update on first loop.
-  display_update_elapsed_.set(kUpdateIntervalMillis + 1);
+  points_buffer_.clear();
 };
 
 void StepsChartScreen::on_unload(){};
@@ -65,43 +62,56 @@ void StepsChartScreen::on_event(ui_events::UiEventId ui_event_id) {
       chart_.set_scale(alternative_scale_ ? kAxisConfigsAlternative
                                           : kAxisConfigsNormal);
       lv_chart_refresh(chart_.lv_chart);
-      ;
     default:
       break;
   }
 }
 
 void StepsChartScreen::loop() {
-  // We update at a fixed rate.
-  if (display_update_elapsed_.elapsed_millis() < kUpdateIntervalMillis) {
+  const analyzer::StepsCaptureBuffer* steps_sample =
+      analyzer::sample_steps_capture();
+ 
+  if (steps_sample->is_empty()) {
     return;
   }
 
   LED2_ON;
 
-  // Instead of reset() we advance to avoid accomulating
-  // an error.
-  display_update_elapsed_.advance(kUpdateIntervalMillis);
+  // Add the new items to points_buffer_, adjusting y range
+  // as needed.
+  const int new_items = steps_sample->size();
+  for (int i = 0; i < new_items; i++) {
+    // int32_t abs_steps = state->full_steps;
+    int32_t abs_steps = steps_sample->get(i)->full_steps;
 
-  const analyzer::State* state = analyzer::sample_state();
+    // Start from the zero line.
+    if (points_buffer_.is_empty()) {
+      y_offset_ = -abs_steps;
+    }
 
-  int32_t abs_steps = state->full_steps;
+    // Shift the point into our local buffer.
+    *points_buffer_.insert() = abs_steps;
 
-  // Shift the point into our local buffer.
-  *points_buffer_.insert() = abs_steps;
+    const ui::Range& y_range = alternative_scale_
+                                   ? kAxisConfigsAlternative.y_range
+                                   : kAxisConfigsNormal.y_range;
 
-  const ui::Range& y_range = alternative_scale_
-                                 ? kAxisConfigsAlternative.y_range
-                                 : kAxisConfigsNormal.y_range;
+    // Adjust offset if value got out of chart range.
+    const int32_t rel_steps = abs_steps + y_offset_;
+    if (rel_steps > y_range.max) {
+      y_offset_ -= (rel_steps - y_range.max);
+    } else if (rel_steps < y_range.min) {
+      y_offset_ += (y_range.min - rel_steps);
+    }
 
-  // Adjust offset if value got out of chart range.
-  const int32_t rel_steps = abs_steps + y_offset_;
-  if (rel_steps > y_range.max) {
-    y_offset_ -= (rel_steps - y_range.max);
-  } else if (rel_steps < y_range.min) {
-    y_offset_ += (y_range.min - rel_steps);
+    // Every n points we update the steps numeric display.
+    if (++field_update_divider_ >= kFieldUpdateRatio) {
+      field_update_divider_ = 0;
+      steps_field_.set_text_int(abs_steps);
+    }
   }
 
+  // Update the chart with points in points_buffer_
   const uint16_t n = points_buffer_.size();
 
   for (uint16_t i = 0; i < n; i++) {
@@ -113,14 +123,6 @@ void StepsChartScreen::loop() {
   }
 
   lv_chart_refresh(chart_.lv_chart);
-
-  // We first update the chart and then the occasional field
-  // update. This affects the ordering of the rendering and results in
-  // somewhat more consistent chart rendering intervals (?).
-  if (++field_update_divider_ >= kFieldUpdateRatio) {
-    field_update_divider_ = 0;
-    steps_field_.set_text_int(abs_steps);
-  }
 
   // Force screen rendering now rather than waiting for the next LVGL screen
   // update timeslot.

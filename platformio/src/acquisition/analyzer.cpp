@@ -49,6 +49,9 @@ constexpr uint16_t kEnergizedThresholdCounts = 150;
 constexpr int kMinOffset = 0;
 constexpr int kMaxOffset = 4095;  // 12 bits max
 
+// We capture steps every this number of ADC ticks.
+constexpr uint16_t kStepsCaptureDivider = TicksPerSecond / kStepsCaptursPerSec;
+
 enum AdcCaptureState {
   // Filling half of the capture buffer.
   ADC_CAPTURE_HALF_FILL,
@@ -80,9 +83,13 @@ struct IsrData {
   uint16_t adc_capture_divider_counter = 0;
   // Capturing state.
   AdcCaptureState adc_capture_state = ADC_CAPTURE_IDLE;
-  // The capture buffer itself. Updated by ISR when state != CAPTURE_IDLE
+  // The ADC capture buffer. Updated by ISR when state != CAPTURE_IDLE
   // and accessible by the UI (ready only) when state = CAPTURE_IDLE.
   AdcCaptureBuffer adc_capture_buffer;
+  // The steps capture buffer.
+  StepsCaptureBuffer steps_capture_buffer;
+  // For capturing only the N's steps reading.
+  uint16_t steps_capture_divider_counter = 0;
 };
 
 static IsrData isr_data;
@@ -122,9 +129,25 @@ extern void start_adc_capture(uint16_t divider) {
   //__enable_irq();
 }
 
+static StepsCaptureBuffer steps_capture_sample_buffer;
+const StepsCaptureBuffer* sample_steps_capture() {
+  steps_capture_sample_buffer.clear();
+  adc_dma::disable_irq();
+  {
+    if (!isr_data.steps_capture_buffer.is_empty()) {
+      steps_capture_sample_buffer = isr_data.steps_capture_buffer;
+      isr_data.steps_capture_buffer.clear();
+    }
+  }
+  adc_dma::enable_irq();
+  return &steps_capture_sample_buffer;
+}
+
 // Users are expected to read this buffer only when capturing
 // is not active.
-const AdcCaptureBuffer* adc_capture_buffer() { return &isr_data.adc_capture_buffer; }
+const AdcCaptureBuffer* adc_capture_buffer() {
+  return &isr_data.adc_capture_buffer;
+}
 
 const State* sample_state() {
   adc_dma::disable_irq();
@@ -192,7 +215,6 @@ void dump_sampled_state() {
                sampled_state.buckets[i].total_steps)
             : 0;
     printf("%lu ", avg_peak_current);
-
   }
   printf("\n");
 
@@ -282,6 +304,14 @@ static filters::Adc12BitsLowPassFilter<400> signal2_filter;
 void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
   isr_data.state.tick_count++;
 
+  // Every N ADC ticks, capture the steps values.
+  if (++isr_data.steps_capture_divider_counter >= kStepsCaptureDivider) {
+    isr_data.steps_capture_divider_counter = 0;
+    StepsCaptureItem* item = isr_data.steps_capture_buffer.insert();
+    item->full_steps = isr_data.state.full_steps;
+    item->max_full_steps = isr_data.state.max_full_steps;
+  }
+
   //  ignore ADC readings that have the error flag set (bit 15);
   if (raw_v1 & 0x8000 || raw_v2 & 0x8000) {
     isr_data.state.ticks_with_errors++;
@@ -307,14 +337,16 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
     isr_data.adc_capture_divider_counter = 0;
     // Insert sample to circular buffer. If the buffer is full it drops
     // the oldest item.
-    AdcCaptureItem* adc_capture_item = isr_data.adc_capture_buffer.items.insert();
+    AdcCaptureItem* adc_capture_item =
+        isr_data.adc_capture_buffer.items.insert();
     adc_capture_item->v1 = v1;
     adc_capture_item->v2 = v2;
 
     switch (isr_data.adc_capture_state) {
       // In this sate we blindly fill half of the buffer.
       case ADC_CAPTURE_HALF_FILL:
-        if (isr_data.adc_capture_buffer.items.size() >= kAdcCaptureBufferSize / 2) {
+        if (isr_data.adc_capture_buffer.items.size() >=
+            kAdcCaptureBufferSize / 2) {
           isr_data.adc_capture_state = ADC_CAPTURE_PRE_TRIGGER;
         }
         break;
@@ -338,7 +370,8 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
         if (old_v1 < -10 && v1 >= 0) {
           // Keep only the last n/2 points. This way the trigger will
           // always be in the middle of the buffer.
-          isr_data.adc_capture_buffer.items.keep_at_most(kAdcCaptureBufferSize / 2);
+          isr_data.adc_capture_buffer.items.keep_at_most(kAdcCaptureBufferSize /
+                                                         2);
           isr_data.adc_capture_buffer.trigger_found = true;
           isr_data.adc_capture_state = ADC_CAPTURE_POST_TRIGER;
         }
@@ -487,7 +520,6 @@ void setup(const Settings& settings) {
   isr_data.settings = settings;
   isr_data.settings.offset1 = clip_offset(isr_data.settings.offset1);
   isr_data.settings.offset2 = clip_offset(isr_data.settings.offset2);
-
 }
 
 // This involves floating point operations and thus slow. Do not

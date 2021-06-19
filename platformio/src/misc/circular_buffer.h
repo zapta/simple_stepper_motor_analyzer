@@ -24,7 +24,9 @@ class CircularBuffer {
 
   inline uint16_t size() const {  return size_; }
 
-  // Retuns a pointer to the new location to initialized.
+  // Insert a new item. Drop oldest is already full.
+  // Retuns a mutable pointer to the new item buffer. It's caller's 
+  // responsiblity to set the new item.
   inline T* insert() {
       T* result = &items_[next_];
     if (++next_ >= n) {

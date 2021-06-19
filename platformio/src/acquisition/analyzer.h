@@ -27,9 +27,9 @@ struct Settings {
 // the horizontal axis at the middle of the buffer for better
 // visual stability.
 //
-// NOTE: 400 is the width in pixels of the active plot area of the 
+// NOTE: 400 is the width in pixels of the active plot area of the
 // osciloscope screen.
-constexpr int kAdcCaptureBufferSize = 400;
+constexpr uint32_t kAdcCaptureBufferSize = 400;
 
 // A single captured item. These are the signed values
 // in adc counts of the two curent sensing channels.
@@ -51,17 +51,36 @@ struct AdcCaptureBuffer {
   bool trigger_found;
 };
 
+// Max number of capture steps items. Stpes are captures at
+// a slow rate so a small number is suffient for the
+// UI to catch up considering the worst case screen update
+// time.
+constexpr uint32_t kStepsCaptureBufferSize = 10;
+
+constexpr uint32_t kStepsCaptursPerSec = 20;
+
+struct StepsCaptureItem {
+  // Snapshots of the corresponding fields in State object.
+  int full_steps;
+  int max_full_steps;
+};
+
+typedef CircularBuffer<StepsCaptureItem, kStepsCaptureBufferSize> StepsCaptureBuffer;
+
 // Step direction classification. The analyzer classifies
 // each step with these gats. Unknown happens when direction
 // is reversed at the middle of the step.
 enum Direction { UNKNOWN_DIRECTION, FORWARD, BACKWARD };
 
+// A sampling tick includes a pair of ADC sampling one from
+// each of the two channels.
 // Sampling rate is 100K sampling-pairs/sec. Should match ADC
-// settings.
+// settings (which samples at a 2x rate, alternating betwee
+// the two channels)
 constexpr int kUsecsPerTick = 10;
 constexpr int TicksPerSecond = 1000000 / kUsecsPerTick;
 
-// Max range when using ACS70331EESATR-2P5B3 (+/- 2.5A).
+// Max range when using ACS70331EOLCTR-2P5B3 (+/- 2.5A).
 // Double this if using the +/-5A current sensor variant.
 constexpr int kMaxMilliamps = 2500;
 
@@ -154,56 +173,61 @@ struct State {
 };
 
 // Helpers for dumping aquisition sate. For debugging.
-extern void dump_sampled_state();
-extern void dump_adc_capture(const AdcCaptureBuffer& adc_capture_buffer);
+void dump_sampled_state();
+void dump_adc_capture(const AdcCaptureBuffer& adc_capture_buffer);
 
 // Called once during program initialization.
-extern void setup(const Settings& settings);
+void setup(const Settings& settings);
 
 // Is the capture buffer full with data?
-extern bool is_adc_capture_ready();
+bool is_adc_capture_ready();
 
 // Call after is_capture_ready() is true, to get a pointer
 // to internal buffer that contains the capture buffer.
-extern const AdcCaptureBuffer* adc_capture_buffer();
+const AdcCaptureBuffer* adc_capture_buffer();
 
 // Start signal capturing. Data is ready when
 // is_capture_ready() is true. If divider > 1,
 // only one every n ADC samples is captured.
-extern void start_adc_capture(uint16_t divider);
+void start_adc_capture(uint16_t divider);
+
+// Sample capture steps items since last call to this function.
+// Returns a pointer to an internal buffer with the consumed 
+// items, if any.
+const StepsCaptureBuffer* sample_steps_capture();
 
 // Sample the current state to an internal buffer and return
 // a const ptr to it. Values are stable until next time
 // this method is called.
-extern const State* sample_state();
+const State* sample_state();
 
 // Clears state data. This resets counters, min/max values,
 // histograms, etc.
-extern void reset_state();
+void reset_state();
 
 // Return the steps value of the given state.
-extern double state_steps(const State& state);
+double state_steps(const State& state);
 
 // Convert adc value to milliamps.
-extern int adc_value_to_milliamps(int adc_value);
+int adc_value_to_milliamps(int adc_value);
 
 // Convert adc value to amps.
-extern float adc_value_to_amps(int adc_value);
+float adc_value_to_amps(int adc_value);
 
 // Call this when the coil current is known to be zero to
 // calibrate the internal offset1 and offset2.
-extern void calibrate_zeros();
+void calibrate_zeros();
 
 // Set direction. This updates the current settings.
 // Controlled by the user in the Settings screen.
-extern void set_direction(bool reverse_direction);
+void set_direction(bool reverse_direction);
 
 // Return a copy of the internal settings. Used after
 // calibrate_zeros() to save the current settings in the
 // EEPROM.
-extern void get_settings(Settings* settings);
+void get_settings(Settings* settings);
 
 // @@@ Temp
-extern void dump_dma_state();
+void dump_dma_state();
 
 }  // namespace analyzer
