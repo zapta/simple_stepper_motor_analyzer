@@ -258,6 +258,19 @@ void begin() {
 
   write_command_byte(0xB1);  // Frame rate
   write_data_byte(0xA0);     // 60Hz
+  //write_data_byte(0x00);     // 30Hz
+  write_data_byte(0x10);     // NOTE: Was missing originally. RTNA, Default 0x11. 
+
+  // // Optimized for a long vertical blank for sync update.
+  // write_command_byte(0xb5);
+  // write_data_byte(0x02);    // LOW VFP
+  // write_data_byte(0x1C);    // HIGH VPB
+  // write_data_byte(0x02);    // LOW HFP 
+  // write_data_byte(0x02);    // Low HBP
+
+  write_command_byte(0x35);  // Tearing effect signal on.
+  write_data_byte(0x00);     // Vsync only.
+  //write_data_byte(0x01);     // Vsync + hsync.
 
   write_command_byte(0xB4);  // Display Inversion Control
   write_data_byte(0x02);     // 2-dot
