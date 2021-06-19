@@ -49,17 +49,17 @@ constexpr uint16_t kEnergizedThresholdCounts = 150;
 constexpr int kMinOffset = 0;
 constexpr int kMaxOffset = 4095;  // 12 bits max
 
-enum CaptureState {
+enum AdcCaptureState {
   // Filling half of the capture buffer.
-  CAPTURE_HALF_FILL,
+  ADC_CAPTURE_HALF_FILL,
   // Keep filling in a circular way until a trigger event
   // or wait for trigger timeout.
-  CAPTURE_PRE_TRIGGER,
+  ADC_CAPTURE_PRE_TRIGGER,
   // Keep capture points as long as the capture buffer is not full.
-  CAPTURE_POST_TRIGER,
+  ADC_CAPTURE_POST_TRIGER,
   // Not capturing. ISR is guaranteed not to update or access the
   // capture buffer.
-  CAPTURE_IDLE,
+  ADC_CAPTURE_IDLE,
 };
 
 // This data is accessed from interrupt and thus should
@@ -73,31 +73,31 @@ struct IsrData {
 
   // Signal capturing.
   // Time out for waiting for trigger in divided ADC ticks.
-  uint32_t capture_pre_trigger_items_left = 0;
+  uint32_t adc_capture_pre_trigger_items_left = 0;
   // Factor to divide ADC ticks. Only every n'th sample is captured.
-  uint16_t capture_divider = 1;
+  uint16_t adc_capture_divider = 1;
   // Up counter for capturing only every n'th samples.
-  uint16_t capture_divider_counter = 0;
+  uint16_t adc_capture_divider_counter = 0;
   // Capturing state.
-  CaptureState capture_state = CAPTURE_IDLE;
+  AdcCaptureState adc_capture_state = ADC_CAPTURE_IDLE;
   // The capture buffer itself. Updated by ISR when state != CAPTURE_IDLE
   // and accessible by the UI (ready only) when state = CAPTURE_IDLE.
-  CaptureBuffer capture_buffer;
+  AdcCaptureBuffer adc_capture_buffer;
 };
 
 static IsrData isr_data;
 
-extern bool is_capture_ready() {
-  CaptureState capture_state;
+extern bool is_adc_capture_ready() {
+  AdcCaptureState adc_capture_state;
   //__disable_irq();
   adc_dma::disable_irq();
-  { capture_state = isr_data.capture_state; }
+  { adc_capture_state = isr_data.adc_capture_state; }
   //__enable_irq();
   adc_dma::enable_irq();
-  return capture_state == CAPTURE_IDLE;
+  return adc_capture_state == ADC_CAPTURE_IDLE;
 }
 
-extern void start_capture(uint16_t divider) {
+extern void start_adc_capture(uint16_t divider) {
   // Force a reasonable range.
   if (divider < 1) {
     divider = 1;
@@ -105,18 +105,18 @@ extern void start_capture(uint16_t divider) {
     divider = 1000;
   }
 
-  // Since capture may be active, data can co-access by ISR.
+  // Since ADC capture may be active, data can co-access by ISR.
   //__disable_irq();
   adc_dma::disable_irq();
   {
-    isr_data.capture_buffer.items.clear();
-    isr_data.capture_buffer.trigger_found = false;
+    isr_data.adc_capture_buffer.items.clear();
+    isr_data.adc_capture_buffer.trigger_found = false;
     // This is an arbitrary number of divided samples that we allow
     // to wait for a trigger event.
-    isr_data.capture_pre_trigger_items_left = 500;
-    isr_data.capture_divider = divider;
-    isr_data.capture_divider_counter = 0;
-    isr_data.capture_state = CAPTURE_HALF_FILL;
+    isr_data.adc_capture_pre_trigger_items_left = 500;
+    isr_data.adc_capture_divider = divider;
+    isr_data.adc_capture_divider_counter = 0;
+    isr_data.adc_capture_state = ADC_CAPTURE_HALF_FILL;
   }
   adc_dma::enable_irq();
   //__enable_irq();
@@ -124,7 +124,7 @@ extern void start_capture(uint16_t divider) {
 
 // Users are expected to read this buffer only when capturing
 // is not active.
-const CaptureBuffer* capture_buffer() { return &isr_data.capture_buffer; }
+const AdcCaptureBuffer* adc_capture_buffer() { return &isr_data.adc_capture_buffer; }
 
 const State* sample_state() {
   adc_dma::disable_irq();
@@ -212,10 +212,10 @@ void dump_sampled_state() {
   last_tick_count = sampled_state.tick_count;
 }
 
-// Assumes that capture data is ready.
-void dump_capture(const CaptureBuffer& buffer) {
+// Assumes that ADC capture data is ready.
+void dump_adc_capture(const AdcCaptureBuffer& buffer) {
   for (int i = 0; i < buffer.items.size(); i++) {
-    const analyzer::CaptureItem* item = buffer.items.get(i);
+    const analyzer::AdcCaptureItem* item = buffer.items.get(i);
     printf(" %hd %hd\n", item->v1, item->v2);
     printf("%hd %hd\n", item->v2, item->v2);
   }
@@ -302,57 +302,57 @@ void isr_handle_one_sample(const uint16_t raw_v1, const uint16_t raw_v2) {
 
   // Handle signal capturing.
   // Release: 220ns, Debug: 1100ns.  (TODO: update timing for current code)
-  if (isr_data.capture_state != CAPTURE_IDLE &&
-      ++isr_data.capture_divider_counter >= isr_data.capture_divider) {
-    isr_data.capture_divider_counter = 0;
+  if (isr_data.adc_capture_state != ADC_CAPTURE_IDLE &&
+      ++isr_data.adc_capture_divider_counter >= isr_data.adc_capture_divider) {
+    isr_data.adc_capture_divider_counter = 0;
     // Insert sample to circular buffer. If the buffer is full it drops
     // the oldest item.
-    CaptureItem* capture_item = isr_data.capture_buffer.items.insert();
-    capture_item->v1 = v1;
-    capture_item->v2 = v2;
+    AdcCaptureItem* adc_capture_item = isr_data.adc_capture_buffer.items.insert();
+    adc_capture_item->v1 = v1;
+    adc_capture_item->v2 = v2;
 
-    switch (isr_data.capture_state) {
+    switch (isr_data.adc_capture_state) {
       // In this sate we blindly fill half of the buffer.
-      case CAPTURE_HALF_FILL:
-        if (isr_data.capture_buffer.items.size() >= kAdcCaptureBufferSize / 2) {
-          isr_data.capture_state = CAPTURE_PRE_TRIGGER;
+      case ADC_CAPTURE_HALF_FILL:
+        if (isr_data.adc_capture_buffer.items.size() >= kAdcCaptureBufferSize / 2) {
+          isr_data.adc_capture_state = ADC_CAPTURE_PRE_TRIGGER;
         }
         break;
 
       // In this state we look for a trigger event or a pre trigger timeout.
-      case CAPTURE_PRE_TRIGGER: {
+      case ADC_CAPTURE_PRE_TRIGGER: {
         // Pre trigger timeout?
-        if (isr_data.capture_pre_trigger_items_left == 0) {
+        if (isr_data.adc_capture_pre_trigger_items_left == 0) {
           // NOTE: if the buffer is full here we could terminate
           // the capture but we go through the normal motions for simplicity.
-          isr_data.capture_state = CAPTURE_POST_TRIGER;
-          isr_data.capture_buffer.trigger_found = false;
+          isr_data.adc_capture_state = ADC_CAPTURE_POST_TRIGER;
+          isr_data.adc_capture_buffer.trigger_found = false;
 
           break;
         }
-        isr_data.capture_pre_trigger_items_left--;
+        isr_data.adc_capture_pre_trigger_items_left--;
         // Trigger event?
         const int16_t old_v1 =
-            isr_data.capture_buffer.items.get_reversed(5)->v1;
+            isr_data.adc_capture_buffer.items.get_reversed(5)->v1;
         // Trigger criteria, up crossing of the zero line.
         if (old_v1 < -10 && v1 >= 0) {
           // Keep only the last n/2 points. This way the trigger will
           // always be in the middle of the buffer.
-          isr_data.capture_buffer.items.keep_at_most(kAdcCaptureBufferSize / 2);
-          isr_data.capture_buffer.trigger_found = true;
-          isr_data.capture_state = CAPTURE_POST_TRIGER;
+          isr_data.adc_capture_buffer.items.keep_at_most(kAdcCaptureBufferSize / 2);
+          isr_data.adc_capture_buffer.trigger_found = true;
+          isr_data.adc_capture_state = ADC_CAPTURE_POST_TRIGER;
         }
       } break;
 
       // In this state we blindly fill the rest of the buffer.
-      case CAPTURE_POST_TRIGER:
-        if (isr_data.capture_buffer.items.is_full()) {
-          isr_data.capture_state = CAPTURE_IDLE;
+      case ADC_CAPTURE_POST_TRIGER:
+        if (isr_data.adc_capture_buffer.items.is_full()) {
+          isr_data.adc_capture_state = ADC_CAPTURE_IDLE;
         }
         break;
 
       // This one is non reachable but makes the compiler happy.
-      case CAPTURE_IDLE:
+      case ADC_CAPTURE_IDLE:
         break;
     }
   }

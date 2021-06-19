@@ -33,17 +33,17 @@ constexpr int kAdcCaptureBufferSize = 400;
 
 // A single captured item. These are the signed values
 // in adc counts of the two curent sensing channels.
-struct CaptureItem {
+struct AdcCaptureItem {
   int16_t v1;
   int16_t v2;
 };
 
 // A circular array with captured signals. Using a circular array
 // allow to capture data before the trigger point.
-typedef CircularBuffer<CaptureItem, kAdcCaptureBufferSize> CaptureItems;
+typedef CircularBuffer<AdcCaptureItem, kAdcCaptureBufferSize> AdcCaptureItems;
 
-struct CaptureBuffer {
-  CaptureItems items;
+struct AdcCaptureBuffer {
+  AdcCaptureItems items;
   // True if capture was synced with a trigger event where
   // v1 crossed up the y=0 axis. The triggered event, if available
   // is always at a fixed index at the middle of the returned
@@ -87,7 +87,7 @@ struct HistogramBucket {
   uint32_t total_steps;
 };
 
-// Analyzer data, other than the capture buffer, this is the only
+// Analyzer data, other than the capture buffers, this is the only
 // data that the interrupt routine updates.
 struct State {
  public:
@@ -155,22 +155,22 @@ struct State {
 
 // Helpers for dumping aquisition sate. For debugging.
 extern void dump_sampled_state();
-extern void dump_capture(const CaptureBuffer& capture_buffer);
+extern void dump_adc_capture(const AdcCaptureBuffer& adc_capture_buffer);
 
 // Called once during program initialization.
 extern void setup(const Settings& settings);
 
 // Is the capture buffer full with data?
-extern bool is_capture_ready();
+extern bool is_adc_capture_ready();
 
 // Call after is_capture_ready() is true, to get a pointer
 // to internal buffer that contains the capture buffer.
-extern const CaptureBuffer* capture_buffer();
+extern const AdcCaptureBuffer* adc_capture_buffer();
 
 // Start signal capturing. Data is ready when
 // is_capture_ready() is true. If divider > 1,
 // only one every n ADC samples is captured.
-extern void start_capture(uint16_t divider);
+extern void start_adc_capture(uint16_t divider);
 
 // Sample the current state to an internal buffer and return
 // a const ptr to it. Values are stable until next time

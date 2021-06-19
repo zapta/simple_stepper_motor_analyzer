@@ -1,6 +1,6 @@
 #pragma once
 
-#include "capture_util.h"
+#include "adc_capture_util.h"
 #include "misc/elapsed.h"
 #include "screen_manager.h"
 
@@ -16,6 +16,6 @@ class PhaseScreen : public screen_manager::Screen {
   void update_display();
 
   ui::PolarChart polar_chart_;
-  capture_util::CaptureControls capture_controls_;
+  adc_capture_util::AdcCaptureControls adc_capture_controls_;
   ui::Label scale_lable_;
 };

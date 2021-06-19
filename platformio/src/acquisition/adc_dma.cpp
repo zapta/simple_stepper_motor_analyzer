@@ -58,9 +58,9 @@ static SamplePair capture_buf2[BUFFER_SIZE]
 static uint dma_chan1;
 static uint dma_chan2;
 
-static int irq_counter1 = 0;
-static int irq_counter2 = 0;
-static int irq_counter3 = 0;  // Should never count
+static uint32_t irq_counter1 = 0;
+static uint32_t irq_counter2 = 0;
+static uint32_t irq_counter3 = 0;  // Should never count
 
 // Called when one of the DMA buffers is full
 static void dma_handler() {

@@ -2,7 +2,7 @@
 
 #include "misc/elapsed.h"
 #include "screen_manager.h"
-#include "capture_util.h"
+#include "adc_capture_util.h"
 
 class OsciloscopeScreen : public screen_manager::Screen {
  public:
@@ -16,5 +16,5 @@ class OsciloscopeScreen : public screen_manager::Screen {
   void update_display();
   
   ui::Chart chart_;
-  capture_util::CaptureControls capture_controls_;
+  adc_capture_util::AdcCaptureControls adc_capture_controls_;
 };

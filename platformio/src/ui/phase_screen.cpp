@@ -10,15 +10,21 @@ static lv_point_t points[analyzer::kAdcCaptureBufferSize];
 
 static const ui::ChartAxisConfigs kAxisConfigs{
     .y_range = {.min = -2500, .max = 2500},
-    .x = {.labels = "-2.5A\n0\n2.5A", .num_ticks = 3, .dividers = 9,  .minor_div_lines_mask = 0x03de},
-    .y = {.labels = "2.5A\n0\n-2.5A", .num_ticks = 3, .dividers = 9,  .minor_div_lines_mask = 0x03de}};
+    .x = {.labels = "-2.5A\n0\n2.5A",
+          .num_ticks = 3,
+          .dividers = 9,
+          .minor_div_lines_mask = 0x03de},
+    .y = {.labels = "2.5A\n0\n-2.5A",
+          .num_ticks = 3,
+          .dividers = 9,
+          .minor_div_lines_mask = 0x03de}};
 
 void PhaseScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "PHASE PATTERNS", screen_num, nullptr);
   ui::create_polar_chart(screen_, kAxisConfigs, ui_events::UI_EVENT_SCALE,
                          &polar_chart_);
-  capture_controls_.setup(screen_);
+  adc_capture_controls_.setup(screen_);
   // We set the text dynamically when updating the display.
   ui::create_label(screen_, 0, 350, 180, "??", ui::kFontSmallText,
                    LV_LABEL_ALIGN_CENTER, LV_COLOR_SILVER, &scale_lable_);
@@ -27,21 +33,21 @@ void PhaseScreen::setup(uint8_t screen_num) {
 };
 
 void PhaseScreen::on_load() {
-  capture_controls_.sync_button_to_state();
+  adc_capture_controls_.sync_button_to_state();
   update_display();
 };
 
 void PhaseScreen::on_event(ui_events::UiEventId ui_event_id) {
   switch (ui_event_id) {
     case ui_events::UI_EVENT_RESET:
-      capture_util::clear_data();
-      capture_controls_.sync_button_to_state();
+      adc_capture_util::clear_data();
+      adc_capture_controls_.sync_button_to_state();
       update_display();
       break;
 
     case ui_events::UI_EVENT_SCALE: {
-      capture_util::toggle_scale();
-      capture_controls_.sync_button_to_state();
+      adc_capture_util::toggle_scale();
+      adc_capture_controls_.sync_button_to_state();
       update_display();
     } break;
 
@@ -58,21 +64,21 @@ static lv_coord_t map_line_coord(int milliamps, lv_coord_t max_radius) {
 }
 
 void PhaseScreen::update_display() {
-  capture_controls_.update_display_from_state();
+  adc_capture_controls_.update_display_from_state();
 
-  scale_lable_.set_text(capture_util::alternative_scale()
+  scale_lable_.set_text(adc_capture_util::alternative_scale()
                             ? "Long Capture\ntime:  100ms"
                             : "Short Capture\ntime:  20ms");
 
-  if (!capture_util::has_data()) {
+  if (!adc_capture_util::has_data()) {
     lv_line_set_points(polar_chart_.lv_line, points, 0);
     return;
   }
 
   // Update both chart series with the new captured data.
   for (int i = 0; i < analyzer::kAdcCaptureBufferSize; i++) {
-    const analyzer::CaptureItem* item =
-        capture_util::capture_buffer()->items.get(i);
+    const analyzer::AdcCaptureItem* item =
+        adc_capture_util::capture_buffer()->items.get(i);
     // Currents in millamps [-2500, 2500].
     const int milliamps1 = analyzer::adc_value_to_milliamps(item->v1);
     const int milliamps2 = analyzer::adc_value_to_milliamps(item->v2);
@@ -88,12 +94,13 @@ void PhaseScreen::update_display() {
 
 void PhaseScreen::loop() {
   // Update capture enabled from button if needed.
-  if (capture_util::maybe_update_state_from_controls(capture_controls_)) {
+  if (adc_capture_util::maybe_update_state_from_controls(
+          adc_capture_controls_)) {
     update_display();
     return;
   }
 
-  if (capture_util::maybe_update_capture_data()) {
+  if (adc_capture_util::maybe_update_capture_data()) {
     update_display();
   }
 }

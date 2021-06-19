@@ -1,6 +1,6 @@
-#include "capture_util.h"
+#include "adc_capture_util.h"
 
-namespace capture_util {
+namespace adc_capture_util {
 
 static constexpr uint32_t kUpdateIntervalMillis = 500;
 
@@ -13,7 +13,7 @@ struct Vars {
   bool capture_in_progress = false;
   bool alternative_scale = false;
   // Ignored in has_data is false.
-  analyzer::CaptureBuffer capture_buffer;
+  analyzer::AdcCaptureBuffer capture_buffer;
   bool capture_enabled = true;
   Elapsed elapsed_from_last_update;
 };
@@ -28,7 +28,7 @@ void toggle_scale() {
 
 bool alternative_scale() { return vars.alternative_scale; }
 
-const analyzer::CaptureBuffer* capture_buffer() {
+const analyzer::AdcCaptureBuffer* capture_buffer() {
   return &vars.capture_buffer;
 }
 
@@ -56,7 +56,7 @@ bool maybe_update_capture_data() {
       // This will prevent the timer from overflowing, without affecting
       // the logic here.
       vars.elapsed_from_last_update.set(kUpdateIntervalMillis);
-      analyzer::start_capture(vars.alternative_scale
+      analyzer::start_adc_capture(vars.alternative_scale
                                      ? kCaptureDividerAlternative
                                      : kCaptureDividerNormal);
       vars.capture_in_progress = true;
@@ -65,7 +65,7 @@ bool maybe_update_capture_data() {
   }
 
   // Capture in progress but data is not ready yet.
-  if (!analyzer::is_capture_ready()) {
+  if (!analyzer::is_adc_capture_ready()) {
     return false;
   }
 
@@ -76,8 +76,8 @@ bool maybe_update_capture_data() {
   // Since capture is not in progress now, the content of the
   // asquisition capture buffer should be stable and it's safe to use
   // it.
-  const analyzer::CaptureBuffer* acq_capture_buffer =
-      analyzer::capture_buffer();
+  const analyzer::AdcCaptureBuffer* acq_capture_buffer =
+      analyzer::adc_capture_buffer();
 
   // Currently we display only captured with a trigger point.
   // This seens to give a better user experience.
@@ -92,7 +92,7 @@ bool maybe_update_capture_data() {
   return true;
 }
 
-void CaptureControls::update_display_from_state() {
+void AdcCaptureControls::update_display_from_state() {
   if (vars.capture_enabled) {
    // lv_obj_set_state(run_button.lv_button, LV_STATE_CHECKED);
     status_label.set_text("RUNNING");
@@ -108,7 +108,7 @@ void CaptureControls::update_display_from_state() {
   run_button.label.set_text(ui::kSymbolRun);
 }
 
-void CaptureControls::sync_button_to_state() {
+void AdcCaptureControls::sync_button_to_state() {
   if (vars.capture_enabled) {
     lv_obj_set_state(run_button.lv_button, LV_STATE_CHECKED);
     //status_label.set_text("RUNNING");
@@ -121,7 +121,7 @@ void CaptureControls::sync_button_to_state() {
 }
 
 
-bool maybe_update_state_from_controls(const CaptureControls& capture_controls) {
+bool maybe_update_state_from_controls(const AdcCaptureControls& capture_controls) {
   const bool run_button_checked =
       lv_obj_get_state(capture_controls.run_button.lv_button,
                        LV_BTN_PART_MAIN) &
@@ -133,7 +133,7 @@ bool maybe_update_state_from_controls(const CaptureControls& capture_controls) {
   return true;
 }
 
-void CaptureControls::setup(ui::Screen& screen) {
+void AdcCaptureControls::setup(ui::Screen& screen) {
   ui::create_label(screen, 100, 130, 0, "", ui::kFontPageTitles,
                    LV_LABEL_ALIGN_CENTER, LV_COLOR_RED, &status_label);
   // Button's symbol is set later by set_displayed_status().
@@ -143,4 +143,4 @@ void CaptureControls::setup(ui::Screen& screen) {
   lv_obj_set_state(run_button.lv_button, LV_STATE_CHECKED);
 }
 
-}  // namespace capture_util
+}  // namespace adc_capture_util
