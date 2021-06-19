@@ -40,7 +40,7 @@ struct CaptureItem {
 
 // A circular array with captured signals. Using a circular array
 // allow to capture data before the trigger point.
-typedef CircularBuffer<CaptureItem, kCaptureBufferSize> CaptureItems;
+typedef CircularBuffer<CaptureItem, kAdcCaptureBufferSize> CaptureItems;
 
 struct CaptureBuffer {
   CaptureItems items;
