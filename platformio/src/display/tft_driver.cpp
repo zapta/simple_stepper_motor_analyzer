@@ -6,6 +6,7 @@
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
 #include "hardware/pio.h"
+#include "hardware/pwm.h"
 #include "io.h"
 #include "pico/stdlib.h"
 #include "tft_driver.pio.h"
@@ -23,11 +24,9 @@ namespace tft_driver {
 
 #define TFT_RST_HIGH gpio_set_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_HIGH gpio_set_mask(1ul << TFT_DC_PIN)
-#define TFT_BL_HIGH gpio_set_mask(1ul << TFT_BL_PIN)
 
 #define TFT_RST_LOW gpio_clr_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_LOW gpio_clr_mask(1ul << TFT_DC_PIN)
-#define TFT_BL_LOW gpio_clr_mask(1ul << TFT_BL_PIN)
 
 // // Assuming landscape mode per memory access command 0x36.
 #define WIDTH 480
@@ -54,19 +53,37 @@ static constexpr uint32_t SM_STALL_MASK = 1u << (PIO_FDEBUG_TXSTALL_LSB + SM);
 static constexpr uint32_t SM_OVERRUN_MASK = 1u << (PIO_FDEBUG_TXOVER_LSB + SM);
 
 // Updated later with the loading offset of the PIO program.
-uint program_offset = 0;
+static uint pio_program_offset = 0;
+
+// Info about the PWM channel used for the backlight output.
+static uint bl_pwm_slice_num;
+static uint bl_pwm_channel;
+
+static void set_backlight_percents(uint16_t percents) {
+  // Don't go beyond a minimum level to make sure some display is
+  // still visible, to avoid confusion.
+  percents = MAX(10, percents);
+  // Any value above 99 will result in 100% PWM (constant high level).
+  pwm_set_chan_level(bl_pwm_slice_num, bl_pwm_channel, percents);
+}
+
+// BL output is PWM driven.
+static void init_pwm() {
+  bl_pwm_slice_num = pwm_gpio_to_slice_num(TFT_BL_PIN);
+  bl_pwm_channel = pwm_gpio_to_channel(TFT_BL_PIN);
+  gpio_set_function(TFT_BL_PIN, GPIO_FUNC_PWM);
+  pwm_set_wrap(bl_pwm_slice_num, 99);
+  // Reduce PWM freq to ~4.8Khz
+  pwm_set_clkdiv_int_frac(bl_pwm_slice_num, 255, 0);
+  // We start with BL off.
+  pwm_set_chan_level(bl_pwm_slice_num, bl_pwm_channel, 0);
+  pwm_set_enabled(bl_pwm_slice_num, true);
+}
 
 static void init_gpio() {
   // A mask with all gpio output pins we use.
-  constexpr uint kOutputMask =
-      1ul << TFT_RST_PIN | 1ul << TFT_DC_PIN | 1ul << TFT_BL_PIN;
-
+  constexpr uint kOutputMask = 1ul << TFT_RST_PIN | 1ul << TFT_DC_PIN;
   gpio_init_mask(kOutputMask);
-
-  // Start with backlight non active, efore we set it as an
-  // output, to avoid startup flicker.
-  TFT_BL_LOW;
-
   gpio_set_dir_out_masked(kOutputMask);
 }
 
@@ -76,7 +93,7 @@ static void init_pio() {
 
   // Load the PIO program. Starting by default with 16 bits mode
   // since it's at the begining of the PIO program.
-  program_offset = pio_add_program(PIO, &tft_driver_pio_program);
+  pio_program_offset = pio_add_program(PIO, &tft_driver_pio_program);
 
   // Associate pins with the PIO.
   pio_gpio_init(PIO, TFT_WR_PIN);
@@ -89,7 +106,7 @@ static void init_pio() {
   pio_sm_set_consecutive_pindirs(PIO, SM, TFT_D0_PIN, 8, true);
 
   // Configure the state machine.
-  pio_sm_config c = tft_driver_pio_program_get_default_config(program_offset);
+  pio_sm_config c = tft_driver_pio_program_get_default_config(pio_program_offset);
   // The pio program declares that a single sideset pin is used.
   // Define it.
   sm_config_set_sideset_pins(&c, TFT_WR_PIN);
@@ -104,7 +121,7 @@ static void init_pio() {
   sm_config_set_out_shift(&c, true, false, 0);
   // Set the SM with the configuration we constructed above.
   // Default mode is single byte.
-  pio_sm_init(PIO, SM, program_offset + tft_driver_pio_offset_start_8, &c);
+  pio_sm_init(PIO, SM, pio_program_offset + tft_driver_pio_offset_start_8, &c);
 
   // Start the state machine.
   pio_sm_set_enabled(PIO, SM, true);
@@ -122,14 +139,14 @@ static void set_mode_single_byte() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
-              pio_encode_jmp(program_offset + tft_driver_pio_offset_start_8));
+              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_8));
 }
 
 static void set_mode_double_byte() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
-              pio_encode_jmp(program_offset + tft_driver_pio_offset_start_16));
+              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_16));
 }
 
 // For testing.
@@ -189,7 +206,9 @@ static void init_dma() {
 
 void begin() {
   init_gpio();
+  init_pwm();
   init_pio();
+  init_dma();
 
   // pio_tft::begin();
 
@@ -258,19 +277,19 @@ void begin() {
 
   write_command_byte(0xB1);  // Frame rate
   write_data_byte(0xA0);     // 60Hz
-  //write_data_byte(0x00);     // 30Hz
-  write_data_byte(0x10);     // NOTE: Was missing originally. RTNA, Default 0x11. 
+  // write_data_byte(0x00);     // 30Hz
+  write_data_byte(0x10);  // NOTE: Was missing originally. RTNA, Default 0x11.
 
   // // Optimized for a long vertical blank for sync update.
   // write_command_byte(0xb5);
   // write_data_byte(0x02);    // LOW VFP
   // write_data_byte(0x1C);    // HIGH VPB
-  // write_data_byte(0x02);    // LOW HFP 
+  // write_data_byte(0x02);    // LOW HFP
   // write_data_byte(0x02);    // Low HBP
 
   write_command_byte(0x35);  // Tearing effect signal on.
   write_data_byte(0x00);     // Vsync only.
-  //write_data_byte(0x01);     // Vsync + hsync.
+  // write_data_byte(0x01);     // Vsync + hsync.
 
   write_command_byte(0xB4);  // Display Inversion Control
   write_data_byte(0x02);     // 2-dot
@@ -293,8 +312,6 @@ void begin() {
   write_command_byte(ILI9488_SLPOUT);  // Exit Sleep
   sleep_ms(120);
   write_command_byte(ILI9488_DISPON);  // Display on
-
-  init_dma();
 }
 
 // This is followed by a stream of pixels to render in this
@@ -340,6 +357,6 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   //}
 }
 
-void backlight_on() { TFT_BL_HIGH; }
+void backlight_on() { set_backlight_percents(100); }
 
 }  // namespace tft_driver
