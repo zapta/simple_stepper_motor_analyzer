@@ -1,8 +1,7 @@
 #pragma once
 
-#include "acquisition/speed_tracker.h"
 #include "lvgl.h"
-#include "misc/elapsed.h"
+#include "misc/circular_buffer.h"
 #include "screen_manager.h"
 #include "ui.h"
 
@@ -18,9 +17,9 @@ class SpeedGaugeScreen : public screen_manager::Screen {
  private:
   ui::Gauge gauge_;
   ui::Label speed_field_;
-  Elapsed display_update_elapsed_;
+  static constexpr int kMaxStepSamples = 10;
+  CircularBuffer<int32_t, kMaxStepSamples> recent_full_step_samples_;
 
-  SpeedTracker speed_tracker_;
   uint8_t label_update_divider_ = 0;
   bool alternative_scale_ = false;
 };

@@ -1,8 +1,10 @@
 #include "speed_gauge_screen.h"
 
-#include "acquisition/analyzer.h"
-#include "ui.h"
 #include <stdio.h>
+
+#include "acquisition/analyzer.h"
+//#include "io.h"
+#include "ui.h"
 
 constexpr uint16_t kUpdateIntervalMillis = 75;
 
@@ -28,7 +30,7 @@ void SpeedGaugeScreen::setup(uint8_t screen_num) {
 };
 
 void SpeedGaugeScreen::on_load() {
-  speed_tracker_.reset();
+  recent_full_step_samples_.clear();
   // This avoids value flicker on screen switch.
   speed_field_.set_text("");
   // Force label update on first guage update.
@@ -53,28 +55,49 @@ void SpeedGaugeScreen::on_event(ui_events::UiEventId ui_event_id) {
 }
 
 void SpeedGaugeScreen::loop() {
-   if (display_update_elapsed_.elapsed_millis() < kUpdateIntervalMillis) {
+  const analyzer::StepsCaptureBuffer* new_samples =
+      analyzer::sample_steps_capture();
+  if (new_samples->is_empty()) {
     return;
   }
-  display_update_elapsed_.reset();
+ 
 
-  // Sample data and update screen.
-  const analyzer::State* state = analyzer::sample_state();
-
-  if (label_update_divider_ < kLabelUpdateRatio) {
-    label_update_divider_++;
+  // Append new samples to the local buffer.
+  const int new_samples_count = new_samples->size();
+  for (int i = 0; i < new_samples_count; i++) {
+    *recent_full_step_samples_.insert() = new_samples->get(i)->full_steps;
   }
 
-  // See if we have a speed estimation.
-  int32_t steps_per_sec;
-  if (!speed_tracker_.track(state, &steps_per_sec)) {
+  // We need at least two readings to estimate speed.
+  const int samples_count = recent_full_step_samples_.size();
+  if (samples_count < 2) {
     return;
   }
+
+  //LED2_ON;
+
+
+  // Should be >= 1 per the condition above.
+  // TODO: Consider to change to weighted average, giving more weight to recent
+  // readings.
+  const int interval_count = MIN(5, samples_count - 1);
+  const int delta_steps =
+      *recent_full_step_samples_.get(samples_count - 1) -
+      *recent_full_step_samples_.get(samples_count - 1 - interval_count);
+  const int steps_per_sec =
+      (delta_steps * (int)analyzer::kStepsCaptursPerSec) / interval_count;
+  
 
   lv_gauge_set_value(gauge_.lv_gauge, 0, steps_per_sec);
 
+  label_update_divider_++;
   if (label_update_divider_ >= kLabelUpdateRatio) {
     speed_field_.set_text_int(steps_per_sec);
     label_update_divider_ = 0;
   }
+
+  // Force screen update for consistent update rate.
+  lv_refr_now(NULL);
+
+  //LED2_OFF;
 };
