@@ -1,4 +1,5 @@
 
+* Add backlight control slider (UI).
 
 * Switch to Pico SDK 1.2.x
 
