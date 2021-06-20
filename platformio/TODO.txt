@@ -7,34 +7,3 @@
 
 ============= DONE
 
-* Change the speed dial screen to use the hard time screen capture. Currently frame rate based.
-
-* Change the timing of the steps and retraction screens such as the value are captured by the ADC IRQ. Should 
-avoid distortions if the screen update is too slow.
-
-* In the home page, call the coils A, B, not 1, 2.
-
-* Consider to set WR_HL in the first gpio color table. //Didn't work. Insufficient hold time.
-
-* Increase tft driver render loop inline to 20 pixels (currently 8)
-
-* Increase chart horizontal resolution (and update rate). Display resolution is 400 pixels.
-
-* Consider to double the update rate of the steps and retraction charts to have
-a more smooth graph animation.
-
-* COnvert the java table generator to python
-
-* When reentering the steps or retraction charts, clear them.
-
-* Double the resolution of the capture buffer.
-
-* Can we reduce the delays in the screen dump code?
-
-* Consider to slightly increase the LVGL heap, just in case, since we have sufficient RAM.  // currently 32k, seems ok.
-
-
-
-
-
-
