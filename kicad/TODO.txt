@@ -1,9 +1,13 @@
 
+* Add filter capacitor for ACS712ELCTR-05B-T current sensor.
 
 * Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
+
 * Delete junk kicad and model files.
 
 * Replace backlight mosfet with NPN (e.g. SS8050) and a resistor (reduce cost).
+
+* Run the backlight on VSYS and allow for higher max current since backlight is PWM controlled.
 
 
 
