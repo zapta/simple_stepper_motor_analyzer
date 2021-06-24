@@ -59,11 +59,11 @@ static uint pio_program_offset = 0;
 static uint bl_pwm_slice_num;
 static uint bl_pwm_channel;
 
-static void set_backlight_percents(uint16_t percents) {
-  // Don't go beyond a minimum level to make sure some display is
-  // still visible, to avoid confusion.
-  percents = MAX(10, percents);
-  // Any value above 99 will result in 100% PWM (constant high level).
+void set_backlight(uint8_t percents) {
+  // Don't go beyond a minimum level to make sure some
+  // display is visible.
+  percents = MAX(5, percents);
+  percents = MIN(100, percents);
   pwm_set_chan_level(bl_pwm_slice_num, bl_pwm_channel, percents);
 }
 
@@ -357,6 +357,8 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   //}
 }
 
-void backlight_on() { set_backlight_percents(100); }
+// void  set_backlight(uint8_t percents) {
+//   set_backlight_percents(percents); 
+//  }
 
 }  // namespace tft_driver

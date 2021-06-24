@@ -579,7 +579,7 @@ typedef void * lv_obj_user_data_t;
 #define LV_USE_ARC      0
 
 /*Bar (dependencies: -)*/
-#define LV_USE_BAR      0
+#define LV_USE_BAR      1
 
 /*Button (dependencies: lv_cont*/
 #define LV_USE_BTN      1
@@ -712,7 +712,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Slider (dependencies: lv_bar)*/
-#define LV_USE_SLIDER    0
+#define LV_USE_SLIDER    1
 
 /*Spinbox (dependencies: lv_ta)*/
 #define LV_USE_SPINBOX       0

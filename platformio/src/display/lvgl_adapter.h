@@ -7,7 +7,7 @@ namespace lvgl_adapter {
 
 void setup();
 // Called once after the first LVGL screen was rendered.
-void backlight_on();
+void set_backlight(uint8_t percents);
 
 // For developement.
 void dump_stats();

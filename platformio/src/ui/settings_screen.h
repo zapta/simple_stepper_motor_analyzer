@@ -13,8 +13,11 @@ class SettingsScreen : public screen_manager::Screen {
   virtual void on_event(ui_events::UiEventId ui_event_id) override;
 
  private:
+  void maybe_update_eeprom();
+
   Elapsed display_update_elapsed_;
   ui::Label ch_a_field_;
   ui::Label ch_b_field_;
   ui::Checkbox reverse_checkbox_;
+  ui::Slider backlight_slider_;
 };

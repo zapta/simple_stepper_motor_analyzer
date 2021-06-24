@@ -6,6 +6,7 @@
 
 namespace ui {
 
+// These are in .c files so 'extern' is required here.
 extern const lv_font_t* const kFontSmallText;
 extern const lv_font_t* const kFontPageTitles;
 extern const lv_font_t* const kFontDataFields;
@@ -145,6 +146,14 @@ struct PolarChart {
   lv_obj_t* lv_line = nullptr;
 };
 
+struct Slider {
+  lv_obj_t* lv_slider = nullptr;
+  int16_t get_value() const { return lv_slider_get_value(lv_slider); }
+  void set_value(int16_t value) const {
+    lv_slider_set_value(lv_slider, value, LV_ANIM_OFF);
+  }
+};
+
 struct StdPageElements {
   Label screen_number;
   Label title;
@@ -154,38 +163,39 @@ struct StdPageElements {
   Button next_button;
 };
 
-extern void create_screen(Screen* screen);
+void create_screen(Screen* screen);
 
-extern void create_gauge(const Screen& screen, const GaugeAxisConfig& config,
+void create_gauge(const Screen& screen, const GaugeAxisConfig& config,
+                  ui_events::UiEventId ui_event_id, Gauge* gauge);
 
-                         ui_events::UiEventId ui_event_id, Gauge* gauge);
+void create_slider(const Screen& screen, lv_coord_t width, lv_coord_t x,
+                   lv_coord_t y, int16_t min, int16_t max,
+                   int16_t initial_value, Slider* slider);
 
 // If 'button' is null then it is ignored;
-extern void create_button(const Screen& screen, lv_coord_t width, lv_coord_t x,
-                          lv_coord_t y, const char* kFootnotText,
-                          lv_color_t color, ui_events::UiEventId ui_event_id,
-                          Button* button);
+void create_button(const Screen& screen, lv_coord_t width, lv_coord_t x,
+                   lv_coord_t y, const char* kFootnotText, lv_color_t color,
+                   ui_events::UiEventId ui_event_id, Button* button);
 
 // If 'label' is null then it is ignored. width == 0 indicates auto size.
-extern void create_label(const Screen& screen, lv_coord_t width, lv_coord_t x,
-                         lv_coord_t y, const char* kFootnotText,
-                         const lv_font_t* lv_font, lv_label_align_t label_align,
-                         lv_color_t color, Label* label);
+void create_label(const Screen& screen, lv_coord_t width, lv_coord_t x,
+                  lv_coord_t y, const char* kFootnotText,
+                  const lv_font_t* lv_font, lv_label_align_t label_align,
+                  lv_color_t color, Label* label);
 
 // If 'checkbox' is null then it is ignored.
-extern void create_checkbox(const Screen& screen, lv_coord_t x, lv_coord_t y,
-                            const char* kFootnotText, const lv_font_t* lv_font,
-                            lv_color_t text_color,
-                            ui_events::UiEventId ui_event_id,
-                            Checkbox* checkbox);
+void create_checkbox(const Screen& screen, lv_coord_t x, lv_coord_t y,
+                     const char* kFootnotText, const lv_font_t* lv_font,
+                     lv_color_t text_color, ui_events::UiEventId ui_event_id,
+                     Checkbox* checkbox);
 
-extern void create_chart(const Screen& screen, uint16_t num_points,
-                         int num_series, const ChartAxisConfigs& axis_configs,
-                         ui_events::UiEventId ui_event_id, Chart* chart);
+void create_chart(const Screen& screen, uint16_t num_points, int num_series,
+                  const ChartAxisConfigs& axis_configs,
+                  ui_events::UiEventId ui_event_id, Chart* chart);
 
-extern void create_histogram(const Screen& screen, uint16_t num_columns,
-                             const ChartAxisConfigs& axis_configs,
-                             Histogram* histogram);
+void create_histogram(const Screen& screen, uint16_t num_columns,
+                      const ChartAxisConfigs& axis_configs,
+                      Histogram* histogram);
 
 // If 'lable' is null it is ignored.
 void create_page_title(const Screen& screen, const char* title, Label* label);
@@ -197,8 +207,8 @@ void create_polar_chart(const Screen& screen,
 
 // If 'page_elements' is null then it is ignored. Screen number is ignored if
 // zero.
-extern void create_page_elements(const Screen& screen, const char* title,
-                                 uint8_t screen_number,
-                                 StdPageElements* page_elements);
+void create_page_elements(const Screen& screen, const char* title,
+                          uint8_t screen_number,
+                          StdPageElements* page_elements);
 
 }  // namespace ui

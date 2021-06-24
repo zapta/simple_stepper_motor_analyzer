@@ -173,6 +173,6 @@ void stop_screen_capture() {
   printf("###END screen capture\n");
 }
 
-void backlight_on() { tft_driver::backlight_on(); }
+void set_backlight(uint8_t percents) { tft_driver::set_backlight(percents); }
 
 }  // namespace lvgl_adapter

@@ -30,8 +30,6 @@ static bool timer_callback(repeating_timer_t* rt) {
 
 static Elapsed timer;
 
-static uint32_t millis_to_first_screen = 0;
-
 void setup() {
   stdio_init_all();
   hardware_options::determine();
@@ -42,7 +40,8 @@ void setup() {
 
   // TODO: Read settings from EEPROM
   analyzer::Settings acq_settings;
-  config_eeprom::read_acquisition_settings(&acq_settings);
+  uint8_t backlight_percents;
+  config_eeprom::read_settings(&acq_settings, &backlight_percents);
 
   // Must setup analyzer before adc_dma.
   analyzer::setup(acq_settings);
@@ -68,8 +67,8 @@ void setup() {
   sleep_ms(30);  // let the screen process the data to avoid initial flicker.
 
   // Turn on the backlight. User can now see the screen.
-  lvgl_adapter::backlight_on();
-  millis_to_first_screen = to_ms_since_boot(get_absolute_time());
+  lvgl_adapter::set_backlight(backlight_percents);
+  //millis_to_first_screen = to_ms_since_boot(get_absolute_time());
 
   // Now that the first screen is display. We can spend some
   // time setting up proactivly the other screens. Otherwise
@@ -102,7 +101,6 @@ void loop() {
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
         printf("Options: [%s]\n", hardware_options::get_name());
-        printf("Millis to first screen: %lu\n", millis_to_first_screen);
         puts("Pico SDK version: " PICO_SDK_VERSION_STRING);
         print_cycle = 1;
         break;

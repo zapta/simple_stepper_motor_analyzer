@@ -284,6 +284,17 @@ void create_gauge(const Screen& screen, const GaugeAxisConfig& config,
   gauge->lv_gauge = lv_gauge;
 }
 
+void create_slider(const Screen& screen, lv_coord_t width, lv_coord_t x,
+                   lv_coord_t y, int16_t min, int16_t max,
+                   int16_t initial_value, Slider* slider) {
+  lv_obj_t* lv_slider = lv_slider_create(screen.lv_screen, NULL);
+  lv_obj_set_size(lv_slider, width, 15);
+  lv_obj_set_pos(lv_slider, x, y);
+  lv_slider_set_range(lv_slider, min, max);
+  lv_slider_set_value(lv_slider, initial_value, false);
+  slider->lv_slider = lv_slider;
+}
+
 void create_button(const Screen& screen, lv_coord_t width, lv_coord_t x,
                    lv_coord_t y, const char* kFootnotText, lv_color_t color,
                    ui_events::UiEventId ui_event_id, Button* button) {
