@@ -1,5 +1,6 @@
 
 * Move FPC1 1mm toward the cable 
+
 * Add filter capacitor for ACS712ELCTR-05B-T current sensor.
 
 * Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
