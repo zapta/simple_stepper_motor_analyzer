@@ -114,14 +114,16 @@ static void init_pio() {
   sm_config_set_out_pins(&c, TFT_D0_PIN, 8);
   // Set clock divider. Value of 1 for max speed.
   sm_config_set_clkdiv_int_frac(&c, PIO_CLOCK_DIV, 0);
+
   // Make a single 8 words FIFO from the 4 words TX and RX FIFOs.
-  sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+  //sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+
   // The OSR register shifts to the right, sending the MSB byte
   // first, in a double bytes transfers.
   sm_config_set_out_shift(&c, true, false, 0);
   // Set the SM with the configuration we constructed above.
   // Default mode is single byte.
-  pio_sm_init(PIO, SM, pio_program_offset + tft_driver_pio_offset_start_8, &c);
+  pio_sm_init(PIO, SM, pio_program_offset + tft_driver_pio_offset_start_wr8, &c);
 
   // Start the state machine.
   pio_sm_set_enabled(PIO, SM, true);
@@ -139,14 +141,14 @@ static void set_mode_single_byte() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
-              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_8));
+              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr8));
 }
 
 static void set_mode_double_byte() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
-              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_16));
+              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr16));
 }
 
 // For testing.

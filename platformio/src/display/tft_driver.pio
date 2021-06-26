@@ -10,7 +10,13 @@
 // The C++ code switches between the 8 bits and 16 bits loops
 // by waiting for the SM to be idle and setting its PC.
 //
-public start_16:
+public start_wr16:
+   // Force 8 data pins to be outputs by writing 11111111 to the 
+   // pindirs register.
+   set x, 0 side 1
+   mov osr, !x
+   out pindirs, 8
+loop_wr16:
    // Fetch into OSR the next 32 bit value from the TX FIFO. 
    // This is a blocking operation. Sets WR high.
    pull side 1  
@@ -26,18 +32,24 @@ public start_16:
    mov osr, x        
    // Output the second byte and set TFT_WRITE low.
    out pins, 8 side 0    
-   jmp start_16 
+   jmp loop_wr16 
 
 // 8 bytes transfers are less time critical (happen less
 // frequently) so we use more conservative timing.
-public start_8:
+public start_wr8:
+   // Force 8 data pins to be outputs by writing 11111111 to the 
+   // pindirs register.
+   set x, 0 side 1
+   mov osr, !x
+   out pindirs, 8
+loop_wr8:
    // Fetch into OSR the next 32 bit value from the TX FIFO. 
    // This is a blocking operation. Sets WR high.
    pull side 1 [2]
    // Write the first byte (LSB) and sets WR low. This also 
    // shifts the OSR right by 8 bits.
    out pins, 8 side 0 [1]     
-   jmp start_8   
+   jmp loop_wr8   
   
 
 

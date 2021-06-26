@@ -11,30 +11,36 @@
 // -------------- //
 
 #define tft_driver_pio_wrap_target 0
-#define tft_driver_pio_wrap 9
+#define tft_driver_pio_wrap 15
 
-#define tft_driver_pio_offset_start_16 0u
-#define tft_driver_pio_offset_start_8 7u
+#define tft_driver_pio_offset_start_wr16 0u
+#define tft_driver_pio_offset_start_wr8 10u
 
 static const uint16_t tft_driver_pio_program_instructions[] = {
             //     .wrap_target
-    0x98a0, //  0: pull   block           side 1     
-    0x6028, //  1: out    x, 8                       
-    0x7108, //  2: out    pins, 8         side 0 [1] 
-    0xb842, //  3: nop                    side 1     
-    0xa0e1, //  4: mov    osr, x                     
-    0x7008, //  5: out    pins, 8         side 0     
-    0x0000, //  6: jmp    0                          
-    0x9aa0, //  7: pull   block           side 1 [2] 
-    0x7108, //  8: out    pins, 8         side 0 [1] 
-    0x0007, //  9: jmp    7                          
+    0xf820, //  0: set    x, 0            side 1     
+    0xa0e9, //  1: mov    osr, !x                    
+    0x6088, //  2: out    pindirs, 8                 
+    0x98a0, //  3: pull   block           side 1     
+    0x6028, //  4: out    x, 8                       
+    0x7108, //  5: out    pins, 8         side 0 [1] 
+    0xb842, //  6: nop                    side 1     
+    0xa0e1, //  7: mov    osr, x                     
+    0x7008, //  8: out    pins, 8         side 0     
+    0x0003, //  9: jmp    3                          
+    0xf820, // 10: set    x, 0            side 1     
+    0xa0e9, // 11: mov    osr, !x                    
+    0x6088, // 12: out    pindirs, 8                 
+    0x9aa0, // 13: pull   block           side 1 [2] 
+    0x7108, // 14: out    pins, 8         side 0 [1] 
+    0x000d, // 15: jmp    13                         
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program tft_driver_pio_program = {
     .instructions = tft_driver_pio_program_instructions,
-    .length = 10,
+    .length = 16,
     .origin = -1,
 };
 
