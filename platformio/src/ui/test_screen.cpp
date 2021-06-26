@@ -5,6 +5,7 @@
 #include "acquisition/analyzer.h"
 #include "io.h"
 #include "ui.h"
+#include "display/lvgl_adapter.h"
 
 static const ui::ChartAxisConfigs kAxisConfigsNormal{
     .y_range = {.min = 0, .max = 1000},
@@ -72,6 +73,7 @@ void TestScreen::loop() {
 
   // Force screen rendering now rather than waiting for the next LVGL screen
   // update timeslot.
+  //lvgl_adapter::sync_next_update();
   lv_refr_now(NULL);
 
   LED2_OFF;

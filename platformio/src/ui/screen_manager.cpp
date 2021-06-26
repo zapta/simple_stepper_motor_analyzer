@@ -32,8 +32,8 @@ const char* Screen::format(const char* format, ...) {
 }
 
 // Landing screen upon program start.
-//static constexpr ScreenId kInitialScreen = SCREEN_HOME;
-static constexpr ScreenId kInitialScreen = SCREEN_TEST;
+static constexpr ScreenId kInitialScreen = SCREEN_HOME;
+//static constexpr ScreenId kInitialScreen = SCREEN_TEST;
 
 struct ScreenDesc {
   ScreenId screen_id;

@@ -17,6 +17,8 @@
 
 namespace lvgl_adapter {
 
+//#define TFT_SYNC_PIN 0
+
 #define MY_DISP_HOR_RES (480)
 
 // A static variable to store the buffers.
@@ -34,6 +36,24 @@ static lv_color_t buf_2[kBufferSize];
 // For developer's usage. Eatables screen capture for
 // documentation. Do not release with this flag set.
 static bool screen_capture_enabled = false;
+
+// static inline void wait_for_tft_sync() {
+//   uint32_t start = to_us_since_boot(get_absolute_time());
+
+//   while (!gpio_get(TFT_SYNC_PIN)) {
+//   };
+//     uint32_t end = to_us_since_boot(get_absolute_time());
+
+//   //printf("%lu\n", end - start);
+//   sleep_ms(20);
+// }
+
+// Experimental.
+//static bool sync_next_update_flag = false;
+
+// void sync_next_update() {
+//   sync_next_update_flag = true;
+// }
 
 // NOTE: Capture the dumpped text using an external terminal emularot.
 // Platformio's own terminal drops line seperators in some cases.
@@ -89,6 +109,11 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
     capture_buffer(area, color_p);
   }
 
+  // if (sync_next_update_flag) {
+  //   wait_for_tft_sync();
+  //   sync_next_update_flag = false;
+  // }
+
   // Per our lv config settings, LVGL uses 16 bits colors.
   const lv_color16_t* lv_color16 = static_cast<lv_color16_t*>(color_p);
   tft_driver::render_buffer(area->x1, area->y1, area->x2, area->y2,
@@ -143,6 +168,11 @@ void dma_completion_irq_cb() { lv_disp_flush_ready(&disp_drv); }
 // Called once from main on program start.
 void setup() {
   tft_driver::begin();
+
+  // Init gpio
+  // constexpr uint kInputMask = 1ul << TFT_SYNC_PIN;
+  // gpio_init_mask(kInputMask);
+  // gpio_set_dir_in_masked(kInputMask);
 
   lv_init();
 
