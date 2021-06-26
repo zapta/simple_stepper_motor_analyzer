@@ -15,6 +15,8 @@
 #include "steps_chart_screen.h"
 #include "steps_histogram_screen.h"
 #include "time_histogram_screen.h"
+#include "test_screen.h"
+
 
 namespace screen_manager {
 
@@ -30,7 +32,8 @@ const char* Screen::format(const char* format, ...) {
 }
 
 // Landing screen upon program start.
-static constexpr ScreenId kInitialScreen = SCREEN_HOME;
+//static constexpr ScreenId kInitialScreen = SCREEN_HOME;
+static constexpr ScreenId kInitialScreen = SCREEN_TEST;
 
 struct ScreenDesc {
   ScreenId screen_id;
@@ -68,6 +71,11 @@ static SettingsScreen screen_settings;
 static const ScreenDesc settings_screen_descriptor = {SCREEN_SETTINGS,
                                                       &screen_settings};
 
+                                                      // Test screen is not part of the screen sequence.
+static TestScreen screen_test;
+static const ScreenDesc test_screen_descriptor = {SCREEN_TEST,
+                                                      &screen_test};
+
 static const ScreenDesc* current_screen_desc = nullptr;
 
 // If screen is not setup yet do it now.
@@ -81,11 +89,21 @@ static void maybe_setup_screen(const ScreenDesc* desc, uint8_t screen_num) {
 
 // Finds the screen descriptor in table. Returns null if not found.
 static const ScreenDesc* find_screen_desc(ScreenId screen_id, int offset) {
+  // TODO: Consider setting a secondary list of out of sequence screens in
+  //  order to generalize the handling of those screens.
+  //
   if (screen_id == SCREEN_SETTINGS) {
     // We ignore the offset since Setting screen is not in the
     // main screen sequence.
     maybe_setup_screen(&settings_screen_descriptor, 0);
     return &settings_screen_descriptor;
+  }
+
+  if (screen_id == SCREEN_TEST) {
+    // We ignore the offset since Test screen is not in the
+    // main screen sequence.
+    maybe_setup_screen(&test_screen_descriptor, 0);
+    return &test_screen_descriptor;
   }
 
   // Try to match to the sequential screens.

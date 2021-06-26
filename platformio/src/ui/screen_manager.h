@@ -46,6 +46,7 @@ enum ScreenId {
   SCREEN_PHASE,
   SCREEN_CURRENT_HISTOGRAM,
   SCREEN_SETTINGS,
+  SCREEN_TEST,
 };
 
 extern void setup();
