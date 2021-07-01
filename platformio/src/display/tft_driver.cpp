@@ -21,6 +21,8 @@ namespace tft_driver {
 // Outputs managed by PioTft.
 #define TFT_D0_PIN 6   // First of 8 data pins, [GPIO_6, GPIO_13]
 #define TFT_WR_PIN 28  // Active low
+// Not connected in MK3.
+#define TFT_RD_PIN 22  // Active low
 
 #define TFT_RST_HIGH gpio_set_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_HIGH gpio_set_mask(1ul << TFT_DC_PIN)
@@ -97,12 +99,16 @@ static void init_pio() {
 
   // Associate pins with the PIO.
   pio_gpio_init(PIO, TFT_WR_PIN);
+  pio_gpio_init(PIO, TFT_RD_PIN);
   for (int i = 0; i < 8; i++) {
     pio_gpio_init(PIO, TFT_D0_PIN + i);
   }
 
   // Configure the pins to be outputs.
   pio_sm_set_consecutive_pindirs(PIO, SM, TFT_WR_PIN, 1, true);
+  pio_sm_set_consecutive_pindirs(PIO, SM, TFT_RD_PIN, 1, true);
+  // Initially outputs. The PIO program latter toggle these to be
+  // input or output as needed.
   pio_sm_set_consecutive_pindirs(PIO, SM, TFT_D0_PIN, 8, true);
 
   // Configure the state machine.
@@ -110,6 +116,8 @@ static void init_pio() {
   // The pio program declares that a single sideset pin is used.
   // Define it.
   sm_config_set_sideset_pins(&c, TFT_WR_PIN);
+  sm_config_set_set_pins(&c, TFT_RD_PIN, 1);
+
   // The 8 consecutive pins that are used for data outout.
   sm_config_set_out_pins(&c, TFT_D0_PIN, 8);
   // Set clock divider. Value of 1 for max speed.
@@ -137,18 +145,26 @@ static void flush() {
   }
 }
 
-static void set_mode_single_byte() {
+static void set_mode_write_8() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
               pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr8));
 }
 
-static void set_mode_double_byte() {
+static void set_mode_write_16() {
   flush();
   // Force a SM jump.
   pio_sm_exec(PIO, SM,
               pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr16));
+}
+
+// Not available in MK3 (RD signal not connected).
+static void set_mode_read_8() {
+  flush();
+  // Force a SM jump.
+  pio_sm_exec(PIO, SM,
+              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_rd8));
 }
 
 // For testing.
@@ -162,7 +178,7 @@ static void write(uint16_t value) { pio_sm_put_blocking(PIO, SM, value); }
 
 inline void write_command_byte(uint8_t c) {
   // This also flushes any pending writes.
-  set_mode_single_byte();
+  set_mode_write_8();
   TFT_DC_LOW;
   write(c);
   // Prepear for data bytes that will follow
@@ -333,7 +349,7 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 
   // Should follow by pixels.
   write_command_byte(ILI9488_RAMWR);  // write to RAM
-  set_mode_double_byte();
+  set_mode_write_16();
   TFT_DC_HIGH;
 }
 

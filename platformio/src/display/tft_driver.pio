@@ -7,12 +7,14 @@
 .program tft_driver_pio
 .side_set 1 opt ;  The TFT_WR output.
 
-// The C++ code switches between the 8 bits and 16 bits loops
+// The C++ code switches between the loops here
 // by waiting for the SM to be idle and setting its PC.
 //
 public start_wr16:
+   // Set RD output high
+   set pins 1
    // Force 8 data pins to be outputs by writing 11111111 to the 
-   // pindirs register.
+   // pindirs register. Also sets WR high.
    set x, 0 side 1
    mov osr, !x
    out pindirs, 8
@@ -34,11 +36,13 @@ loop_wr16:
    out pins, 8 side 0    
    jmp loop_wr16 
 
-// 8 bytes transfers are less time critical (happen less
+// 8 bits writes are less time critical (happen less
 // frequently) so we use more conservative timing.
 public start_wr8:
+   // Set RD output high
+   set pins 1
    // Force 8 data pins to be outputs by writing 11111111 to the 
-   // pindirs register.
+   // pindirs register. Also sets WR high.
    set x, 0 side 1
    mov osr, !x
    out pindirs, 8
@@ -50,6 +54,28 @@ loop_wr8:
    // shifts the OSR right by 8 bits.
    out pins, 8 side 0 [1]     
    jmp loop_wr8   
+
+// 8 bits reads from the TFT
+public start_rd8:
+   // Set RD output high
+   set pins 1
+   // Force 8 data pins to be inputs by writing 00000000 to the 
+   // pindirs register. Also sets WR high.
+   set pindirs, 0 side 1
+loop_rd8:
+   // Read a work token from the TX FIFO. Actual value is ignore.
+   pull
+   // RD low.
+   set pins 0 [2]
+   // Read data
+   in pins, 8 [2]
+   // RD high
+   set pins 1 
+   push
+   jmp loop_rd8
+
+
+
   
 
 
