@@ -22,8 +22,8 @@ namespace tft_driver {
 // Outputs managed by PioTft.
 #define TFT_D0_PIN 6   // First of 8 data pins, [GPIO_6, GPIO_13]
 #define TFT_WR_PIN 28  // Active low
-// RD is not connected in MK3.
-#define TFT_RD_PIN 18  // Active low
+// Added in MK4. Prior versions cannot read the TFT.
+#define TFT_RD_PIN 22  // Active low
 
 #define TFT_RST_HIGH gpio_set_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_HIGH gpio_set_mask(1ul << TFT_DC_PIN)
