@@ -11,11 +11,11 @@
 // -------------- //
 
 #define tft_driver_pio_wrap_target 0
-#define tft_driver_pio_wrap 18
+#define tft_driver_pio_wrap 17
 
 #define tft_driver_pio_offset_start_wr16 0u
 #define tft_driver_pio_offset_start_wr8 7u
-#define tft_driver_pio_offset_start_rd8 10u
+#define tft_driver_pio_offset_start_rd8 15u
 
 static const uint16_t tft_driver_pio_program_instructions[] = {
             //     .wrap_target
@@ -29,22 +29,21 @@ static const uint16_t tft_driver_pio_program_instructions[] = {
     0x9aa0, //  7: pull   block           side 1 [2] 
     0x7108, //  8: out    pins, 8         side 0 [1] 
     0x0007, //  9: jmp    7                          
-    0x004d, // 10: jmp    x--, 13                    
-    0x80a0, // 11: pull   block                      
-    0x000b, // 12: jmp    11                         
-    0xe700, // 13: set    pins, 0                [7] 
-    0xa0c2, // 14: mov    isr, y                     
-    0x4008, // 15: in     pins, 8                    
-    0xe001, // 16: set    pins, 1                    
-    0x8720, // 17: push   block                  [7] 
-    0x000a, // 18: jmp    10                         
+    0xe700, // 10: set    pins, 0                [7] 
+    0xa0c2, // 11: mov    isr, y                     
+    0x4008, // 12: in     pins, 8                    
+    0xe001, // 13: set    pins, 1                    
+    0x8720, // 14: push   block                  [7] 
+    0x004a, // 15: jmp    x--, 10                    
+    0x80a0, // 16: pull   block                      
+    0x0010, // 17: jmp    16                         
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program tft_driver_pio_program = {
     .instructions = tft_driver_pio_program_instructions,
-    .length = 19,
+    .length = 18,
     .origin = -1,
 };
 

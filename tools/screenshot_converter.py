@@ -25,14 +25,24 @@ timestamp = "%d%02d%02d-%02d%02d%02d" % (dateTimeObj.year, dateTimeObj.month,  d
 # Set one pixel in the image.
 
 
-def put_pixel(x, y, color16):
-    r3 = (color16 >> 11) & 0x1f  # R 5 bits
-    g3 = (color16 >> 5) & 0x3f  # G 6 bits
-    b2 = color16 & 0x1f  # B 5 bits
+def put_pixel(x, y, color):
+    r3 = (color >> 11) & 0x1f  # R 5 bits
+    g3 = (color >> 5) & 0x3f  # G 6 bits
+    b2 = color & 0x1f  # B 5 bits
 
     r = int(r3 * 255 / 31)
     g = int(g3 * 255 / 63)
     b = int(b2 * 255 / 31)
+
+    # r = (color >> 16) & 0xff  # R 8 bits
+    # g = (color >> 8) & 0xff  # G 8 bits
+    # b = color & 0xff  # B 8 bits
+
+    # r = int(r * 2)
+    # g = int(g * 2)
+    # b = int(b * 2)
+
+   
     image.putpixel((x, y), (r, g, b, 255))
 
 # Process a line with pixels.

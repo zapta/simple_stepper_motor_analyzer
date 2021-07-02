@@ -97,7 +97,7 @@ void loop() {
 
     static uint print_cycle = 0;
 
-    tft_driver::test();
+    //tft_driver::test();
 
     switch (print_cycle) {
       default:

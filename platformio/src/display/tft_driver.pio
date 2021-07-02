@@ -55,21 +55,14 @@ loop_wr8:
    jmp loop_wr8   
 
 // 8 bits reads from the TFT
-public start_rd8:
-  // Initialized by tft_driver.cpp:
-  // * Data pins direction = IN
-  // * TFT_RD, TFT_WR pins are high
-  // * x register = num of bytes to read
-  // * Y register = 0
-
-rd8_loop:
-   // If not done, go to next iteration.
-   jmp x-- rd8_read_next 
-
-rd8_halt:
-   pull  // dummy pull to stall
-   jmp rd8_halt
-
+// Initialized by tft_driver.cpp:
+// * Data pins direction = IN
+// * TFT_RD, TFT_WR pins are high
+// * x register = num of bytes to read
+// * Y register = 0
+//
+// Starts at start_rd8
+//
 rd8_read_next:
    // NOTE: we add delays below to have sufficient settling time
    // for the TFT data. ILI9488 reads seems to be significantly 
@@ -78,7 +71,8 @@ rd8_read_next:
    // RD output pin = 0 (active).
    set pins 0 [7]
 
-   // Reset ISR, since we shift in only 8 bits.
+   // Clear ISR, since we shift in only 8 bits. Y is zero from
+   // initialization.
    mov isr, y 
 
    // Shift left 8 pins values into ISR.
@@ -90,7 +84,14 @@ rd8_read_next:
    // Write ISR to the RX FIFO.
    push [7]
 
-   jmp rd8_loop
+   // If counter > 0, go to next iteration.
+public start_rd8:
+   jmp x-- rd8_read_next 
+
+rd_halt:
+   // TODO: Is there a single instruction stall forever command?
+   pull  // dummy pull to stall
+   jmp rd_halt
 
 
 

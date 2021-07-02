@@ -139,7 +139,6 @@ static void init_pio() {
   // Set clock divider. Value of 1 for max speed.
   sm_config_set_clkdiv_int_frac(&c, PIO_CLOCK_DIV, 0);
 
-
   // The OSR register shifts to the right, sending the MSB byte
   // first, in a double bytes transfers.
   sm_config_set_out_shift(&c, true, false, 0);
@@ -168,6 +167,7 @@ static void flush() {
   pio_sm_clear_fifos(PIO, SM);
 }
 
+// TODO: consider to use the same init table for wr8 and wr16.
 static const uint wr8_init_table[] = {
     0xf801,  // set    pins, 1         side 1
     0xe020,  // set    x, 0
@@ -246,6 +246,35 @@ static void set_mode_read_8(uint count) {
 
   pio_sm_set_enabled(PIO, SM, true);
 }
+
+// static const uint rd16_init_table[] = {
+//     0xf801,  // 18: set    pins, 1         side 1
+//     0xe040,  // 19: set    y, 0
+//     0xa0e2,  // 20: mov    osr, y
+//     0x6088,  // 21: out    pindirs, 8
+// };
+
+// Not available in MK3 (RD signal not connected).
+// static void set_mode_read_16(uint count) {
+//   flush();
+
+//   pio_sm_set_enabled(PIO, SM, false);
+
+//   constexpr int N = sizeof(rd16_init_table) / sizeof(rd16_init_table[0]);
+//   for (int i = 0; i < N; i++) {
+//     pio_sm_exec(PIO, SM, rd16_init_table[i]);
+//   }
+
+//   pio_set_x(count);
+
+//   // Force jump to start address.
+//   // pio_program_offset is a variable so can't be used in the static init
+//   table. pio_sm_exec(
+//       PIO, SM,
+//       pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_rd16));
+
+//   pio_sm_set_enabled(PIO, SM, true);
+// }
 
 // For testing.
 static bool is_overrun() {
@@ -412,8 +441,7 @@ void begin() {
   write_command_byte(ILI9488_DISPON);  // Display on
 }
 
-// This is followed by a stream of pixels to render in this
-// rectangle.
+// Sets the pixel rectangle for read or write operations.
 static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   write_command_byte(ILI9488_CASET);  // Column addr set
   write_data_byte(x0 >> 8);
@@ -426,16 +454,16 @@ static void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   write_data_byte(y0 & 0xff);  // YSTART
   write_data_byte(y1 >> 8);
   write_data_byte(y1 & 0xff);  // YEND
-
-  // Should follow by pixels.
-  write_command_byte(ILI9488_RAMWR);  // write to RAM
-  set_mode_write_16();
-  TFT_DC_HIGH;
 }
 
 void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
                    const uint16_t* color16_p) {
   setAddrWindow(x1, y1, x2, y2);
+
+  // Start pixel write in the set rectangle.
+  write_command_byte(ILI9488_RAMWR);  // write to RAM
+  set_mode_write_16();
+  TFT_DC_HIGH;
 
   const int32_t w_pixels = x2 - x1 + 1;
   const int32_t h_pixels = y2 - y1 + 1;
@@ -456,7 +484,15 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 }
 
 // Temp for testing. Reads ILI9488 data.
-void test(void) {
+
+// Should print:
+//   Reading TFT
+//   Byte 0: ??????????  // Ignored
+//   Byte 1: 0x00000000
+//   Byte 2: 0x00000094
+//   Byte 3: 0x00000088
+//
+void test() {
   printf("Reading TFT\n");
   write_command_byte(0xd3);
   constexpr int N = 4;
@@ -469,5 +505,54 @@ void test(void) {
     printf("Byte %d: 0x%08lx\n", i, bfr[i]);
   }
 }
+
+// Temp for testing. Dumps ILI9488 screen.
+// void test() {
+//   uint16_t x = 0;
+//   uint16_t y = 0;
+//   uint16_t w = 480;
+//   uint16_t h = 320;
+//   setAddrWindow(x, y, x + w - 1, y + h - 1);
+//   const uint pixels = (uint32_t)w * h;
+
+//   // Start pixel read from the set rectangle.
+//   write_command_byte(ILI9488_RAMRD);  // read to RAM
+//   set_mode_read_8(pixels * 3 + 1);
+//   TFT_DC_HIGH;
+
+//   // Extra junk byte.
+//   pio_sm_get_blocking(PIO, SM);
+
+//   printf("###BEGIN screen capture\n");
+
+//   int pending_count;
+//   uint last_pixel;
+//   for (int j = y; j < y + h; j++) {
+//     printf("#%d,%d,%d", x, j, w);
+//     for (int i = x; i < x + w; i++) {
+//       const uint32_t b1 = pio_sm_get_blocking(PIO, SM);
+
+//       const uint32_t b2 = pio_sm_get_blocking(PIO, SM);
+//       const uint32_t b3 = pio_sm_get_blocking(PIO, SM);
+//       const uint32_t pixel = b1 << 16 | b2 << 8 | b3;
+//       if (!pending_count) {
+//         pending_count = 1;
+//         last_pixel = pixel;
+//       } else if (pixel == last_pixel) {
+//         pending_count++;
+//       } else {
+//         printf(",%d:%x", pending_count, last_pixel);
+//         pending_count = 1;
+//         last_pixel = pixel;
+//       }
+//     }
+//     if (pending_count) {
+//       printf(",%d:%x", pending_count, last_pixel);
+//       pending_count = 0;
+//     }
+//     printf("\n");
+//   }
+//   printf("###END screen capture\n");
+// }
 
 }  // namespace tft_driver
