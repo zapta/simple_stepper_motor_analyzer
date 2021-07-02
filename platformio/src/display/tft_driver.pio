@@ -1,6 +1,7 @@
 // Raspberry Pi Pico PIO program to output data to a TFT
 // controller via a 8 bit 8080 style data path.
 
+// Set: 1 output pin, TFT_RD, Active low.
 // Side set: 1 output pin, TFT_WR. Active low.
 // Data set: 8 consecutive output pins, TFT_D0 .. TFT_D7
 
@@ -11,25 +12,25 @@
 // by waiting for the SM to be idle and setting its PC.
 //
 public start_wr16:
-   // Set RD output high
-   set pins 1
-   // Force 8 data pins to be outputs by writing 11111111 to the 
-   // pindirs register. Also sets WR high.
-   set x, 0 side 1
-   mov osr, !x
-   out pindirs, 8
+   // TODO: Document here the initialization done in C++ each time
+   // starting this program.
+
 loop_wr16:
+
    // Fetch into OSR the next 32 bit value from the TX FIFO. 
    // This is a blocking operation. Sets WR high.
    pull side 1  
    // Shift the OSR reg right by 8 bits, loading the low 8 bits
    // of reg x with the shifted data.
    out x, 8
+ 
    // Write the first byte (MSB) and sets WR low. This also
    // shift OSR by 8 bits which we don't care about.
-   out pins, 8 side 0 [1]       
+   out pins, 8 side 0 [1]     
+  
    // Set TFT_WR back high.    
    nop side 1    
+
    // Move the LSB byte back to the OSR.
    mov osr, x        
    // Output the second byte and set TFT_WRITE low.
@@ -39,14 +40,12 @@ loop_wr16:
 // 8 bits writes are less time critical (happen less
 // frequently) so we use more conservative timing.
 public start_wr8:
-   // Set RD output high
-   set pins 1
-   // Force 8 data pins to be outputs by writing 11111111 to the 
-   // pindirs register. Also sets WR high.
-   set x, 0 side 1
-   mov osr, !x
-   out pindirs, 8
+   // TODO: Document here the initialization done in C++ each time
+   // starting this program.
+
 loop_wr8:
+   //set pins 1
+
    // Fetch into OSR the next 32 bit value from the TX FIFO. 
    // This is a blocking operation. Sets WR high.
    pull side 1 [2]
@@ -57,22 +56,41 @@ loop_wr8:
 
 // 8 bits reads from the TFT
 public start_rd8:
-   // Set RD output high
+  // Initialized by tft_driver.cpp:
+  // * Data pins direction = IN
+  // * TFT_RD, TFT_WR pins are high
+  // * x register = num of bytes to read
+  // * Y register = 0
+
+rd8_loop:
+   // If not done, go to next iteration.
+   jmp x-- rd8_read_next 
+
+rd8_halt:
+   pull  // dummy pull to stall
+   jmp rd8_halt
+
+rd8_read_next:
+   // NOTE: we add delays below to have sufficient settling time
+   // for the TFT data. ILI9488 reads seems to be significantly 
+   // slower than writes.
+   
+   // RD output pin = 0 (active).
+   set pins 0 [7]
+
+   // Reset ISR, since we shift in only 8 bits.
+   mov isr, y 
+
+   // Shift left 8 pins values into ISR.
+   in pins, 8
+
+   // ED output pin = 1 (inactive).
    set pins 1
-   // Force 8 data pins to be inputs by writing 00000000 to the 
-   // pindirs register. Also sets WR high.
-   set pindirs, 0 side 1
-loop_rd8:
-   // Read a work token from the TX FIFO. Actual value is ignore.
-   pull
-   // RD low.
-   set pins 0 [2]
-   // Read data
-   in pins, 8 [2]
-   // RD high
-   set pins 1 
-   push
-   jmp loop_rd8
+
+   // Write ISR to the RX FIFO.
+   push [7]
+
+   jmp rd8_loop
 
 
 

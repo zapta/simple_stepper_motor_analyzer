@@ -1,6 +1,7 @@
 #include "tft_driver.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "hardware/dma.h"
 #include "hardware/gpio.h"
@@ -21,8 +22,8 @@ namespace tft_driver {
 // Outputs managed by PioTft.
 #define TFT_D0_PIN 6   // First of 8 data pins, [GPIO_6, GPIO_13]
 #define TFT_WR_PIN 28  // Active low
-// Not connected in MK3.
-#define TFT_RD_PIN 22  // Active low
+// RD is not connected in MK3.
+#define TFT_RD_PIN 18  // Active low
 
 #define TFT_RST_HIGH gpio_set_mask(1ul << TFT_RST_PIN)
 #define TFT_DC_HIGH gpio_set_mask(1ul << TFT_DC_PIN)
@@ -60,6 +61,17 @@ static uint pio_program_offset = 0;
 // Info about the PWM channel used for the backlight output.
 static uint bl_pwm_slice_num;
 static uint bl_pwm_channel;
+
+static void pio_set_x(uint32_t v) {
+  static const uint instr_shift = pio_encode_in(pio_x, 4);
+  static const uint instr_mov = pio_encode_mov(pio_x, pio_isr);
+  for (int i = 7; i >= 0; i--) {
+    const uint32_t nibble = (v >> (i * 4)) & 0xf;
+    pio_sm_exec(PIO, SM, pio_encode_set(pio_x, nibble));
+    pio_sm_exec(PIO, SM, instr_shift);
+  }
+  pio_sm_exec(PIO, SM, instr_mov);
+}
 
 void set_backlight(uint8_t percents) {
   // Don't go beyond a minimum level to make sure some
@@ -112,7 +124,8 @@ static void init_pio() {
   pio_sm_set_consecutive_pindirs(PIO, SM, TFT_D0_PIN, 8, true);
 
   // Configure the state machine.
-  pio_sm_config c = tft_driver_pio_program_get_default_config(pio_program_offset);
+  pio_sm_config c =
+      tft_driver_pio_program_get_default_config(pio_program_offset);
   // The pio program declares that a single sideset pin is used.
   // Define it.
   sm_config_set_sideset_pins(&c, TFT_WR_PIN);
@@ -120,18 +133,21 @@ static void init_pio() {
 
   // The 8 consecutive pins that are used for data outout.
   sm_config_set_out_pins(&c, TFT_D0_PIN, 8);
+
+  sm_config_set_in_pins(&c, TFT_D0_PIN);
+
   // Set clock divider. Value of 1 for max speed.
   sm_config_set_clkdiv_int_frac(&c, PIO_CLOCK_DIV, 0);
 
-  // Make a single 8 words FIFO from the 4 words TX and RX FIFOs.
-  //sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
 
   // The OSR register shifts to the right, sending the MSB byte
   // first, in a double bytes transfers.
   sm_config_set_out_shift(&c, true, false, 0);
+  sm_config_set_in_shift(&c, false, false, 0);
   // Set the SM with the configuration we constructed above.
   // Default mode is single byte.
-  pio_sm_init(PIO, SM, pio_program_offset + tft_driver_pio_offset_start_wr8, &c);
+  pio_sm_init(PIO, SM, pio_program_offset + tft_driver_pio_offset_start_wr8,
+              &c);
 
   // Start the state machine.
   pio_sm_set_enabled(PIO, SM, true);
@@ -143,28 +159,92 @@ static void flush() {
   // Wait until the stall flag is up again.
   while (!(PIO->fdebug & SM_STALL_MASK)) {
   }
+
+  const uint rx_count = pio_sm_get_rx_fifo_level(PIO, SM);
+  const uint tx_count = pio_sm_get_tx_fifo_level(PIO, SM);
+  if (rx_count || tx_count) {
+    printf("WARNING: Dropping FIFOs, rx=%u, tx=%u\n", rx_count, tx_count);
+  }
+  pio_sm_clear_fifos(PIO, SM);
 }
+
+static const uint wr8_init_table[] = {
+    0xf801,  // set    pins, 1         side 1
+    0xe020,  // set    x, 0
+    0xa0e9,  // mov    osr, !x
+    0x6088,  // out    pindirs, 8
+};
 
 static void set_mode_write_8() {
   flush();
-  // Force a SM jump.
-  pio_sm_exec(PIO, SM,
-              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr8));
+
+  pio_sm_set_enabled(PIO, SM, false);
+
+  constexpr int N = sizeof(wr8_init_table) / sizeof(wr8_init_table[0]);
+  for (int i = 0; i < N; i++) {
+    pio_sm_exec(PIO, SM, wr8_init_table[i]);
+  }
+
+  // Force jump to start address.
+  // pio_program_offset is a variable so can't be used in the static init table.
+  pio_sm_exec(
+      PIO, SM,
+      pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr8));
+
+  pio_sm_set_enabled(PIO, SM, true);
 }
+
+static const uint wr16_init_table[] = {
+    0xf801,  // set    pins, 1         side 1
+    0xe020,  // set    x, 0
+    0xa0e9,  // mov    osr, !x
+    0x6088,  // out    pindirs, 8
+};
 
 static void set_mode_write_16() {
   flush();
-  // Force a SM jump.
-  pio_sm_exec(PIO, SM,
-              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr16));
+  pio_sm_set_enabled(PIO, SM, false);
+
+  constexpr int N = sizeof(wr16_init_table) / sizeof(wr16_init_table[0]);
+  for (int i = 0; i < N; i++) {
+    pio_sm_exec(PIO, SM, wr16_init_table[i]);
+  }
+
+  // Force jump to start address.
+  // pio_program_offset is a variable so can't be used in the static init table.
+  pio_sm_exec(
+      PIO, SM,
+      pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_wr16));
+  pio_sm_set_enabled(PIO, SM, true);
 }
 
+static const uint rd8_init_table[] = {
+    0xf801,  // 18: set    pins, 1         side 1
+    0xe040,  // 19: set    y, 0
+    0xa0e2,  // 20: mov    osr, y
+    0x6088,  // 21: out    pindirs, 8
+};
+
 // Not available in MK3 (RD signal not connected).
-static void set_mode_read_8() {
+static void set_mode_read_8(uint count) {
   flush();
-  // Force a SM jump.
-  pio_sm_exec(PIO, SM,
-              pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_rd8));
+
+  pio_sm_set_enabled(PIO, SM, false);
+
+  constexpr int N = sizeof(rd8_init_table) / sizeof(rd8_init_table[0]);
+  for (int i = 0; i < N; i++) {
+    pio_sm_exec(PIO, SM, rd8_init_table[i]);
+  }
+
+  pio_set_x(count);
+
+  // Force jump to start address.
+  // pio_program_offset is a variable so can't be used in the static init table.
+  pio_sm_exec(
+      PIO, SM,
+      pio_encode_jmp(pio_program_offset + tft_driver_pio_offset_start_rd8));
+
+  pio_sm_set_enabled(PIO, SM, true);
 }
 
 // For testing.
@@ -375,8 +455,19 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   //}
 }
 
-// void  set_backlight(uint8_t percents) {
-//   set_backlight_percents(percents); 
-//  }
+// Temp for testing. Reads ILI9488 data.
+void test(void) {
+  printf("Reading TFT\n");
+  write_command_byte(0xd3);
+  constexpr int N = 4;
+  set_mode_read_8(N);
+  uint32_t bfr[N];
+  for (int i = 0; i < N; i++) {
+    bfr[i] = pio_sm_get_blocking(PIO, SM);
+  }
+  for (int i = 0; i < N; i++) {
+    printf("Byte %d: 0x%08lx\n", i, bfr[i]);
+  }
+}
 
 }  // namespace tft_driver

@@ -11,47 +11,40 @@
 // -------------- //
 
 #define tft_driver_pio_wrap_target 0
-#define tft_driver_pio_wrap 25
+#define tft_driver_pio_wrap 18
 
 #define tft_driver_pio_offset_start_wr16 0u
-#define tft_driver_pio_offset_start_wr8 11u
-#define tft_driver_pio_offset_start_rd8 18u
+#define tft_driver_pio_offset_start_wr8 7u
+#define tft_driver_pio_offset_start_rd8 10u
 
 static const uint16_t tft_driver_pio_program_instructions[] = {
             //     .wrap_target
-    0xe001, //  0: set    pins, 1                    
-    0xf820, //  1: set    x, 0            side 1     
-    0xa0e9, //  2: mov    osr, !x                    
-    0x6088, //  3: out    pindirs, 8                 
-    0x98a0, //  4: pull   block           side 1     
-    0x6028, //  5: out    x, 8                       
-    0x7108, //  6: out    pins, 8         side 0 [1] 
-    0xb842, //  7: nop                    side 1     
-    0xa0e1, //  8: mov    osr, x                     
-    0x7008, //  9: out    pins, 8         side 0     
-    0x0004, // 10: jmp    4                          
-    0xe001, // 11: set    pins, 1                    
-    0xf820, // 12: set    x, 0            side 1     
-    0xa0e9, // 13: mov    osr, !x                    
-    0x6088, // 14: out    pindirs, 8                 
-    0x9aa0, // 15: pull   block           side 1 [2] 
-    0x7108, // 16: out    pins, 8         side 0 [1] 
-    0x000f, // 17: jmp    15                         
-    0xe001, // 18: set    pins, 1                    
-    0xf880, // 19: set    pindirs, 0      side 1     
-    0x80a0, // 20: pull   block                      
-    0xe200, // 21: set    pins, 0                [2] 
-    0x4208, // 22: in     pins, 8                [2] 
-    0xe001, // 23: set    pins, 1                    
-    0x8020, // 24: push   block                      
-    0x0014, // 25: jmp    20                         
+    0x98a0, //  0: pull   block           side 1     
+    0x6028, //  1: out    x, 8                       
+    0x7108, //  2: out    pins, 8         side 0 [1] 
+    0xb842, //  3: nop                    side 1     
+    0xa0e1, //  4: mov    osr, x                     
+    0x7008, //  5: out    pins, 8         side 0     
+    0x0000, //  6: jmp    0                          
+    0x9aa0, //  7: pull   block           side 1 [2] 
+    0x7108, //  8: out    pins, 8         side 0 [1] 
+    0x0007, //  9: jmp    7                          
+    0x004d, // 10: jmp    x--, 13                    
+    0x80a0, // 11: pull   block                      
+    0x000b, // 12: jmp    11                         
+    0xe700, // 13: set    pins, 0                [7] 
+    0xa0c2, // 14: mov    isr, y                     
+    0x4008, // 15: in     pins, 8                    
+    0xe001, // 16: set    pins, 1                    
+    0x8720, // 17: push   block                  [7] 
+    0x000a, // 18: jmp    10                         
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program tft_driver_pio_program = {
     .instructions = tft_driver_pio_program_instructions,
-    .length = 26,
+    .length = 19,
     .origin = -1,
 };
 

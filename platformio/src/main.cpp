@@ -13,6 +13,7 @@
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
+#include "display/tft_driver.h"
 
 constexpr uint8_t kColor8Blue = 0x3;
 
@@ -91,10 +92,12 @@ void loop() {
   }
 
   // Periodic report over USB/Serial. For debugging.
-  if (elapsed_from_last_dump.elapsed_millis() > 5000) {
+  if (elapsed_from_last_dump.elapsed_millis() > 3000) {
     elapsed_from_last_dump.reset();
 
     static uint print_cycle = 0;
+
+    tft_driver::test();
 
     switch (print_cycle) {
       default:
