@@ -181,16 +181,16 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0105
 U 1 1 60A1DF96
-P 3850 2050
-F 0 "#PWR0105" H 3850 1800 50  0001 C CNN
-F 1 "GND" H 3855 1877 50  0000 C CNN
-F 2 "" H 3850 2050 50  0001 C CNN
-F 3 "" H 3850 2050 50  0001 C CNN
-	1    3850 2050
+P 3850 2100
+F 0 "#PWR0105" H 3850 1850 50  0001 C CNN
+F 1 "GND" H 3855 1927 50  0000 C CNN
+F 2 "" H 3850 2100 50  0001 C CNN
+F 3 "" H 3850 2100 50  0001 C CNN
+	1    3850 2100
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3850 2000 3850 2050
+	3850 2000 3850 2100
 Text Label 4750 1500 2    50   ~ 0
 CHB
 Wire Wire Line
@@ -261,16 +261,14 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0108
 U 1 1 60A49E54
-P 2900 3150
-F 0 "#PWR0108" H 2900 2900 50  0001 C CNN
-F 1 "GND" H 2905 2977 50  0000 C CNN
-F 2 "" H 2900 3150 50  0001 C CNN
-F 3 "" H 2900 3150 50  0001 C CNN
-	1    2900 3150
+P 2900 3200
+F 0 "#PWR0108" H 2900 2950 50  0001 C CNN
+F 1 "GND" H 2905 3027 50  0000 C CNN
+F 2 "" H 2900 3200 50  0001 C CNN
+F 3 "" H 2900 3200 50  0001 C CNN
+	1    2900 3200
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2900 3150 2900 3100
 Wire Wire Line
 	2900 2300 2900 2150
 $Comp
@@ -369,8 +367,6 @@ Wire Wire Line
 Text Label 8050 2350 0    50   ~ 0
 ~TFT_WR
 Wire Wire Line
-	8500 2450 8900 2450
-Wire Wire Line
 	8500 1450 8500 1850
 NoConn ~ 8900 2650
 Text Label 8050 2750 0    50   ~ 0
@@ -390,7 +386,6 @@ F 3 "" H 8700 5800 50  0001 C CNN
 $EndComp
 Connection ~ 8700 2150
 Connection ~ 8700 2850
-Connection ~ 8500 2450
 Wire Wire Line
 	8900 4950 8700 4950
 Connection ~ 8700 4950
@@ -405,14 +400,10 @@ Wire Wire Line
 	8500 1950 8900 1950
 Connection ~ 8500 1950
 Wire Wire Line
-	8500 1950 8500 2450
-Wire Wire Line
 	8900 5250 8700 5250
 Connection ~ 8700 5250
 Wire Wire Line
 	8700 5250 8700 5800
-Wire Wire Line
-	8500 2450 8500 4550
 $Comp
 L power:GND #PWR0120
 U 1 1 60F17E04
@@ -660,7 +651,7 @@ F 3 "~" H 10150 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 6400 7150 0    100  ~ 0
-Simple Stepper Motor Analyzer MK2
+Simple Stepper Motor Analyzer MK4
 Text Notes 7550 4850 2    50   ~ 0
 BACKLIGHT\nCONTROL
 Text Notes 8200 6400 0    50   ~ 0
@@ -756,13 +747,11 @@ Wire Wire Line
 Connection ~ 8700 4450
 Wire Wire Line
 	8700 4450 8700 4950
-NoConn ~ 4900 6050
 NoConn ~ 4900 6150
 NoConn ~ 4900 6250
 NoConn ~ 4900 6550
 NoConn ~ 4900 6650
 NoConn ~ 3500 5150
-NoConn ~ 4900 5750
 $Comp
 L Transistor_FET:AO3400A Q1
 U 1 1 60D5E604
@@ -876,7 +865,6 @@ Wire Wire Line
 	3500 4850 2800 4850
 Text Label 2800 4850 0    50   ~ 0
 ~TFT_RST
-NoConn ~ 4900 5850
 $Comp
 L Device:C C3
 U 1 1 60C5DA5D
@@ -951,6 +939,92 @@ Wire Wire Line
 Text Label 1800 6650 2    50   ~ 0
 OPTIONS
 Wire Wire Line
-	5150 5950 5150 6450
+	5150 5950 5150 6050
 NoConn ~ 4900 6350
+Text Label 5650 5850 2    50   ~ 0
+~TFT_RD
+Wire Wire Line
+	8500 1950 8500 4550
+Wire Wire Line
+	8900 2450 8050 2450
+Text Label 8050 2450 0    50   ~ 0
+~TFT_RD
+Wire Wire Line
+	4900 5850 5650 5850
+NoConn ~ 4900 5750
+$Comp
+L Device:C C5
+U 1 1 60ECCB29
+P 4350 1900
+F 0 "C5" H 4150 1900 50  0000 L CNN
+F 1 "DNP" H 4100 2000 50  0000 L CNN
+F 2 "stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 4388 1750 50  0001 C CNN
+F 3 "~" H 4350 1900 50  0001 C CNN
+F 4 "C49678 " V 4350 1900 50  0001 C CNN "LCSC"
+	1    4350 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 60ECD31D
+P 4350 2100
+F 0 "#PWR0111" H 4350 1850 50  0001 C CNN
+F 1 "GND" H 4355 1927 50  0000 C CNN
+F 2 "" H 4350 2100 50  0001 C CNN
+F 3 "" H 4350 2100 50  0001 C CNN
+	1    4350 2100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4300 1700 4350 1700
+Wire Wire Line
+	4350 1700 4350 1750
+Wire Wire Line
+	4350 2050 4350 2100
+$Comp
+L Device:C C4
+U 1 1 60EE9FA1
+P 3400 3000
+F 0 "C4" H 3200 3000 50  0000 L CNN
+F 1 "DNP" H 3150 3100 50  0000 L CNN
+F 2 "stepper_motor_analyzer:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 3438 2850 50  0001 C CNN
+F 3 "~" H 3400 3000 50  0001 C CNN
+F 4 "C49678 " V 3400 3000 50  0001 C CNN "LCSC"
+	1    3400 3000
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0112
+U 1 1 60EEA675
+P 3400 3200
+F 0 "#PWR0112" H 3400 2950 50  0001 C CNN
+F 1 "GND" H 3405 3027 50  0000 C CNN
+F 2 "" H 3400 3200 50  0001 C CNN
+F 3 "" H 3400 3200 50  0001 C CNN
+	1    3400 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 2800 3400 2800
+Wire Wire Line
+	3400 2800 3400 2850
+Wire Wire Line
+	3400 3150 3400 3200
+Wire Wire Line
+	2900 3100 2900 3200
+Text Notes 4650 1950 0    50   ~ 0
+(MK4)
+Text Notes 3700 3050 0    50   ~ 0
+(MK4)
+Text Notes 5700 5850 0    50   ~ 0
+(MK4)
+Wire Wire Line
+	4900 6050 5150 6050
+Connection ~ 5150 6050
+Wire Wire Line
+	5150 6050 5150 6450
+Text Notes 4900 6050 0    50   ~ 0
+(MK4)
+Text Notes 6400 6950 0    100  ~ 0
+WORK IN PROGRESS. NON RELEASE.
 $EndSCHEMATC

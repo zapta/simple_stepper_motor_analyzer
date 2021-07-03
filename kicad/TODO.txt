@@ -1,18 +1,25 @@
 
-* Add a connection to the TFT's RD input to allow reading. Make it PIO friendly (e.g. WR and RD can be a 2 pin 'side output')
 
-* Move FPC1 1mm toward the cable 
-
-* Add filter capacitor for ACS712ELCTR-05B-T current sensor.
 
 * Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
 
 * Delete junk kicad and model files.
 
-* Run the backlight on VSYS and allow for higher max current since backlight is PWM controlled.
 
 
 ----- Done
+
+* Add builtin config for MK4
+
+* Add filter capacitor for ACS712ELCTR-05B-T current sensor.
+
+* Move FPC1 1mm toward the cable 
+
+* Add a connection to the TFT's RD input to allow reading. Make it PIO friendly (e.g. WR and RD can be a 2 pin 'side output')
+
+* (Not done, resistor heat dissipation) Run the backlight on VSYS and allow for higher max current since backlight is PWM controlled.
+
+--
 
 * REJECTED. (low Hfe concerns) Replace backlight mosfet with NPN (e.g. SS8050) and a resistor (reduce cost).
 
