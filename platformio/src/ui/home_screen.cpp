@@ -3,6 +3,7 @@
 #include "acquisition/analyzer.h"
 #include "misc/config_eeprom.h"
 #include "ui.h"
+#include "misc/hardware_config.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 500;
 
@@ -80,8 +81,9 @@ void HomeScreen::loop() {
   // Sample data and update screen.
   const analyzer::State* state = analyzer::sample_state();
 
-  ch_a_field_.set_text_float(analyzer::adc_value_to_amps(state->v1), 2);
-  ch_b_field_.set_text_float(analyzer::adc_value_to_amps(state->v2), 2);
+  const hardware_config::SensorSpec* sensor_spec = hardware_config::sensor_spec();
+  ch_a_field_.set_text_float(sensor_spec->adc_value_to_amps(state->v1), 2);
+  ch_b_field_.set_text_float(sensor_spec->adc_value_to_amps(state->v2), 2);
 
   errors_field_.set_text_uint(state->quadrature_errors);
   errors_field_.set_text_color(state->quadrature_errors ? LV_COLOR_RED

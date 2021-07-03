@@ -6,16 +6,17 @@
 #include "config.h"
 #include "display/lvgl_adapter.h"
 #include "misc/config_eeprom.h"
-#include "misc/hardware_options.h"
+#include "misc/hardware_config.h"
 #include "ui.h"
 #include "ui_events.h"
+#include "misc/hardware_config.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 350;
 
 static constexpr const char* kFootnotFormat =
-    "To calibrate, disconnect the stepper motors and\n"
-    "press SET ZERO. Options: %s, firmware: %s.\n"
-    "Pico SDK: %s. LVLG: %s" ;
+    "To calibrate, disconnect the steppers and\n"
+    "press SET ZERO. Level: %s, sensor: %s,\n"
+    "Firmware: %s, SDK: %s.";
 
 // Must be static. LV keeps a reference to it.
 static lv_style_t style;
@@ -134,8 +135,9 @@ void SettingsScreen::setup(uint8_t screen_num) {
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_SILVER, nullptr);
 
   const char* footnote_text =
-      format(kFootnotFormat, hardware_options::get_name(), VERSION_STRING,
-             PICO_SDK_VERSION_STRING, LVGL_VERSION_INFO);
+      format(kFootnotFormat, hardware_config::level_name(),
+             hardware_config::sensor_name(), VERSION_STRING,
+             PICO_SDK_VERSION_STRING);
   ui::create_label(screen_, 0, 5, 275, footnote_text, ui::kFontSmallText,
                    LV_LABEL_ALIGN_LEFT, LV_COLOR_OLIVE, nullptr);
 };
@@ -149,7 +151,7 @@ void SettingsScreen::on_load() {
 
 void SettingsScreen::on_unload() { maybe_update_eeprom(); };
 
-// For the intensity slider we don't use events, just 
+// For the intensity slider we don't use events, just
 // polling.
 void SettingsScreen::on_event(ui_events::UiEventId ui_event_id) {
   switch (ui_event_id) {
@@ -182,6 +184,7 @@ void SettingsScreen::loop() {
 
   // Sample data and update screen.
   const analyzer::State* state = analyzer::sample_state();
-  ch_a_field_.set_text_float(analyzer::adc_value_to_amps(state->v1), 2);
-  ch_b_field_.set_text_float(analyzer::adc_value_to_amps(state->v2), 2);
+  const hardware_config::SensorSpec* sensor_spec = hardware_config::sensor_spec();
+  ch_a_field_.set_text_float(sensor_spec->adc_value_to_amps(state->v1), 2);
+  ch_b_field_.set_text_float(sensor_spec->adc_value_to_amps(state->v2), 2);
 }

@@ -27,12 +27,12 @@ static State sampled_state;
 
 // 12 bit -> 4096 counts. 3.3V full scale.
 // 0.4V per AMP (for +/- 2.5A sensor).
-constexpr float kCountsPerAmp = 0.4 * 4096 / 3.3;
+//constexpr float kCountsPerAmp = 0.4 * 4096 / 3.3;
 
 // We use this value to do multiplications instead of divisions.
-constexpr float kAmpsPerCount = 1 / kCountsPerAmp;
+//constexpr float kAmpsPerCount = 1 / kCountsPerAmp;
 
-constexpr float kMilliampsPerCount = 1000 / kCountsPerAmp;
+//constexpr float kMilliampsPerCount = 1000 / kCountsPerAmp;
 
 // Energized/non-energized histeresis limits in ADC
 // counts.
@@ -171,13 +171,13 @@ void reset_state() {
   adc_dma::enable_irq();
 }
 
-int adc_value_to_milliamps(int adc_value) {
-  return (int)(adc_value * kMilliampsPerCount);
-}
+// int adc_value_to_milliamps(int adc_value) {
+//   return (int)(adc_value * kMilliampsPerCount);
+// }
 
-float adc_value_to_amps(int adc_value) {
-  return ((float)adc_value) * kAmpsPerCount;
-}
+// float adc_value_to_amps(int adc_value) {
+//   return ((float)adc_value) * kAmpsPerCount;
+// }
 
 void calibrate_zeros() {
   adc_dma::disable_irq();

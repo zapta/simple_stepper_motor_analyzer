@@ -9,7 +9,7 @@
 #include "lvgl.h"
 #include "misc/config_eeprom.h"
 #include "misc/elapsed.h"
-#include "misc/hardware_options.h"
+#include "misc/hardware_config.h"
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
@@ -33,7 +33,7 @@ static Elapsed timer;
 
 void setup() {
   stdio_init_all();
-  hardware_options::determine();
+  hardware_config::determine();
 
   io::setup();
 
@@ -103,7 +103,7 @@ void loop() {
       default:
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
-        printf("Options: [%s]\n", hardware_options::get_name());
+        printf("Config: [%s] [%s]\n", hardware_config::level_name(), hardware_config::sensor_name());
         puts("Pico SDK version: " PICO_SDK_VERSION_STRING);
         print_cycle = 1;
         break;

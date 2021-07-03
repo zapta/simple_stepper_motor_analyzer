@@ -2,6 +2,7 @@
 
 #include "acquisition/analyzer.h"
 #include "ui.h"
+#include "misc/hardware_config.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 200;
 
@@ -50,13 +51,14 @@ void CurrentHistogramScreen::loop() {
   const analyzer::State* state = analyzer::sample_state();
 
   // Update all the histogram points.
+  const hardware_config::SensorSpec* sensor_spec = hardware_config::sensor_spec();
   for (int i = 0; i < analyzer::kNumHistogramBuckets; i++) {
     uint64_t total_current_ticks = state->buckets[i].total_step_peak_currents;
     uint64_t steps = state->buckets[i].total_steps;
     // Scale the value to [0, 100];
     uint16_t val =
         steps > 0
-            ? analyzer::adc_value_to_milliamps(total_current_ticks / steps)
+            ? sensor_spec->adc_value_to_milliamps(total_current_ticks / steps)
             : 0;
 
     // Force non zero value to be visible.

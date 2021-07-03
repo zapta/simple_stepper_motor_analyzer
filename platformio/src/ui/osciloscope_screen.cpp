@@ -1,6 +1,7 @@
 #include "osciloscope_screen.h"
 
 #include "acquisition/analyzer.h"
+#include "misc/hardware_config.h"
 #include "ui.h"
 
 // NOTE: Capture deviders are configured in adc_capture_util.cpp.
@@ -63,8 +64,9 @@ void OsciloscopeScreen::on_event(ui_events::UiEventId ui_event_id) {
 // Update chart from shared state.
 void OsciloscopeScreen::update_display() {
   // TODO: can we skip this most of the times? Is it expensive?
-  chart_.set_scale(adc_capture_util::alternative_scale() ? kAxisConfigsAlternative
-                                                     : kAxisConfigsNormal);
+  chart_.set_scale(adc_capture_util::alternative_scale()
+                       ? kAxisConfigsAlternative
+                       : kAxisConfigsNormal);
   adc_capture_controls_.update_display_from_state();
 
   // No capture data.
@@ -78,11 +80,13 @@ void OsciloscopeScreen::update_display() {
   // Has capture data.
   const analyzer::AdcCaptureBuffer* capture_buffer =
       adc_capture_util::capture_buffer();
+  const hardware_config::SensorSpec* sensor_spec =
+      hardware_config::sensor_spec();
   for (int i = 0; i < analyzer::kAdcCaptureBufferSize; i++) {
     const analyzer::AdcCaptureItem* item = capture_buffer->items.get(i);
     // Currents in millamps [-2500, 2500].
-    const int milliamps1 = analyzer::adc_value_to_milliamps(item->v1);
-    const int milliamps2 = analyzer::adc_value_to_milliamps(item->v2);
+    const int milliamps1 = sensor_spec->adc_value_to_milliamps(item->v1);
+    const int milliamps2 = sensor_spec->adc_value_to_milliamps(item->v2);
 
     lv_chart_set_point_id(chart_.lv_chart, chart_.ser1.lv_series, milliamps1,
                           i);

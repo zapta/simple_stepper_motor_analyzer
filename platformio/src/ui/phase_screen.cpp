@@ -1,6 +1,7 @@
 #include "phase_screen.h"
 
 #include "acquisition/analyzer.h"
+#include "misc/hardware_config.h"
 #include "ui.h"
 
 // NOTE: Capture deviders are configured in capture_util.cpp.
@@ -76,12 +77,14 @@ void PhaseScreen::update_display() {
   }
 
   // Update both chart series with the new captured data.
+  const hardware_config::SensorSpec* sensor_spec =
+      hardware_config::sensor_spec();
   for (int i = 0; i < analyzer::kAdcCaptureBufferSize; i++) {
     const analyzer::AdcCaptureItem* item =
         adc_capture_util::capture_buffer()->items.get(i);
     // Currents in millamps [-2500, 2500].
-    const int milliamps1 = analyzer::adc_value_to_milliamps(item->v1);
-    const int milliamps2 = analyzer::adc_value_to_milliamps(item->v2);
+    const int milliamps1 = sensor_spec->adc_value_to_milliamps(item->v1);
+    const int milliamps2 = sensor_spec->adc_value_to_milliamps(item->v2);
 
     points[i].x = map_line_coord(milliamps1, polar_chart_.max_radius);
     points[i].y = map_line_coord(milliamps2, polar_chart_.max_radius);

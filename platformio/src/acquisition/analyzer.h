@@ -82,7 +82,7 @@ constexpr int TicksPerSecond = 1000000 / kUsecsPerTick;
 
 // Max range when using ACS70331EOLCTR-2P5B3 (+/- 2.5A).
 // Double this if using the +/-5A current sensor variant.
-constexpr int kMaxMilliamps = 2500;
+//constexpr int kMaxMilliamps = 2500;
 
 // Number of histogram buckets, each bucket represents
 // a band of step speeds.
@@ -209,10 +209,10 @@ void reset_state();
 double state_steps(const State& state);
 
 // Convert adc value to milliamps.
-int adc_value_to_milliamps(int adc_value);
+//int adc_value_to_milliamps(int adc_value);
 
 // Convert adc value to amps.
-float adc_value_to_amps(int adc_value);
+//float adc_value_to_amps(int adc_value);
 
 // Call this when the coil current is known to be zero to
 // calibrate the internal offset1 and offset2.
