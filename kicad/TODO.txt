@@ -1,5 +1,8 @@
 
 
+* Consider to reduce TFT resistros to 6.x
+
+* Check noise due to TFT PWM. Consider to increase frequency
 
 * Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
 
@@ -8,6 +11,8 @@
 
 
 ----- Done
+
+* Add silk screen label to new pin used in MK4
 
 * Add builtin config for MK4
 
