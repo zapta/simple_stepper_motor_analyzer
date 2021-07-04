@@ -1,6 +1,7 @@
 
+* Are the filter capacitor needed for the 5A sensor?
 
-* Consider to reduce TFT resistros to 6.x
+* Consider to reduce TFT resistros to 6.x for higher brightness
 
 * Check noise due to TFT PWM. Consider to increase frequency
 
