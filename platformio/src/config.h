@@ -8,6 +8,8 @@ namespace config {
 
 // FLAGS ARE FOR DEBUGGING ONLY. Turn off for official releases.
 
+// TODO: convert kEnableScreenshots and kEnableDebugEvents to a single enum.
+
 // For developers only. When enabled, clicking on a
 // screen's title field pauses the program and sends a screen
 // dump over the USB/serial connection.

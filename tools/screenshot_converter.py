@@ -22,18 +22,18 @@ image_count = 0
 
 image = None
 
-# Returns filename.
+# Returns the filename.
 def init_new_file():
-  global image_count, image
-  image_count = image_count + 1
-  image = Image.new(mode="RGB", size=(480, 320), color="red")
-  return "%d%02d%02d-%02d%02d%02d-%02d.png" % (dateTimeObj.year, dateTimeObj.month,  dateTimeObj.day, dateTimeObj.hour,
-                                      dateTimeObj.minute, dateTimeObj.second,image_count)
-                                    
+    global image_count, image
+    image_count = image_count + 1
+    image = Image.new(mode="RGB", size=(480, 320), color="red")
+    return "%d%02d%02d-%02d%02d%02d-%02d.png" % (dateTimeObj.year, dateTimeObj.month,  dateTimeObj.day, dateTimeObj.hour,
+                                                 dateTimeObj.minute, dateTimeObj.second, image_count)
+
 
 # Set one pixel in the image.
 
-# Parse the 24bit pixel color and set in in the image buffer. 
+# Parse the 24bit pixel color and set in in the image buffer.
 def put_pixel(x, y, color):
     global image
 
@@ -50,12 +50,14 @@ def put_pixel(x, y, color):
     b = color & 0xff  # B 8 bits
 
     # Images are kind of dark so making this brighter.
+    #k = 1.5
     k = 2.0
+    #k = 1.0
 
     r = min(255, int(r * k))
     g = min(255, int(g * k))
     b = min(255, int(b * k))
-   
+
     image.putpixel((x, y), (r, g, b, 255))
 
 # Process a line with pixels.
@@ -104,7 +106,14 @@ def process_next_image():
         process_data_line(l, line)
         l += 1
 
+    hist = image.histogram()
+    print()
+    for i in range(256):
+        print("%02x %5d %5d %5d" % (i, hist[i], hist[256+i], hist[512 + i]))
+    print()
+
     image.save(filename)
+    print("Saved image", filename)
 
 # Increment l to the index of data line past the BEGIN line.
 while l < len(lines):
@@ -112,6 +121,4 @@ while l < len(lines):
 if image_count < 1:
     print("\nError: no image found")
 else:
-  print("\nAll done, found %d images." % image_count)
-
-  
+    print("\nAll done, found %d images.\n" % image_count)
