@@ -3,14 +3,21 @@
 #include <stdio.h>
 
 #include "acquisition/analyzer.h"
+#include "display/lvgl_adapter.h"
 #include "io.h"
 #include "ui.h"
-#include "display/lvgl_adapter.h"
 
-static const ui::ChartAxisConfigs kAxisConfigsNormal{
-    .y_range = {.min = 0, .max = 1000},
-    .x = {.labels = "0\n2s\n4s\n6s\n8s\n10s", .num_ticks = 4, .dividers = 4},
-    .y = {.labels = "1k\n750\n500\n250\n0", .num_ticks = 3, .dividers = 3}};
+static const ui::ChartAxisConfig kXAxisConfig{
+    .range = {.min = 0, .max = 10},  // ignored
+    .labels = "0\n2s\n4s\n6s\n8s\n10s",
+    .num_ticks = 4,
+    .dividers = 4};
+
+static const ui::ChartAxisConfig kYAxisConfig{
+    .range = {.min = 0, .max = 1000},  // pattern range
+    .labels = "1k\n750\n500\n250\n0",
+    .num_ticks = 3,
+    .dividers = 3};
 
 TestScreen::TestScreen() {}
 
@@ -41,7 +48,7 @@ void TestScreen::setup(uint8_t screen_num) {
   construct_test_pattern();
 
   ui::create_screen(&screen_);
-  ui::create_chart(screen_, kNumPoints, 1, kAxisConfigsNormal,
+  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig, kYAxisConfig,
                    ui_events::UI_EVENT_SCALE, &chart_);
 };
 
@@ -73,7 +80,6 @@ void TestScreen::loop() {
 
   // Force screen rendering now rather than waiting for the next LVGL screen
   // update timeslot.
-  //lvgl_adapter::sync_next_update();
   lv_refr_now(NULL);
 
   LED2_OFF;

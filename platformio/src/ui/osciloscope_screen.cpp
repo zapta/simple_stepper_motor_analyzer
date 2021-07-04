@@ -6,33 +6,34 @@
 
 // NOTE: Capture deviders are configured in adc_capture_util.cpp.
 
-static const ui::ChartAxisConfigs kAxisConfigsNormal{
-    .y_range = {.min = -2500, .max = 2500},
-    .x = {.labels = "0\n5ms\n10ms\n15ms\n20ms",
-          .num_ticks = 5,
-          .dividers = 19,
-          .minor_div_lines_mask = 0xf7bde},
-    .y = {.labels = "2.5A\n0\n-2.5A",
-          .num_ticks = 3,
-          .dividers = 9,
-          .minor_div_lines_mask = 0x03de}};
+static const ui::ChartAxisConfig kYAxisConfig{
+    .range = {.min = -2500, .max = 2500},
 
-static const ui::ChartAxisConfigs kAxisConfigsAlternative{
-    .y_range = {.min = -2500, .max = 2500},
-    .x = {.labels = "0\n20ms\n40ms\n60ms\n80ms\n100ms",
-          .num_ticks = 6,
-          .dividers = 19,
-          .minor_div_lines_mask = 0xeeeee},
-    .y = {.labels = "2.5A\n0\n-2.5A",
-          .num_ticks = 3,
-          .dividers = 9,
-          .minor_div_lines_mask = 0x03de}};
+    .labels = "2.5A\n0\n-2.5A",
+    .num_ticks = 3,
+    .dividers = 9,
+    .minor_div_lines_mask = 0x03de};
+
+static const ui::ChartAxisConfig kXAxisConfigNormal{
+    .range = {.min = 0, .max = 20},  // ignored
+    .labels = "0\n5ms\n10ms\n15ms\n20ms",
+    .num_ticks = 5,
+    .dividers = 19,
+    .minor_div_lines_mask = 0xf7bde};
+
+static const ui::ChartAxisConfig kXAxisConfigAlternative{
+    .range = {.min = 0, .max = 100},  // ignored
+    .labels = "0\n20ms\n40ms\n60ms\n80ms\n100ms",
+    .num_ticks = 6,
+    .dividers = 19,
+    .minor_div_lines_mask = 0xeeeee};
 
 void OsciloscopeScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "CURRENT PATTERNS", screen_num, nullptr);
   ui::create_chart(screen_, analyzer::kAdcCaptureBufferSize, 2,
-                   kAxisConfigsNormal, ui_events::UI_EVENT_SCALE, &chart_);
+                   kXAxisConfigNormal, kYAxisConfig, ui_events::UI_EVENT_SCALE,
+                   &chart_);
   adc_capture_controls_.setup(screen_);
 };
 
@@ -65,8 +66,9 @@ void OsciloscopeScreen::on_event(ui_events::UiEventId ui_event_id) {
 void OsciloscopeScreen::update_display() {
   // TODO: can we skip this most of the times? Is it expensive?
   chart_.set_scale(adc_capture_util::alternative_scale()
-                       ? kAxisConfigsAlternative
-                       : kAxisConfigsNormal);
+                       ? kXAxisConfigAlternative
+                       : kXAxisConfigNormal,
+                   kYAxisConfig);
   adc_capture_controls_.update_display_from_state();
 
   // No capture data.

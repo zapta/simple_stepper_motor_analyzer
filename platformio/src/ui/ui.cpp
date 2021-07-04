@@ -404,47 +404,50 @@ void create_checkbox(const Screen& screen, lv_coord_t x, lv_coord_t y,
   }
 }
 
-void set_chart_scale(lv_obj_t* lv_chart, const ChartAxisConfigs& axis_configs) {
+void set_chart_scale(lv_obj_t* lv_chart, const ChartAxisConfig& x_axis_config,
+                     const ChartAxisConfig& y_axis_config) {
   // Number of internal vertical and horizontal grid lines. Does not
   // include the frame.
-  lv_chart_set_div_line_count(lv_chart, axis_configs.y.dividers,
-                              axis_configs.x.dividers);
+  lv_chart_set_div_line_count(lv_chart, y_axis_config.dividers,
+                              x_axis_config.dividers);
   lv_chart_set_minor_div_lines_masks(lv_chart,
-                                     axis_configs.y.minor_div_lines_mask,
-                                     axis_configs.x.minor_div_lines_mask);
+                                     y_axis_config.minor_div_lines_mask,
+                                     x_axis_config.minor_div_lines_mask);
 
   lv_chart_set_y_tick_length(lv_chart, 0, 0);
   lv_chart_set_x_tick_length(lv_chart, 0, 0);
 
-  if (axis_configs.x.is_enabled()) {
-    lv_chart_set_x_tick_texts(lv_chart, axis_configs.x.labels,
-                              axis_configs.x.num_ticks,
+  if (x_axis_config.is_enabled()) {
+    lv_chart_set_x_tick_texts(lv_chart, x_axis_config.labels,
+                              x_axis_config.num_ticks,
                               LV_CHART_AXIS_DRAW_LAST_TICK);
   }
 
-  if (axis_configs.y.is_enabled()) {
-    lv_chart_set_y_tick_texts(lv_chart, axis_configs.y.labels,
-                              axis_configs.y.num_ticks,
+  if (y_axis_config.is_enabled()) {
+    lv_chart_set_y_tick_texts(lv_chart, y_axis_config.labels,
+                              y_axis_config.num_ticks,
                               LV_CHART_AXIS_DRAW_LAST_TICK);
   }
 
   lv_chart_set_y_range(lv_chart, LV_CHART_AXIS_PRIMARY_Y,
-                       axis_configs.y_range.min, axis_configs.y_range.max);
+                       y_axis_config.range.min, y_axis_config.range.max);
 }
 
-void Chart::set_scale(const ChartAxisConfigs& axis_configs) {
-  set_chart_scale(lv_chart, axis_configs);
+void Chart::set_scale(const ChartAxisConfig& x_axis_config,
+                      const ChartAxisConfig& y_axis_config) {
+  set_chart_scale(lv_chart, x_axis_config, y_axis_config);
   lv_chart_refresh(lv_chart);
 }
 
 // Common to charts and histograms.
 static void common_lv_chart_settings(lv_obj_t* lv_chart,
-                                     const ChartAxisConfigs& axis_configs) {
+                                     const ChartAxisConfig& x_axis_config,
+                                     const ChartAxisConfig& y_axis_config) {
   lv_obj_set_click(lv_chart, false);
 
   // NOTE: Padding on top and right is required to avoid clipping the
   // x and y lables.
-  const bool y_labels_enabled = axis_configs.y.is_enabled();
+  const bool y_labels_enabled = y_axis_config.is_enabled();
   lv_obj_set_style_local_pad_top(lv_chart, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
                                  10);
   lv_obj_set_style_local_pad_bottom(lv_chart, LV_OBJ_PART_MAIN,
@@ -458,16 +461,17 @@ static void common_lv_chart_settings(lv_obj_t* lv_chart,
   // The x,y offsets here are fine tweaks of the chat position.
   lv_obj_align(lv_chart, NULL, LV_ALIGN_CENTER, 0, 0);
 
-  set_chart_scale(lv_chart, axis_configs);
+  set_chart_scale(lv_chart, x_axis_config, y_axis_config);
 }
 
 void create_chart(const Screen& screen, uint16_t num_points, int num_series,
-                  const ChartAxisConfigs& axis_configs,
+                  const ChartAxisConfig& x_axis_config,
+                  const ChartAxisConfig& y_axis_config,
                   ui_events::UiEventId ui_event_id, Chart* chart) {
   init_styles_if_needed();
 
   lv_obj_t* lv_chart = lv_chart_create(screen.lv_screen, NULL);
-  common_lv_chart_settings(lv_chart, axis_configs);
+  common_lv_chart_settings(lv_chart, x_axis_config, y_axis_config);
   lv_chart_set_type(lv_chart, LV_CHART_TYPE_LINE);
   lv_chart_set_update_mode(lv_chart, LV_CHART_UPDATE_MODE_SHIFT);
   // TODO: set this to actual number of X pixels for better resolution.
@@ -505,7 +509,8 @@ void create_chart(const Screen& screen, uint16_t num_points, int num_series,
 }
 
 void create_polar_chart(const Screen& screen,
-                        const ChartAxisConfigs& axis_configs,
+                        const ChartAxisConfig& x_axis_config,
+                        const ChartAxisConfig& y_axis_config,
                         ui_events::UiEventId ui_event_id,
                         PolarChart* polar_chart) {
   init_styles_if_needed();
@@ -515,7 +520,7 @@ void create_polar_chart(const Screen& screen,
 
   // NOTE: Padding on top and right is required to avoid clipping the
   // x and y lables.
-  const bool y_labels_enabled = axis_configs.y.is_enabled();
+  const bool y_labels_enabled = y_axis_config.is_enabled();
   lv_obj_set_style_local_pad_top(lv_chart, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
                                  10);
   lv_obj_set_style_local_pad_bottom(lv_chart, LV_OBJ_PART_MAIN,
@@ -530,7 +535,7 @@ void create_polar_chart(const Screen& screen,
   // The x,y offsets here are fine tweaks of the chat position.
   lv_obj_align(lv_chart, NULL, LV_ALIGN_CENTER, -40, 0);
 
-  set_chart_scale(lv_chart, axis_configs);
+  set_chart_scale(lv_chart, x_axis_config, y_axis_config);
 
   if (ui_event_id != ui_events::UI_EVENT_NONE) {
     lv_obj_set_click(lv_chart, true);
@@ -576,13 +581,14 @@ void create_polar_chart(const Screen& screen,
 }
 
 void create_histogram(const Screen& screen, uint16_t num_columns,
-                      const ChartAxisConfigs& axis_configs,
+                      const ChartAxisConfig& x_axis_config,
+                      const ChartAxisConfig& y_axis_config,
                       Histogram* histogram) {
   init_styles_if_needed();
 
   lv_obj_t* lv_chart = lv_chart_create(screen.lv_screen, NULL);
 
-  common_lv_chart_settings(lv_chart, axis_configs);
+  common_lv_chart_settings(lv_chart, x_axis_config, y_axis_config);
 
   // lv_obj_align(lv_chart, NULL, LV_ALIGN_CENTER, 0, 0);
   lv_chart_set_type(lv_chart, LV_CHART_TYPE_COLUMN);
@@ -593,7 +599,7 @@ void create_histogram(const Screen& screen, uint16_t num_columns,
   lv_chart_series_t* lv_series = lv_chart_add_series(lv_chart, LV_COLOR_YELLOW);
 
   lv_chart_set_y_range(lv_chart, LV_CHART_AXIS_PRIMARY_Y,
-                       axis_configs.y_range.min, axis_configs.y_range.max);
+                       y_axis_config.range.min, y_axis_config.range.max);
 
   lv_obj_add_style(lv_chart, LV_CHART_PART_BG,
                    &histogram_styles.bg);  // apply background style

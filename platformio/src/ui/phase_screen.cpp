@@ -9,22 +9,25 @@
 // TODO: Make class member? Share with other screen?
 static lv_point_t points[analyzer::kAdcCaptureBufferSize];
 
-static const ui::ChartAxisConfigs kAxisConfigs{
-    .y_range = {.min = -2500, .max = 2500},
-    .x = {.labels = "-2.5A\n0\n2.5A",
-          .num_ticks = 3,
-          .dividers = 9,
-          .minor_div_lines_mask = 0x03de},
-    .y = {.labels = "2.5A\n0\n-2.5A",
-          .num_ticks = 3,
-          .dividers = 9,
-          .minor_div_lines_mask = 0x03de}};
+static const ui::ChartAxisConfig kXAxisConfig{
+    .range = {.min = -2500, .max = 2500},  // ignored ?
+    .labels = "-2.5A\n0\n2.5A",
+    .num_ticks = 3,
+    .dividers = 9,
+    .minor_div_lines_mask = 0x03de};
+
+static const ui::ChartAxisConfig kYAxisConfig{
+    .range = {.min = -2500, .max = 2500},  // ignored ?
+    .labels = "2.5A\n0\n-2.5A",
+    .num_ticks = 3,
+    .dividers = 9,
+    .minor_div_lines_mask = 0x03de};
 
 void PhaseScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "PHASE PATTERNS", screen_num, nullptr);
-  ui::create_polar_chart(screen_, kAxisConfigs, ui_events::UI_EVENT_SCALE,
-                         &polar_chart_);
+  ui::create_polar_chart(screen_, kXAxisConfig, kYAxisConfig,
+                         ui_events::UI_EVENT_SCALE, &polar_chart_);
   adc_capture_controls_.setup(screen_);
   // We set the text dynamically when updating the display.
   ui::create_label(screen_, 0, 350, 180, "??", ui::kFontSmallText,

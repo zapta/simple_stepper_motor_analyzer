@@ -1,17 +1,22 @@
 #include "current_histogram_screen.h"
 
 #include "acquisition/analyzer.h"
-#include "ui.h"
 #include "misc/hardware_config.h"
+#include "ui.h"
 
 static constexpr uint32_t kUpdateIntervalMillis = 200;
 
-static const ui::ChartAxisConfigs kAxisConfigsNormal{
-    .y_range = {.min = 0, .max = 2500},
-    .x = {.labels = "0\n500\n1000\n1500\n2000", .num_ticks = 5, .dividers = 3},
-    .y = {.labels = "2.5A\n2.0\n1.5\n1.0\n0.5\n0.0",
-          .num_ticks = 6,
-          .dividers = 4}};
+static const ui::ChartAxisConfig kXAxisConfig{
+    .range = {.min = 0, .max = 2000},  // ignored
+    .labels = "0\n500\n1000\n1500\n2000",
+    .num_ticks = 5,
+    .dividers = 3};
+
+static const ui::ChartAxisConfig kYAxisConfig{
+    .range = {.min = 0, .max = 2500},
+    .labels = "2.5A\n2.0\n1.5\n1.0\n0.5\n0.0",
+    .num_ticks = 6,
+    .dividers = 4};
 
 CurrentHistogramScreen::CurrentHistogramScreen(){};
 
@@ -19,8 +24,8 @@ void CurrentHistogramScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "CURRENT BY STEPS/SEC", screen_num,
                            nullptr);
-  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets,
-                       kAxisConfigsNormal, &histogram_);
+  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig,
+                       kYAxisConfig, &histogram_);
 };
 
 void CurrentHistogramScreen::on_load() {
@@ -51,7 +56,8 @@ void CurrentHistogramScreen::loop() {
   const analyzer::State* state = analyzer::sample_state();
 
   // Update all the histogram points.
-  const hardware_config::SensorSpec* sensor_spec = hardware_config::sensor_spec();
+  const hardware_config::SensorSpec* sensor_spec =
+      hardware_config::sensor_spec();
   for (int i = 0; i < analyzer::kNumHistogramBuckets; i++) {
     uint64_t total_current_ticks = state->buckets[i].total_step_peak_currents;
     uint64_t steps = state->buckets[i].total_steps;
@@ -62,7 +68,7 @@ void CurrentHistogramScreen::loop() {
             : 0;
 
     // Force non zero value to be visible.
-    const lv_coord_t min_non_zero_val = kAxisConfigsNormal.y_range.max / 100;
+    const lv_coord_t min_non_zero_val = kYAxisConfig.range.max / 100;
     if (steps > 0 && val < min_non_zero_val) {
       // Make it visible.
       val = min_non_zero_val;

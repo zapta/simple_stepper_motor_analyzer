@@ -84,18 +84,13 @@ struct Range {
 };
 
 struct ChartAxisConfig {
+  Range range;
   const char* labels = nullptr;
   uint8_t num_ticks = 0;
   // Vertical or horizontal internal grid lines.
   uint8_t dividers;
   uint32_t minor_div_lines_mask = 0;
   bool is_enabled() const { return num_ticks > 0 && labels != nullptr; }
-};
-
-struct ChartAxisConfigs {
-  Range y_range;
-  ChartAxisConfig x;
-  ChartAxisConfig y;
 };
 
 struct ChartSeries {
@@ -132,7 +127,8 @@ struct Chart {
   ChartSeries ser1;
   ChartSeries ser2;
 
-  void set_scale(const ChartAxisConfigs& axis_configs);
+  void set_scale(const ChartAxisConfig& x_axis_config,
+                 const ChartAxisConfig& y_axis_config);
 };
 
 struct Histogram {
@@ -190,18 +186,21 @@ void create_checkbox(const Screen& screen, lv_coord_t x, lv_coord_t y,
                      Checkbox* checkbox);
 
 void create_chart(const Screen& screen, uint16_t num_points, int num_series,
-                  const ChartAxisConfigs& axis_configs,
+                  const ChartAxisConfig& x_axis_config,
+                  const ChartAxisConfig& y_axis_config,
                   ui_events::UiEventId ui_event_id, Chart* chart);
 
 void create_histogram(const Screen& screen, uint16_t num_columns,
-                      const ChartAxisConfigs& axis_configs,
+                      const ChartAxisConfig& x_axis_config,
+                      const ChartAxisConfig& y_axis_config,
                       Histogram* histogram);
 
 // If 'lable' is null it is ignored.
 void create_page_title(const Screen& screen, const char* title, Label* label);
 
 void create_polar_chart(const Screen& screen,
-                        const ChartAxisConfigs& axis_configs,
+                        const ChartAxisConfig& x_axis_config,
+                        const ChartAxisConfig& y_axis_config,
                         ui_events::UiEventId ui_event_id,
                         PolarChart* polar_chart);
 
