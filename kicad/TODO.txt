@@ -1,17 +1,17 @@
 
+
 * Are the filter capacitor needed for the 5A sensor?
 
-* Consider to reduce TFT resistros to 6.x for higher brightness
-
-* Check noise due to TFT PWM. Consider to increase frequency
 
 * Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
 
 * Delete junk kicad and model files.
 
-
-
 ----- Done
+
+* Check noise due to TFT PWM. Consider to increase frequency
+
+* (Rejected) Consider to reduce TFT resistros to 6.x for higher brightness
 
 * Add silk screen label to new pin used in MK4
 
