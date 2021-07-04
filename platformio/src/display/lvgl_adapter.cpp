@@ -7,6 +7,7 @@
 
 #include "io.h"
 #include "lvgl.h"
+#include "misc/hardware_config.h"
 #include "pico/stdlib.h"
 #include "tft_driver.h"
 #include "touch_driver.h"
@@ -33,81 +34,14 @@ static constexpr uint32_t kBufferSize = MY_DISP_HOR_RES * 80;
 static lv_color_t buf_1[kBufferSize];
 static lv_color_t buf_2[kBufferSize];
 
-// For developer's usage. Eatables screen capture for
-// documentation. Do not release with this flag set.
-static bool screen_capture_enabled = false;
-
-// static inline void wait_for_tft_sync() {
-//   uint32_t start = to_us_since_boot(get_absolute_time());
-
-//   while (!gpio_get(TFT_SYNC_PIN)) {
-//   };
-//     uint32_t end = to_us_since_boot(get_absolute_time());
-
-//   //printf("%lu\n", end - start);
-//   sleep_ms(20);
-// }
-
-// Experimental.
-//static bool sync_next_update_flag = false;
-
-// void sync_next_update() {
-//   sync_next_update_flag = true;
-// }
-
-// NOTE: Capture the dumpped text using an external terminal emularot.
-// Platformio's own terminal drops line seperators in some cases.
-//
-// Used during debugging to dump the screen. Enabled by
-// ui::kEnableScreenshots.
-static void capture_buffer(const lv_area_t* area, lv_color_t* bfr) {
-  const int32_t w_pixels = area->x2 - area->x1 + 1;
-  const int32_t h_pixels = area->y2 - area->y1 + 1;
-
-  // x,y are relative to the buffer rect.
-  for (int y = 0; y < h_pixels; y++) {
-    printf("#%d,%d,%ld", area->x1, area->y1 + y, w_pixels);
-    uint16_t pending_pixels_count = 0;
-    uint16_t pending_pixel_color = 0;
-    for (int x = 0; x < w_pixels; x++) {
-      uint16_t pixel_color = bfr[(uint32_t)y * w_pixels + x].full;
-
-      // Case 0: no pending.
-      if (pending_pixels_count == 0) {
-        pending_pixels_count = 1;
-        pending_pixel_color = pixel_color;
-        continue;
-      }
-
-      // Case 1: pending exists, append to pending.
-      if (pending_pixel_color == pixel_color) {
-        pending_pixels_count++;
-        continue;
-      }
-
-      // Case 2: pending exist, flushing pending.
-      printf(",%hu:%hx", pending_pixels_count, pending_pixel_color);
-      pending_pixel_color = pixel_color;
-      pending_pixels_count = 1;
-    }
-    // Flush end of line.
-    if (pending_pixels_count > 0) {
-      printf(",%hu:%hx", pending_pixels_count, pending_pixel_color);
-    }
-    printf("\n");
-    // This prevents loss of data(?).
-    // sleep_ms(25);
-  }
-}
-
 // Called by LV_GL to flush a buffer to the display. Per our LVGL config,
 // color is uint16_t RGB565.
 static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
                         lv_color_t* color_p) {
-  //LED2_ON;
-  if (screen_capture_enabled) {
-    capture_buffer(area, color_p);
-  }
+  // LED2_ON;
+  // if (screen_capture_enabled) {
+  //  capture_buffer(area, color_p);
+  //}
 
   // if (sync_next_update_flag) {
   //   wait_for_tft_sync();
@@ -119,7 +53,7 @@ static void my_flush_cb(lv_disp_drv_t* disp_drv, const lv_area_t* area,
   tft_driver::render_buffer(area->x1, area->y1, area->x2, area->y2,
                             (uint16_t*)lv_color16);
 
-  //LED2_OFF;
+  // LED2_OFF;
   // NOTE: The DMA completion callback will call lv_disp_flush_ready(disp_drv)
   // once the DMA to the TFT is completed.
 }
@@ -192,17 +126,14 @@ void dump_stats() {
          lv_info.frag_pct);
 }
 
-// For developer's usage. Dump the current screen.
-void start_screen_capture() {
-  screen_capture_enabled = true;
-  printf("###BEGIN screen capture\n");
-}
-
-void stop_screen_capture() {
-  screen_capture_enabled = false;
-  printf("###END screen capture\n");
-}
-
 void set_backlight(uint8_t percents) { tft_driver::set_backlight(percents); }
+
+void dump_screen() {
+  if (hardware_config::level() < hardware_config::LEVEL_MK3) {
+    printf("Hardware version %s doesn't support screen dump\n",
+           hardware_config::level_name());
+  }
+  tft_driver::dump_screen();
+}
 
 }  // namespace lvgl_adapter

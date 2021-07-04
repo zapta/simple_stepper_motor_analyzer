@@ -13,7 +13,6 @@
 #include "misc/memory.h"
 #include "pico/stdlib.h"
 #include "ui/screen_manager.h"
-#include "display/tft_driver.h"
 
 constexpr uint8_t kColor8Blue = 0x3;
 
@@ -69,7 +68,7 @@ void setup() {
 
   // Turn on the backlight. User can now see the screen.
   lvgl_adapter::set_backlight(backlight_percents);
-  //millis_to_first_screen = to_ms_since_boot(get_absolute_time());
+  // millis_to_first_screen = to_ms_since_boot(get_absolute_time());
 
   // Now that the first screen is display. We can spend some
   // time setting up proactivly the other screens. Otherwise
@@ -97,13 +96,12 @@ void loop() {
 
     static uint print_cycle = 0;
 
-    tft_driver::test();
-
     switch (print_cycle) {
       default:
       case 0:
         printf("\nFree memory: %d\n", memory::free_memory());
-        printf("Config: [%s] [%s]\n", hardware_config::level_name(), hardware_config::sensor_name());
+        printf("Config: [%s] [%s]\n", hardware_config::level_name(),
+               hardware_config::sensor_name());
         puts("Pico SDK version: " PICO_SDK_VERSION_STRING);
         print_cycle = 1;
         break;

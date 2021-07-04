@@ -14,8 +14,10 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 
 void set_backlight(uint8_t percents);
 
-// Temp, for testing.
-void test(void);
+// Works from MK4 and up. Dumps the content of the screen in 
+// a format compatible with the screenshot_converter.py.
+// Used for diagnostics and documentation.
+void dump_screen();
 
 }  // namespace tft_driver
 

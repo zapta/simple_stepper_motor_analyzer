@@ -53,6 +53,7 @@ HardwareConfig determine();
 const HardwareConfig& config();
 
 inline const SensorSpec* sensor_spec() { return config().sensor_spec; }
+inline Level level() { return config().level; }
 const char* level_name();
 
 inline const char* sensor_name() { return config().sensor_spec->name; }

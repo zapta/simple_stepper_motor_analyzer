@@ -483,76 +483,79 @@ void render_buffer(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   //}
 }
 
-// Temp for testing. Reads ILI9488 data.
-
-// Should print:
-//   Reading TFT
+// Temp. Example of reading the TFT controller ID.
+//
+// For ILI9488, Should print:
 //   Byte 0: ??????????  // Ignored
 //   Byte 1: 0x00000000
 //   Byte 2: 0x00000094
 //   Byte 3: 0x00000088
 //
-void test() {
-  printf("Reading TFT\n");
-  write_command_byte(0xd3);
-  constexpr int N = 4;
-  set_mode_read_8(N);
-  uint32_t bfr[N];
-  for (int i = 0; i < N; i++) {
-    bfr[i] = pio_sm_get_blocking(PIO, SM);
-  }
-  for (int i = 0; i < N; i++) {
-    printf("Byte %d: 0x%08lx\n", i, bfr[i]);
-  }
-}
-
-// Temp for testing. Dumps ILI9488 screen.
 // void test() {
-//   uint16_t x = 0;
-//   uint16_t y = 0;
-//   uint16_t w = 480;
-//   uint16_t h = 320;
-//   setAddrWindow(x, y, x + w - 1, y + h - 1);
-//   const uint pixels = (uint32_t)w * h;
-
-//   // Start pixel read from the set rectangle.
-//   write_command_byte(ILI9488_RAMRD);  // read to RAM
-//   set_mode_read_8(pixels * 3 + 1);
-//   TFT_DC_HIGH;
-
-//   // Extra junk byte.
-//   pio_sm_get_blocking(PIO, SM);
-
-//   printf("###BEGIN screen capture\n");
-
-//   int pending_count;
-//   uint last_pixel;
-//   for (int j = y; j < y + h; j++) {
-//     printf("#%d,%d,%d", x, j, w);
-//     for (int i = x; i < x + w; i++) {
-//       const uint32_t b1 = pio_sm_get_blocking(PIO, SM);
-
-//       const uint32_t b2 = pio_sm_get_blocking(PIO, SM);
-//       const uint32_t b3 = pio_sm_get_blocking(PIO, SM);
-//       const uint32_t pixel = b1 << 16 | b2 << 8 | b3;
-//       if (!pending_count) {
-//         pending_count = 1;
-//         last_pixel = pixel;
-//       } else if (pixel == last_pixel) {
-//         pending_count++;
-//       } else {
-//         printf(",%d:%x", pending_count, last_pixel);
-//         pending_count = 1;
-//         last_pixel = pixel;
-//       }
-//     }
-//     if (pending_count) {
-//       printf(",%d:%x", pending_count, last_pixel);
-//       pending_count = 0;
-//     }
-//     printf("\n");
+//   printf("Reading TFT\n");
+//   write_command_byte(0xd3);
+//   constexpr int N = 4;
+//   set_mode_read_8(N);
+//   uint32_t bfr[N];
+//   for (int i = 0; i < N; i++) {
+//     bfr[i] = pio_sm_get_blocking(PIO, SM);
 //   }
-//   printf("###END screen capture\n");
+//   for (int i = 0; i < N; i++) {
+//     printf("Byte %d: 0x%08lx\n", i, bfr[i]);
+//   }
 // }
+
+// Works from MK4. Uses the TFT_RD signal.
+void dump_screen() {
+  setAddrWindow(0, 0, WIDTH-1, HEIGHT-1);
+  constexpr uint kPixelCount = (uint32_t)WIDTH * HEIGHT;
+
+  // Start pixel read from the rectangle we set earlier
+  write_command_byte(ILI9488_RAMRD);  // read to RAM
+  // One junk byte and then 3 bytes per pixel (R, G, B);
+  constexpr uint kBytesToRead = 1 + (kPixelCount * 3);
+  set_mode_read_8(kBytesToRead);
+
+  // Skip the junk byte.
+  pio_sm_get_blocking(PIO, SM);
+
+  // Start of dump marker.
+  printf("\n###BEGIN screen capture\n");
+  // Pixels that are yet to be output. We use a simple compression
+  // that groups together consecutive identical pixels.
+  int pending_pixels_count;
+  uint pending_pixels_value;
+  for (int y = 0; y < HEIGHT; y++) {
+    // Record header: x, y, count
+    printf("#%d,%d,%d", 0, y, WIDTH);
+    for (int x = 0; x < WIDTH; x++) {
+      const uint8_t r = pio_sm_get_blocking(PIO, SM);
+      const uint8_t g = pio_sm_get_blocking(PIO, SM);
+      const uint8_t b = pio_sm_get_blocking(PIO, SM);
+      const uint32_t pixel = (uint32_t)r << 16 | (uint32_t)g << 8 | b;
+      if (!pending_pixels_count) {
+        // Starting a new row.
+        pending_pixels_count = 1;
+        pending_pixels_value = pixel;
+      } else if (pixel == pending_pixels_value) {
+        // Same pixel value, add to pending.
+        pending_pixels_count++;
+      } else {
+        // New pixel value. Flush pending.
+        printf(",%d:%x", pending_pixels_count, pending_pixels_value);
+        pending_pixels_count = 1;
+        pending_pixels_value = pixel;
+      }
+    }
+    // Flush the last pixels in the row.
+    if (pending_pixels_count) {
+      printf(",%d:%x", pending_pixels_count, pending_pixels_value);
+      pending_pixels_count = 0;
+    }
+    printf("\n");
+  }
+  // End of dump marker.
+  printf("###END screen capture\n");
+}
 
 }  // namespace tft_driver

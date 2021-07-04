@@ -13,35 +13,48 @@ from datetime import datetime
 # Read lines from input file
 file1 = open('./screenshot.txt', 'r')
 lines = file1.readlines()
-
-
-image = Image.new(mode="RGB", size=(480, 320), color="red")
-
+# lines read so far
+l = 0
 
 dateTimeObj = datetime.now()
-timestamp = "%d%02d%02d-%02d%02d%02d" % (dateTimeObj.year, dateTimeObj.month,  dateTimeObj.day, dateTimeObj.hour,
-                                      dateTimeObj.minute, dateTimeObj.second)
+image_count = 0
+
+
+image = None
+
+# Returns filename.
+def init_new_file():
+  global image_count, image
+  image_count = image_count + 1
+  image = Image.new(mode="RGB", size=(480, 320), color="red")
+  return "%d%02d%02d-%02d%02d%02d-%02d.png" % (dateTimeObj.year, dateTimeObj.month,  dateTimeObj.day, dateTimeObj.hour,
+                                      dateTimeObj.minute, dateTimeObj.second,image_count)
+                                    
 
 # Set one pixel in the image.
 
-
+# Parse the 24bit pixel color and set in in the image buffer. 
 def put_pixel(x, y, color):
-    r3 = (color >> 11) & 0x1f  # R 5 bits
-    g3 = (color >> 5) & 0x3f  # G 6 bits
-    b2 = color & 0x1f  # B 5 bits
+    global image
 
-    r = int(r3 * 255 / 31)
-    g = int(g3 * 255 / 63)
-    b = int(b2 * 255 / 31)
+    # r3 = (color >> 11) & 0x1f  # R 5 bits
+    # g3 = (color >> 5) & 0x3f  # G 6 bits
+    # b2 = color & 0x1f  # B 5 bits
 
-    # r = (color >> 16) & 0xff  # R 8 bits
-    # g = (color >> 8) & 0xff  # G 8 bits
-    # b = color & 0xff  # B 8 bits
+    # r = int(r3 * 255 / 31)
+    # g = int(g3 * 255 / 63)
+    # b = int(b2 * 255 / 31)
 
-    # r = int(r * 2)
-    # g = int(g * 2)
-    # b = int(b * 2)
+    r = (color >> 16) & 0xff  # R 8 bits
+    g = (color >> 8) & 0xff  # G 8 bits
+    b = color & 0xff  # B 8 bits
 
+    # Images are kind of dark so making this brighter.
+    k = 2.0
+
+    r = min(255, int(r * k))
+    g = min(255, int(g * k))
+    b = min(255, int(b * k))
    
     image.putpixel((x, y), (r, g, b, 255))
 
@@ -49,7 +62,7 @@ def put_pixel(x, y, color):
 
 
 def process_data_line(l, line):
-    print(f"Processing line {l+1}")
+    print(f"Processing input line {l+1}")
     if not line.startswith("#"):
         raise Exception(f"Data lines {l+1} doesn't start with a #.")
     tokens = line[1:].split(',')
@@ -67,25 +80,38 @@ def process_data_line(l, line):
             x += 1
 
 
-# Increment l to the index of data line past the BEGIN line.
-l = 0
-while True:
-    if l >= len(lines):
-        raise Exception("###BEGIN line not found")
-    if lines[l].startswith("###BEGIN"):
+def process_next_image():
+    global l
+    # Lookup for next start marker or end of input.
+    while True:
+        if l >= len(lines):
+            return
+        if lines[l].startswith("###BEGIN"):
+            l += 1
+            break
         l += 1
-        break
-    l += 1
 
-# Process the data lines until END line.
-while True:
-    if l >= len(lines):
-        raise Exception("###END line not found")
-    line = lines[l].rstrip()
-    if line.startswith("###END"):
-        break
-    process_data_line(l, line)
-    l += 1
+    #image = Image.new(mode="RGB", size=(480, 320), color="red")
+    filename = init_new_file()
 
-image.save(timestamp + ".png")
-print("All done.")
+    # Start marker found, process data lines.
+    while True:
+        if l >= len(lines):
+            raise Exception("###END line is missing")
+        line = lines[l].rstrip()
+        if line.startswith("###END"):
+            break
+        process_data_line(l, line)
+        l += 1
+
+    image.save(filename)
+
+# Increment l to the index of data line past the BEGIN line.
+while l < len(lines):
+    process_next_image()
+if image_count < 1:
+    print("\nError: no image found")
+else:
+  print("\nAll done, found %d images." % image_count)
+
+  

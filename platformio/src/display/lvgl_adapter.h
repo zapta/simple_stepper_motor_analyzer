@@ -11,10 +11,6 @@ void set_backlight(uint8_t percents);
 
 // For developement.
 void dump_stats();
-void start_screen_capture();
-void stop_screen_capture();
-
-// Experimental
-//void sync_next_update();
+void dump_screen();
 
 }  // namespace lvgl_adapter

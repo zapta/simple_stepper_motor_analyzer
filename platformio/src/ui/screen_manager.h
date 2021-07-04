@@ -21,9 +21,7 @@ class Screen {
 
   lv_obj_t* lv_scr() { return screen_.lv_screen; }
   // Used for on demand setup() to speed up app startup time.
-  inline bool  is_setup() {
-    return screen_.lv_screen != nullptr;
-  }
+  inline bool is_setup() { return screen_.lv_screen != nullptr; }
 
  protected:
   ui::Screen screen_;
@@ -49,13 +47,11 @@ enum ScreenId {
   SCREEN_TEST,
 };
 
-extern void setup();
-// Called after the first screen is displayed, to setup the 
+void setup();
+// Called after the first screen is displayed, to setup the
 // rest of the screens. This way the LV heap stats represents
 // all screens being loaded.
-extern void setup_screens_ahead();
-extern void loop();
-
-extern void request_screen_capture();
+void setup_screens_ahead();
+void loop();
 
 }  // namespace screen_manager

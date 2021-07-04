@@ -14,9 +14,8 @@
 #include "speed_gauge_screen.h"
 #include "steps_chart_screen.h"
 #include "steps_histogram_screen.h"
-#include "time_histogram_screen.h"
 #include "test_screen.h"
-
+#include "time_histogram_screen.h"
 
 namespace screen_manager {
 
@@ -33,14 +32,12 @@ const char* Screen::format(const char* format, ...) {
 
 // Landing screen upon program start.
 static constexpr ScreenId kInitialScreen = SCREEN_HOME;
-//static constexpr ScreenId kInitialScreen = SCREEN_TEST;
+// static constexpr ScreenId kInitialScreen = SCREEN_TEST;
 
 struct ScreenDesc {
   ScreenId screen_id;
   Screen* screen_ptr;
 };
-
-static bool screen_cpature_requested = false;
 
 static HomeScreen home_screen;
 static SpeedGaugeScreen speed_gauge_screen;
@@ -71,10 +68,9 @@ static SettingsScreen screen_settings;
 static const ScreenDesc settings_screen_descriptor = {SCREEN_SETTINGS,
                                                       &screen_settings};
 
-                                                      // Test screen is not part of the screen sequence.
+// Test screen is not part of the screen sequence.
 static TestScreen screen_test;
-static const ScreenDesc test_screen_descriptor = {SCREEN_TEST,
-                                                      &screen_test};
+static const ScreenDesc test_screen_descriptor = {SCREEN_TEST, &screen_test};
 
 static const ScreenDesc* current_screen_desc = nullptr;
 
@@ -158,7 +154,11 @@ static bool common_event_handler(ui_events::UiEventId ui_event_id) {
       return false;
 
     case ui_events::UI_EVENT_SCREENSHOT:
-      request_screen_capture();
+      // We assume that LVGL doesn't call an event during
+      // a screen update so it should be safe to access the TFT to read
+      // the data. Otherwise, we could buffer the request and dump
+      // in loop(), outside of LVGL.
+      lvgl_adapter::dump_screen();
       return false;
 
     case ui_events::UI_EVENT_SETTINGS:
@@ -199,24 +199,8 @@ void loop() {
     }
   }
 
-  // Loop the current screen.
+  // Service the current screen.
   current_screen_desc->screen_ptr->loop();
-
-  if (screen_cpature_requested) {
-    const uint32_t start_millis = to_ms_since_boot(get_absolute_time());
-    lvgl_adapter::start_screen_capture();
-    lv_obj_invalidate(lv_scr_act());
-    lv_refr_now(NULL);
-    lvgl_adapter::stop_screen_capture();
-    screen_cpature_requested = false;
-    printf("Screen dump: %lu sec",
-           (to_ms_since_boot(get_absolute_time()) - start_millis) / 1000);
-  }
 };
-
-void request_screen_capture() {
-  screen_cpature_requested = true;
-  printf("Screenshot requested\n");
-}
 
 }  // namespace screen_manager
