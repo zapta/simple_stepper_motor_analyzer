@@ -575,7 +575,7 @@ void create_polar_chart(const Screen& screen,
   lv_obj_add_style(lv_line, LV_LINE_PART_MAIN,
                    &polar_chart_styles.line);  // Apply part series style.
 
-  polar_chart->max_radius = max_radius;
+  polar_chart->max_radius_in_pixels = max_radius;
   polar_chart->lv_chart = lv_chart;
   polar_chart->lv_line = lv_line;
 }

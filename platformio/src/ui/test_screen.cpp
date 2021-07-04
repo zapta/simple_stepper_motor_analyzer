@@ -7,13 +7,13 @@
 #include "io.h"
 #include "ui.h"
 
-static const ui::ChartAxisConfig kXAxisConfig{
+static const ui::ChartAxisConfig kXAxisConfig_2500ma{
     .range = {.min = 0, .max = 10},  // ignored
     .labels = "0\n2s\n4s\n6s\n8s\n10s",
     .num_ticks = 4,
     .dividers = 4};
 
-static const ui::ChartAxisConfig kYAxisConfig{
+static const ui::ChartAxisConfig kYAxisConfig_2500ma{
     .range = {.min = 0, .max = 1000},  // pattern range
     .labels = "1k\n750\n500\n250\n0",
     .num_ticks = 3,
@@ -48,7 +48,7 @@ void TestScreen::setup(uint8_t screen_num) {
   construct_test_pattern();
 
   ui::create_screen(&screen_);
-  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig, kYAxisConfig,
+  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig_2500ma, kYAxisConfig_2500ma,
                    ui_events::UI_EVENT_SCALE, &chart_);
 };
 

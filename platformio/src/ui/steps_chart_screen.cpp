@@ -13,7 +13,7 @@ static_assert(analyzer::kStepsCaptursPerSec == 20);
 // Update the steps field once every N time the chart is updated.
 static constexpr int kFieldUpdateRatio = 5;
 
-static const ui::ChartAxisConfig kXAxisConfig{
+static const ui::ChartAxisConfig kXAxisConfig_2500ma{
     .range = {.min = 0, .max = 10},
     .labels = "0\n2s\n4s\n6s\n8s\n10s",
     .num_ticks = 4,
@@ -39,7 +39,7 @@ void StepsChartScreen::setup(uint8_t screen_num) {
   points_buffer_.clear();
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "STEPS  CHART", screen_num, nullptr);
-  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig, kYAxisConfigNormal,
+  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig_2500ma, kYAxisConfigNormal,
                    ui_events::UI_EVENT_SCALE, &chart_);
 
   ui::create_label(screen_, 110, 120, 293, "", ui::kFontNumericDataFields,
@@ -67,7 +67,7 @@ void StepsChartScreen::on_event(ui_events::UiEventId ui_event_id) {
     case ui_events::UI_EVENT_SCALE:
       alternative_scale_ = !alternative_scale_;
       // Data will be scaled on the next loop().
-      chart_.set_scale(kXAxisConfig, alternative_scale_
+      chart_.set_scale(kXAxisConfig_2500ma, alternative_scale_
                                          ? kYAxisConfigAlternative
                                          : kYAxisConfigNormal);
       lv_chart_refresh(chart_.lv_chart);

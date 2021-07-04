@@ -137,7 +137,7 @@ struct Histogram {
 };
 
 struct PolarChart {
-  lv_coord_t max_radius;
+  lv_coord_t max_radius_in_pixels;
   lv_obj_t* lv_chart = nullptr;
   lv_obj_t* lv_line = nullptr;
 };

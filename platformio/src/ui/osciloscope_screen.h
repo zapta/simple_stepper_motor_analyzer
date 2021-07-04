@@ -17,4 +17,5 @@ class OsciloscopeScreen : public screen_manager::Screen {
   
   ui::Chart chart_;
   adc_capture_util::AdcCaptureControls adc_capture_controls_;
+  ui::ChartAxisConfig y_axis_config_;
 };

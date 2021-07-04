@@ -6,17 +6,23 @@
 
 static constexpr uint32_t kUpdateIntervalMillis = 200;
 
-static const ui::ChartAxisConfig kXAxisConfig{
+static const ui::ChartAxisConfig kXAxisConfig_2500ma = {
     .range = {.min = 0, .max = 2000},  // ignored
     .labels = "0\n500\n1000\n1500\n2000",
     .num_ticks = 5,
     .dividers = 3};
 
-static const ui::ChartAxisConfig kYAxisConfig{
+static const ui::ChartAxisConfig kYAxisConfig_2500ma = {
     .range = {.min = 0, .max = 2500},
     .labels = "2.5A\n2.0\n1.5\n1.0\n0.5\n0.0",
     .num_ticks = 6,
     .dividers = 4};
+
+static const ui::ChartAxisConfig kYAxisConfig_3000ma = {
+    .range = {.min = 0, .max = 3000},
+    .labels = "3A\n2\n1\n0",
+    .num_ticks = 4,
+    .dividers = 5};
 
 CurrentHistogramScreen::CurrentHistogramScreen(){};
 
@@ -24,8 +30,13 @@ void CurrentHistogramScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "CURRENT BY STEPS/SEC", screen_num,
                            nullptr);
-  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig,
-                       kYAxisConfig, &histogram_);
+  const uint16_t sensor_max_milliamps =
+      hardware_config::sensor_spec()->range_milliamps;
+  const ui::ChartAxisConfig* y_axis_config = (sensor_max_milliamps > 2500)
+                                                 ? &kYAxisConfig_3000ma
+                                                 : &kYAxisConfig_2500ma;
+  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets,
+                       kXAxisConfig_2500ma, *y_axis_config, &histogram_);
 };
 
 void CurrentHistogramScreen::on_load() {
@@ -61,20 +72,12 @@ void CurrentHistogramScreen::loop() {
   for (int i = 0; i < analyzer::kNumHistogramBuckets; i++) {
     uint64_t total_current_ticks = state->buckets[i].total_step_peak_currents;
     uint64_t steps = state->buckets[i].total_steps;
-    // Scale the value to [0, 100];
-    uint16_t val =
+    uint16_t avg_peak_milliamps =
         steps > 0
             ? sensor_spec->adc_value_to_milliamps(total_current_ticks / steps)
             : 0;
 
-    // Force non zero value to be visible.
-    const lv_coord_t min_non_zero_val = kYAxisConfig.range.max / 100;
-    if (steps > 0 && val < min_non_zero_val) {
-      // Make it visible.
-      val = min_non_zero_val;
-    }
-
-    histogram_.lv_series->points[i] = val;
+    histogram_.lv_series->points[i] = avg_peak_milliamps;
   }
 
   lv_chart_refresh(histogram_.lv_chart);

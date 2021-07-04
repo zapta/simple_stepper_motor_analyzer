@@ -12,7 +12,7 @@ static_assert(analyzer::kStepsCaptursPerSec == 20);
 // Update the retraction field once every N times the chart is updated.
 static constexpr int kFieldUpdateRatio = 2;
 
-static const ui::ChartAxisConfig kXAxisConfig = {
+static const ui::ChartAxisConfig kXAxisConfig_2500ma = {
     .range = {.min = 0, .max = 10},  // ignored
     .labels = "0\n2s\n4s\n6s\n8s\n10s",
     .num_ticks = 4,
@@ -40,7 +40,7 @@ void RetractionChartScreen::setup(uint8_t screen_num) {
   field_update_divider_ = kFieldUpdateRatio;
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "RETRACTION CHART", screen_num, nullptr);
-  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig, kScaleYAxisConfigs[y_scale_],
+  ui::create_chart(screen_, kNumPoints, 1, kXAxisConfig_2500ma, kScaleYAxisConfigs[y_scale_],
                    ui_events::UI_EVENT_SCALE, &chart_);
 
   ui::create_label(screen_, 110, 120, 293, "", ui::kFontNumericDataFields,
@@ -63,7 +63,7 @@ void RetractionChartScreen::on_event(ui_events::UiEventId ui_event_id) {
     case ui_events::UI_EVENT_SCALE:
       // TODO: make 3 a const (derive from the config table size).
       y_scale_ = (y_scale_ + 1) % kNumYScales;
-      chart_.set_scale(kXAxisConfig, kScaleYAxisConfigs[y_scale_]);
+      chart_.set_scale(kXAxisConfig_2500ma, kScaleYAxisConfigs[y_scale_]);
       lv_chart_refresh(chart_.lv_chart);
 
     default:

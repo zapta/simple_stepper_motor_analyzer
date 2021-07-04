@@ -17,5 +17,6 @@ class PhaseScreen : public screen_manager::Screen {
 
   ui::PolarChart polar_chart_;
   adc_capture_util::AdcCaptureControls adc_capture_controls_;
-  ui::Label scale_lable_;
+  ui::Label scale_label_;
+  uint16_t xy_max_milliamps_ = 0; 
 };

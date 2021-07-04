@@ -5,13 +5,13 @@
 
 static constexpr uint32_t kUpdateIntervalMillis = 200;
 
-static const ui::ChartAxisConfig kXAxisConfig{
+static const ui::ChartAxisConfig kXAxisConfig_2500ma{
     .range = {.min = 0, .max = 200},  // ignored
     .labels = "0\n500\n1000\n1500\n2000",
     .num_ticks = 5,
     .dividers = 3};
 
-static const ui::ChartAxisConfig kYAxisConfig{
+static const ui::ChartAxisConfig kYAxisConfig_2500ma{
     .range = {.min = 0, .max = 100},
     .labels = "100%\n75%\n50%\n25%\n0",
     .num_ticks = 5,
@@ -22,8 +22,8 @@ StepsHistorgramScreen::StepsHistorgramScreen(){};
 void StepsHistorgramScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "STEPS BY STEPS/SEC", screen_num, nullptr);
-  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig,
-                       kYAxisConfig, &histogram_);
+  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig_2500ma,
+                       kYAxisConfig_2500ma, &histogram_);
 };
 
 void StepsHistorgramScreen::on_load() {

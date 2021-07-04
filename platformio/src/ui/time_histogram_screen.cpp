@@ -5,7 +5,7 @@
 
 static constexpr uint32_t kUpdateIntervalMillis = 200;
 
-static const ui::ChartAxisConfig kXAxisConfig{
+static const ui::ChartAxisConfig kXAxisConfig_2500ma{
     .range = {.min = 0, .max = 2000},  // ignored
     .labels = "0\n500\n1000\n1500\n2000",
     .num_ticks = 5,
@@ -22,7 +22,7 @@ TimeHistogramScreen::TimeHistogramScreen(){};
 void TimeHistogramScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "TIME BY STEPS/SEC", screen_num, nullptr);
-  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig,
+  ui::create_histogram(screen_, analyzer::kNumHistogramBuckets, kXAxisConfig_2500ma,
                        kAxisYConfig, &histogram_);
 };
 

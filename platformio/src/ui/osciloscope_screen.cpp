@@ -6,7 +6,7 @@
 
 // NOTE: Capture deviders are configured in adc_capture_util.cpp.
 
-static const ui::ChartAxisConfig kYAxisConfig{
+static const ui::ChartAxisConfig kYAxisConfig_2500ma{
     .range = {.min = -2500, .max = 2500},
 
     .labels = "2.5A\n0\n-2.5A",
@@ -14,14 +14,21 @@ static const ui::ChartAxisConfig kYAxisConfig{
     .dividers = 9,
     .minor_div_lines_mask = 0x03de};
 
-static const ui::ChartAxisConfig kXAxisConfigNormal{
+static const ui::ChartAxisConfig kYAxisConfig_3000ma{
+    .range = {.min = -3000, .max = 3000},
+    .labels = "3A\n2\n1\n0\n-1\n-2\n-3A",
+    .num_ticks = 7,
+    .dividers = 5,
+    .minor_div_lines_mask = 0x0000};
+
+static const ui::ChartAxisConfig kXAxisConfig_20ms{
     .range = {.min = 0, .max = 20},  // ignored
     .labels = "0\n5ms\n10ms\n15ms\n20ms",
     .num_ticks = 5,
     .dividers = 19,
     .minor_div_lines_mask = 0xf7bde};
 
-static const ui::ChartAxisConfig kXAxisConfigAlternative{
+static const ui::ChartAxisConfig kXAxisConfig100ms{
     .range = {.min = 0, .max = 100},  // ignored
     .labels = "0\n20ms\n40ms\n60ms\n80ms\n100ms",
     .num_ticks = 6,
@@ -31,8 +38,11 @@ static const ui::ChartAxisConfig kXAxisConfigAlternative{
 void OsciloscopeScreen::setup(uint8_t screen_num) {
   ui::create_screen(&screen_);
   ui::create_page_elements(screen_, "CURRENT PATTERNS", screen_num, nullptr);
+  y_axis_config_ = hardware_config::sensor_spec()->range_milliamps > 2500
+                       ? kYAxisConfig_3000ma
+                       : kYAxisConfig_2500ma;
   ui::create_chart(screen_, analyzer::kAdcCaptureBufferSize, 2,
-                   kXAxisConfigNormal, kYAxisConfig, ui_events::UI_EVENT_SCALE,
+                   kXAxisConfig_20ms, y_axis_config_, ui_events::UI_EVENT_SCALE,
                    &chart_);
   adc_capture_controls_.setup(screen_);
 };
@@ -65,10 +75,9 @@ void OsciloscopeScreen::on_event(ui_events::UiEventId ui_event_id) {
 // Update chart from shared state.
 void OsciloscopeScreen::update_display() {
   // TODO: can we skip this most of the times? Is it expensive?
-  chart_.set_scale(adc_capture_util::alternative_scale()
-                       ? kXAxisConfigAlternative
-                       : kXAxisConfigNormal,
-                   kYAxisConfig);
+  chart_.set_scale(adc_capture_util::alternative_scale() ? kXAxisConfig100ms
+                                                         : kXAxisConfig_20ms,
+                   y_axis_config_);
   adc_capture_controls_.update_display_from_state();
 
   // No capture data.

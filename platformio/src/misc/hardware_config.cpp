@@ -51,6 +51,7 @@ static Level determine_level() {
 }
 
 static const SensorSpec* determine_sensor() {
+  //return &HAUL_5A_SENSOR;
   const PinState pin_state = determine_config_pin_state(SENSORS_PIN);
   switch (pin_state) {
     case STATE_FLOAT:
