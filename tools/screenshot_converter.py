@@ -26,6 +26,7 @@ image = None
 def init_new_file():
     global image_count, image
     image_count = image_count + 1
+    # Initial color red to detect pixels that may not be set.
     image = Image.new(mode="RGB", size=(480, 320), color="red")
     return "%d%02d%02d-%02d%02d%02d-%02d.png" % (dateTimeObj.year, dateTimeObj.month,  dateTimeObj.day, dateTimeObj.hour,
                                                  dateTimeObj.minute, dateTimeObj.second, image_count)
@@ -58,7 +59,8 @@ def put_pixel(x, y, color):
     g = min(255, int(g * k))
     b = min(255, int(b * k))
 
-    image.putpixel((x, y), (r, g, b, 255))
+    #image.putpixel((x, y), (r, g, b, 255))
+    image.putpixel((x, y), (r, g, b))
 
 # Process a line with pixels.
 
