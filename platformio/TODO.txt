@@ -1,5 +1,5 @@
 
-* Add backlight control slider (UI).
+* Consider to add an animation on screen transition (anonying?)
 
 * Switch to Pico SDK 1.2.x
 
@@ -7,4 +7,6 @@
 
 
 ============= DONE
+
+* Add backlight control slider (UI).
 
