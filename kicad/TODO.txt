@@ -1,4 +1,5 @@
 
+* Support 5V current sensor. Also add series resister on analog signals to prevent overvoltage on Pico's analog input.
 
 * Are the filter capacitor needed for the 5A sensor?
 
