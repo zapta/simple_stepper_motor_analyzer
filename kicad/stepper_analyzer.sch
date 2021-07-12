@@ -824,7 +824,7 @@ Text Notes 4450 2350 0    50   ~ 0
 (MK4)
 Text Notes 3450 3450 0    50   ~ 0
 (MK4)
-Text Notes 6400 6950 0    100  ~ 0
+Text Notes 1250 4400 0    236  ~ 47
 WORK IN PROGRESS. USE RELEASE INSTEAD
 Text Notes 6100 5950 2    50   ~ 0
 CONFIG
@@ -1055,10 +1055,10 @@ Wire Notes Line
 Wire Notes Line
 	5400 1550 7450 1550
 $Comp
-L Device:R_US R?
+L Device:R_US R9
 U 1 1 60E31E63
 P 4600 2900
-F 0 "R?" V 4500 3000 50  0000 L CNN
+F 0 "R9" V 4500 3000 50  0000 L CNN
 F 1 "1K" V 4500 2800 50  0000 L CNN
 F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 4640 2890 50  0001 C CNN
 F 3 "~" H 4600 2900 50  0001 C CNN
@@ -1067,10 +1067,10 @@ F 4 "" V 4600 2900 50  0001 C CNN "LCSC"
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Device:R_US R?
+L Device:R_US R8
 U 1 1 60E32904
 P 4600 1800
-F 0 "R?" V 4500 1900 50  0000 L CNN
+F 0 "R8" V 4500 1900 50  0000 L CNN
 F 1 "1K" V 4500 1700 50  0000 L CNN
 F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 4640 1790 50  0001 C CNN
 F 3 "~" H 4600 1800 50  0001 C CNN
@@ -1094,10 +1094,10 @@ Text Label 6100 4650 2    50   ~ 0
 Wire Wire Line
 	2900 850  2900 950 
 $Comp
-L power:+5V #PWR?
+L power:+5V #PWR0106
 U 1 1 60EA8BA9
 P 2900 850
-F 0 "#PWR?" H 2900 700 50  0001 C CNN
+F 0 "#PWR0106" H 2900 700 50  0001 C CNN
 F 1 "+5V" H 2915 1023 50  0000 C CNN
 F 2 "" H 2900 850 50  0001 C CNN
 F 3 "" H 2900 850 50  0001 C CNN
@@ -1125,10 +1125,10 @@ Connection ~ 3200 1300
 Wire Wire Line
 	3200 1250 3200 1300
 $Comp
-L Device:R_US R?
+L Device:R_US R7
 U 1 1 60E6D702
 P 3200 1100
-F 0 "R?" H 3300 1150 50  0000 L CNN
+F 0 "R7" H 3300 1150 50  0000 L CNN
 F 1 "1K" H 3300 1050 50  0000 L CNN
 F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 3240 1090 50  0001 C CNN
 F 3 "~" H 3200 1100 50  0001 C CNN
@@ -1137,10 +1137,10 @@ F 4 "" V 3200 1100 50  0001 C CNN "LCSC"
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_US R?
+L Device:R_US R6
 U 1 1 60E7C804
 P 2900 1100
-F 0 "R?" H 2700 1150 50  0000 L CNN
+F 0 "R6" H 2700 1150 50  0000 L CNN
 F 1 "DNP" H 2650 1050 50  0000 L CNN
 F 2 "stepper_motor_analyzer:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 2940 1090 50  0001 C CNN
 F 3 "~" H 2900 1100 50  0001 C CNN
