@@ -1,36 +1,13 @@
 
-* Support 5V current sensor. Also add series resister on analog signals to prevent overvoltage on Pico's analog input.
+Replace 10u tantalum with cermaic (cost)
 
-* Are the filter capacitor needed for the 5A sensor?
-
-
-* Update the PICO footprint per the official specification. (e.g. pads under the USB connector).
 
 * Delete junk kicad and model files.
 
+
+
+
 ----- Done
-
-* Check noise due to TFT PWM. Consider to increase frequency
-
-* (Rejected) Consider to reduce TFT resistros to 6.x for higher brightness
-
-* Add silk screen label to new pin used in MK4
-
-* Add builtin config for MK4
-
-* Add filter capacitor for ACS712ELCTR-05B-T current sensor.
-
-* Move FPC1 1mm toward the cable 
-
-* Add a connection to the TFT's RD input to allow reading. Make it PIO friendly (e.g. WR and RD can be a 2 pin 'side output')
-
-* (Not done, resistor heat dissipation) Run the backlight on VSYS and allow for higher max current since backlight is PWM controlled.
-
---
-
-* REJECTED. (low Hfe concerns) Replace backlight mosfet with NPN (e.g. SS8050) and a resistor (reduce cost).
-
-* Replace 10u tantalum with ceramic (cost)
 
 * Verify drill size of Molex pins
 
