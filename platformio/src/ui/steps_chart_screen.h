@@ -12,11 +12,12 @@ class StepsChartScreen : public screen_manager::Screen {
   virtual void loop() override;
   virtual void on_event(ui_events::UiEventId ui_event_id) override;
 
- private:
   // NOTE: Chart's area width is 400 pixels. Note that
   // the more points we have, the slower is the LVGL 
   // in memory rendering.
   static constexpr int16_t kNumPoints = 200;
+
+ private:
   // Counter to update the steps field once every N chart updates.
   uint8_t field_update_divider_ = 0;
   ui::Label steps_field_;
@@ -28,5 +29,6 @@ class StepsChartScreen : public screen_manager::Screen {
   // way we don't risk an over/underflow if we will use the
   // Chart's int16 point values when we rebase the Y range.
   CircularBuffer<int32_t, kNumPoints> points_buffer_;
-  bool alternative_scale_ = false;
+  // Index into kYAxisConfigs.
+  int scale_index_ = 0;
 };
