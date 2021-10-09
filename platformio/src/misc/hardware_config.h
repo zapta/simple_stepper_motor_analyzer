@@ -44,12 +44,11 @@ struct HardwareConfig {
   Level level;
   const SensorSpec* sensor_spec;
   HardwareConfig(Level l, const SensorSpec* s) : level(l), sensor_spec(s) {}
-  /// HardwareConfig() : HardwareConfig(LEVEL_UNKNOWN, SENSOR_UNKNOWN) {}
 };
 
 HardwareConfig determine();
 
-// Should call determine() before calling these.
+// Should call determine() at least once before calling these.
 const HardwareConfig& config();
 
 inline const SensorSpec* sensor_spec() { return config().sensor_spec; }

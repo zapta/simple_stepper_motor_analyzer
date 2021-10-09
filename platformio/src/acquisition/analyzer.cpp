@@ -296,7 +296,7 @@ static inline void isr_update_full_steps_counter(int increment) {
 //
 // We use these filters to reduce internal and external noise.
 static filters::Adc12BitsLowPassFilter<700> signal1_filter;
-static filters::Adc12BitsLowPassFilter<400> signal2_filter;
+static filters::Adc12BitsLowPassFilter<700> signal2_filter;
 
 // This function performs the bulk of the IRQ processing. It accepts
 // one pair of ADC1, ADC2 readings, analyzes it, and updates the

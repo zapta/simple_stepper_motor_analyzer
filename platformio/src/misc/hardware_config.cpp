@@ -17,7 +17,7 @@ static const SensorSpec GMR_2P5_SENSOR("G2P5A", 2500, 0.4);
 // ACS712ELCTR-05B-T
 // We limit the range to 3A since this is the
 // most 3D printer use cases fall here.
-static SensorSpec HAUL_5A_SENSOR("H5A", 3000, 0.185);
+//static SensorSpec HAUL_5A_SENSOR("H5A", 3000, 0.185);
 
 static HardwareConfig hardware_config(LEVEL_UNKNOWN, &UNKNOWN_SENSOR);
 
@@ -51,13 +51,13 @@ static Level determine_level() {
 }
 
 static const SensorSpec* determine_sensor() {
-  //return &HAUL_5A_SENSOR;
   const PinState pin_state = determine_config_pin_state(SENSORS_PIN);
   switch (pin_state) {
     case STATE_FLOAT:
       return &GMR_2P5_SENSOR;
     case STATE_DOWN:
-      return &HAUL_5A_SENSOR;
+      // Reserved for a future sernsor.
+      return &UNKNOWN_SENSOR;
     case STATE_UP:
     default:
       return &UNKNOWN_SENSOR;
