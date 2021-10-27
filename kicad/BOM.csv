@@ -1,0 +1,17 @@
+Ref,Quantity,Value,Footprint,JLCPCB Service,Comments
+"C1, C2, ",2,Ceramic capacitor 100nf,SMD 0805,Yes,
+"C3, ",1,Ceramic capacitor 10uf,SMD 0805,Yes,
+"FPC1, ",1,"FPC connector 40 pins, 0.5mm pitch TOP contacts.",,Yes,LCSC C11097 or similar.
+"FPC2, ",1,"FPC connector 6 pins, 0.5mm pitch BOTTOM contacts.",,Yes,LCSC C262262 or similar
+"Q1, ",1,N-Chan MOSFET AO3400A ,SOT-23,Yes,
+"R1, R2, R3, ",3,Resistor 8.2 Ohms,SMD 0805,Yes,
+PCB,1,Custom PCB per gerber files,,Yes,
+,,,,,
+"J1, J2, ",2,"Right angle connector, 4 pins, 0.1” pitch. KF2510 ",,No,"AliExpress. Trim pins using the 3D printed jig, BEFORE soldering them."
+"U1, U2, ",2,ACS70331EOLCTR-2P5B3,SOIC-8,No,AliExpress
+"U3, ",1,Raspberry Pi Pico,,No,
+TFT,1,"TFT module 3.5” 320x480, IL9488, capacitive touch FT6206",,No,"AliExpress JR E-Shop, “3.5 LCD CTP”"
+Threaded heat Inserts,4,M2.5 x 3.5mm OD x 3mm length,,No,AliExpress Centrode Store
+Screws,4,"M2.5 x 10mm,  hex cup head.",,No,AliExpress
+Enclosure,1,Use provided 3D model,,No,
+Tape,,"Double sided thermal tape 10mm width, 0.2mm thickness",,,AliExpress
