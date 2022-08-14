@@ -1,8 +1,9 @@
 # Simple Stepper Motor Analyzer
 
+NOTE (Aug 2022) The Simple Stepper Motor Analyzer can be purchased in Japan at 
+https://nyarurato.booth.pm/items/4025304 . International shipping is also available.
 
-<span style="color:red"><b>
-NOTE (June 2021): The old design of the Simple Stepper Motor analyzer which was based on the STM32 was moved to https://github.com/zapta/legacy_stepper_motor_analyzer. This is a new and improve design that is based on the Raspberry Pi Pico and a 'bare' TFT panel.</b></span> 
+IMPORTANT: We are not associated with any seller and do have any experience with their products. The Simple Stepper Motor Analyzer is an open source reference design for educational purposes and people are free to use on their own risk.
 
 &nbsp;
 
