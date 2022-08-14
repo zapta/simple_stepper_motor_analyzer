@@ -1,9 +1,9 @@
 # Simple Stepper Motor Analyzer
 
-NOTE (Aug 2022) A variant of the Simple Stepper Motor Analyzer can be purchased in Japan at 
+**NOTE:** (Aug 2022) A variant of the Simple Stepper Motor Analyzer can be purchased in Japan at 
 https://nyarurato.booth.pm/items/4025304 . International shipping is also available.
 
-IMPORTANT: We are not associated with any seller nor do we have any experience with their products
+**IMPORTANT:** We are not associated with any seller nor do we have any experience with their products
 which may or may not differ from the design here. The Simple Stepper Motor Analyzer is an *as-is*
 open source design for educational purposes and people may chose to use it on their own risk.
 
