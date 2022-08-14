@@ -9,10 +9,6 @@ open source design for educational purposes and people may chose to use it on th
 
 &nbsp;
 
-https://github.com/zapta/simple_stepper_motor_analyzer
-
-&nbsp;
-
 
 ![](./www/overall.jpg)
 
