@@ -1,5 +1,8 @@
 # Simple Stepper Motor Analyzer
 
+**NOTE:** (April 2023) A new design of a stepper motor analyzer is available at 
+https://github.com/zapta/ble_stepper_motor_analyzer. The new design has similar capabilities to this one but uses a Bluetooth link and a Mac/Windows/Linux app to display the data in real time. It is also less expensive to produce and can be ordered fully assembled from JLCPCB SMD service. You can embed one or more of the new analyzers in your 3D printer and connect to them remotely whever you want.
+
 **NOTE:** (Aug 2022) A variant of the Simple Stepper Motor Analyzer can be purchased in Japan at 
 https://nyarurato.booth.pm/items/4025304 . International shipping is also available.
 
